@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      // كل مستخدم مسجّل دخول يقرأ ويكتب مستنده الخاص فقط
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // بريد المشرف يقرأ بيانات كل المستخدمين (لعرضها في لوحة الإدارة) بلا صلاحية كتابة
+      allow read: if request.auth != null &&
+                     request.auth.token.email != null &&
+                     request.auth.token.email.lower() in ['ali078044@gmail.com'];
+
+      match /attempts/{attemptId} {
+        // كل مستخدم يقرأ ويضيف محاولاته الخاصة فقط
+        allow read, create: if request.auth != null && request.auth.uid == uid;
+
+        // بريد المشرف يقرأ محاولات كل المستخدمين
+        allow read: if request.auth != null &&
+                       request.auth.token.email != null &&
+                       request.auth.token.email.lower() in ['ali078044@gmail.com'];
+      }
+    }
+  }
+}
