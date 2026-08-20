@@ -101,7 +101,7 @@ header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,var(--
 .line.active{background:#FFF6E3;border-color:var(--saffron)}
 .line .txt{font-family:var(--en);direction:ltr;text-align:left;font-size:17.5px;line-height:1.65;font-weight:500}
 .line .ar{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.7}
-.w{border-radius:5px;padding:0 1px}
+.w{border-radius:5px;padding:2px 2px;margin:0 -1px;display:inline-block;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 .w.on{background:var(--saffron);color:#2A1E05}
 .w.gramHi{background:#D9E6FA;color:#1D3A66;font-weight:700;box-shadow:0 0 0 1px #9FBBE8}
 html[data-theme="light"] .w.gramHi{background:#2A4A7C;color:#EAF1FF;box-shadow:0 0 0 1px #1D3A66}
@@ -120,18 +120,32 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .vc .e{font-family:var(--en);direction:ltr;text-align:left;font-weight:600;font-size:14.5px}
 .vc .a{font-size:12px;color:var(--muted);margin-top:2px}
 
-/* بطاقات مفردات قابلة للقلب — بطاقة فعلية (front/back) بدل إظهار المعنى مباشرة */
-.vocab.flip{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-.vc-card{background:transparent;border:0;padding:0;perspective:700px;height:78px;display:block}
-.vc-in{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
-.vc-card.flipped .vc-in{transform:rotateY(180deg)}
-.vc-f,.vc-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;padding:9px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:3px}
-.vc-f{background:var(--paper2);border:1.5px solid #E2CFA9}
-.vc-f .e{font-family:var(--en);direction:ltr;font-weight:700;font-size:15px}
-.vc-f .tap{font-size:10px;color:var(--muted);margin-top:2px}
-.vc-b{background:linear-gradient(150deg,var(--leaf),#1E5B50);color:#EAF7F2;transform:rotateY(180deg)}
-.vc-b .a{font-size:14px;font-weight:700}
-.vc-b .more{font-size:10px;margin-top:4px;opacity:.85;text-decoration:underline;text-underline-offset:2px}
+/* بطاقات مفردات قابلة للقلب — بطاقة فعلية (front/back) بدل إظهار المعنى مباشرة.
+   ملاحظة مهمة: لا نعتمد على تحويلات CSS ثلاثية الأبعاد (rotateY/perspective/backface-visibility) لأن هذه
+   التقنية تحتاج تسريع الرسوميات (GPU) وتفشل بصمت (تبقى البطاقة ثابتة كأن الضغط لا يعمل) على أجهزة/متصفحات
+   كثيرة (أجهزة قديمة، أجهزة افتراضية، سطح مكتب بعيد RDP، تسريع رسوميات معطّل). بدلاً من ذلك نستخدم إظهار/إخفاء
+   بسيط (display) بين الوجهين مع حركة انتقال خفيفة (تكبير+تلاشي) — تعمل مضمونة على أي جهاز أو متصفح.
+   الوجه الأمامي (vc-f) يحدّد ارتفاع البطاقة تلقائياً حسب طول نصّه. عند القلب يختفي تماماً (display:none) ويظهر
+   الوجه الخلفي (vc-b) بدلاً عنه — فلا تداخل ولا مشاكل نقر إطلاقاً لأن العنصر المخفي لا يُرسَم ولا يستقبل نقرات. */
+.vocab.flip{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));align-items:stretch;gap:10px}
+.vc-card{background:transparent;border:0;padding:0;display:block;height:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.vc-in{position:relative;width:100%;min-height:84px}
+.vc-f,.vc-b{border-radius:16px;padding:12px 11px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;min-height:84px;
+  box-shadow:0 3px 10px -4px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.04) inset;
+  animation:vcPop .22s ease}
+@keyframes vcPop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.vc-f{background:linear-gradient(160deg,var(--paper2),var(--paper));border:1.5px solid #E2CFA9}
+.vc-f .e{font-family:var(--en);direction:ltr;font-weight:700;font-size:14.5px;line-height:1.35}
+.vc-f .ipa{font-size:10.5px;color:var(--muted);opacity:.85}
+.vc-f .tap{font-size:9.5px;color:#B9862F;margin-top:3px;font-weight:700;letter-spacing:.2px}
+.vc-f .tap::before{content:"🔄 "}
+.vc-b{display:none;background:linear-gradient(155deg,var(--leaf),#164A41);color:#EAF7F2}
+.vc-card.flipped .vc-f{display:none}
+.vc-card.flipped .vc-b{display:flex}
+.vc-b .a{font-size:14.5px;font-weight:700;line-height:1.4}
+.vc-b .more{font-size:10px;margin-top:5px;opacity:.9;text-decoration:underline;text-underline-offset:2px}
+.vc-card:active .vc-f,.vc-card:active .vc-b{filter:brightness(.96)}
 
 /* شريط خطوات الدرس — دوائر قابلة للضغط للتنقّل المباشر بين أقسام الفصل، مع علامة إنجاز */
 .stepper{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:2px}
@@ -288,7 +302,10 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .playb{width:34px;height:34px;border-radius:10px;background:var(--deep3);color:var(--paper);
   font-size:12px;flex:0 0 auto;margin-top:2px}
 .rbody{flex:1;min-width:0}
-.rtxt{font-family:var(--en);direction:ltr;text-align:left;font-size:17px;line-height:1.75;font-weight:500}
+.rtxt{font-family:var(--en);direction:ltr;text-align:left;font-size:17px;line-height:1.75;font-weight:500;
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.gtable td,.note,.qtext,.fb,.bigword,.pg .lab,.exp-text,.qhint-en{
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .rtxt .w,.qtext .w,.opts .w{border-radius:5px;padding:1px 2px;cursor:pointer;border-bottom:1px dotted #C4AE86}
 .rtxt .w:active{background:var(--paper2)}
 .rtxt .w.on{background:var(--saffron);color:#2A1E05;border-bottom-color:transparent}
@@ -300,6 +317,7 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .veil{position:fixed;inset:0;background:rgba(6,20,19,.62);z-index:80}
 .wpop{position:fixed;inset:auto 12px 12px 12px;z-index:81;background:var(--paper);color:var(--ink);
   border-radius:20px;padding:16px 15px calc(16px + env(safe-area-inset-bottom));
+  max-height:78vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
   box-shadow:0 -10px 40px -10px rgba(0,0,0,.8);animation:up .18s ease-out}
 @keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:translateY(0);opacity:1}}
 .wp-h{display:flex;align-items:center;gap:10px}
@@ -326,8 +344,9 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 textarea.tin{resize:vertical;text-align:left;line-height:1.6}
 
 /* كلمات قابلة للنقر في كل مكان */
-.tw{border-radius:4px;padding:0 1px;cursor:pointer;
-  border-bottom:1px dotted rgba(122,106,85,.45)}
+.tw{border-radius:4px;padding:1px 2px;margin:0 -1px;cursor:pointer;display:inline-block;
+  border-bottom:1px dotted rgba(122,106,85,.45);-webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 .tw:active{background:var(--saffron);color:#2A1E05}
 .note .tw,.gtable .tw{border-bottom-color:rgba(122,106,85,.4)}
 .fb .tw{border-bottom-color:currentColor;opacity:1}
@@ -385,9 +404,11 @@ nav .bdg{position:absolute;top:2px;inset-inline-end:14px;background:var(--plum);
 <script src="data/a1/idioms.js"></script>
 <script src="data/a1/dialogues.js"></script>
 <script src="data/a1/dictionary.js"></script>
+<script src="data/a1/synonyms.js"></script>
+<script src="data/a2/story.js"></script>
 <script>
 /* المنهج الكامل للمستوى A1 — 16 فصلاً */
-const BOOK=[
+const BOOK_A1=[
 {
  t_en:"Hello, I am Sami", t_ar:"مرحباً، أنا سامي", icon:"👋", unit:"الوحدة ١ · التعريف بالنفس",
  sky:["#FFD98E","#F2A65A"], ground:"#C98B5B",
@@ -496,6 +517,47 @@ const BOOK=[
  ]
 },
 {
+ t_en:"A New Friend for Sami's Family", t_ar:"صديق جديد لعائلة سامي", icon:"🎉", unit:"الوحدة ١ · التعريف بالنفس",
+ sky:["#FFE3B0","#F0A85C"], ground:"#C9863C",
+ items:[{e:"🎉",x:50,y:26,s:40},{e:"👦",x:24,y:70,s:54},{e:"🧒",x:46,y:72,s:50},{e:"👦",x:68,y:70,s:52},{e:"🧒",x:88,y:74,s:44}],
+ cap:"سامي يقدّم صديقه الجديد كريم لعائلته، ويحسبون كل شيء معاً",
+ lines:[
+  ["Hello! My name is Sami and this is my new friend, Karim.","مرحباً! اسمي سامي وهذا صديقي الجديد، كريم."],
+  ["Karim is ten years old, just like me.","كريم عمره عشر سنوات، مثلي تماماً."],
+  ["I have a big family: my father, my mother, and two sisters.","لديّ عائلة كبيرة: أبي وأمي وأختان."],
+  ["My father is a teacher and my mother is a doctor.","أبي معلّم وأمي طبيبة."],
+  ["Karim has one brother. His name is Yousef.","لدى كريم أخ واحد. اسمه يوسف."],
+  ["We are happy today because our families are meeting.","نحن سعداء اليوم لأن عائلتينا تلتقيان."],
+  ["How many pencils do you have, Karim?","كم قلماً لديك يا كريم؟"],
+  ["I have twelve red pencils and five blue pencils.","لديّ اثنا عشر قلماً أحمر وخمسة أقلام زرقاء."],
+  ["My favourite colour is green, not yellow.","لوني المفضل هو الأخضر، وليس الأصفر."],
+  ["This is a big day for our small city.","هذا يوم كبير لمدينتنا الصغيرة."],
+  ["Welcome to our family, Karim!","أهلاً بك في عائلتنا يا كريم!"],
+  ["We are friends now, from today.","نحن أصدقاء الآن، من اليوم."]
+ ],
+ vocab:[["name","اسم","/neɪm/"],["friend","صديق","/frend/"],["family","عائلة","/ˈfæməli/"],["father","أب","/ˈfɑːðə/"],
+        ["mother","أم","/ˈmʌðə/"],["brother","أخ","/ˈbrʌðə/"],["sister","أخت","/ˈsɪstə/"],["happy","سعيد","/ˈhæpi/"],
+        ["colour","لون","/ˈkʌlə/"],["favourite","مفضّل","/ˈfeɪvərɪt/"]],
+ gram:{ t:"📖 مراجعة الوحدة ١: to be + الملكية + الأرقام",
+   note:"هذه خلاصة كل قواعد الوحدة الأولى في مكان واحد — راجعها جيداً قبل الانتقال إلى الوحدة التالية.",
+   rows:[["I am / You are / He is","فعل الكينونة"],["my / his / her / our","ضمائر الملكية"],["I have / He has","لديّ / لديه (have/has)"],["How many pencils?","السؤال عن العدد"],["a red pencil","ترتيب الصفة قبل الاسم"],["We are happy today.","جملة اسمية بفعل الكينونة"]] },
+ pron:{ t:"مراجعة: H وF مقابل V",
+   note:"راجع صوت H الخفيف في بداية الكلمة، والفرق بين F (بلا اهتزاز) وV (باهتزاز) الذي لا يوجد له نظير دقيق في العربية.",
+   groups:[["/h/ في أول الكلمة",["hello","happy","house"]],["/f/ بدون اهتزاز مقابل /v/ باهتزاز",["father","family","very","love"]]] },
+ quiz:[
+  {t:"mcq",q:"Karim ___ ten years old.",hint:"كريم عمره عشر سنوات.",o:["am","is","are"],a:1},
+  {t:"mcq",q:"I ___ a big family.",hint:"لديّ عائلة كبيرة.",o:["have","has","am"],a:0},
+  {t:"mcq",q:"Karim ___ one brother.",hint:"لدى كريم أخ واحد.",o:["have","has","is"],a:1},
+  {t:"mcq",q:"___ pencils do you have?",hint:"كم قلماً لديك؟",o:["How many","How much","What"],a:0},
+  {t:"mcq",q:"Choose the correct order:",hint:"قلم أحمر",o:["a red pencil","a pencil red","red a pencil"],a:0},
+  {t:"listen",say:"happy",o:["happy","house","hand"],a:0},
+  {t:"order",hint:"هذا صديقي الجديد.",w:["This","is","my","new","friend"]},
+  {t:"match",p:[["family","عائلة"],["brother","أخ"],["sister","أخت"],["colour","لون"]]},
+  {t:"trans",hint:"أبي معلّم وأمي طبيبة.",o:["My father is a teacher and my mother is a doctor.","My father is a doctor and my mother is a teacher.","My brother is a teacher."],a:0},
+  {t:"spell",say:"family",hint:"عائلة"}
+ ]
+},
+{
  t_en:"My House", t_ar:"بيتي", icon:"🏡", unit:"الوحدة ٢ · عالمي حولي",
  sky:["#F7D9C4","#E9A17C"], ground:"#9C6B4F",
  items:[{e:"🌙",x:84,y:20,s:32},{e:"🏡",x:48,y:50,s:82},{e:"🌳",x:18,y:60,s:56},{e:"🐈",x:74,y:76,s:42}],
@@ -601,6 +663,57 @@ const BOOK=[
  ]
 },
 {
+ t_en:"A Busy Saturday", t_ar:"سبت مزدحم", icon:"🗓️", unit:"الوحدة ٢ · عالمي حولي",
+ sky:["#F2E6C9","#D9B15C"], ground:"#9C7A3D",
+ items:[{e:"🏠",x:18,y:56,s:52},{e:"🏫",x:48,y:46,s:60},{e:"🧺",x:80,y:60,s:54},{e:"🐈",x:62,y:80,s:34}],
+ cap:"من البيت إلى المدرسة إلى السوق، في يوم واحد",
+ lines:[
+  ["This is my house. There are three windows and a red door.","هذا بيتي. توجد ثلاث نوافذ وباب أحمر."],
+  ["My books are on the shelf, next to my bed.","كتبي على الرف، بجانب سريري."],
+  ["Every Saturday I go to school in the morning.","كل سبت أذهب إلى المدرسة صباحاً."],
+  ["My teacher writes on the board and I read carefully.","معلّمي يكتب على السبورة وأقرأ بعناية."],
+  ["Nour studies with me. She speaks English very well.","نور تدرس معي. هي تتكلم الإنكليزية جيداً جداً."],
+  ["After school, we go to the market.","بعد المدرسة، نذهب إلى السوق."],
+  ["My mother buys some bread and rice.","أمي تشتري بعض الخبز والرز."],
+  ["I want an apple and a banana.","أريد تفاحة وموزة."],
+  ["How much is the fish today?","بكم السمك اليوم؟"],
+  ["The market is busy, but the food is sweet and fresh.","السوق مزدحم، لكن الطعام حلو وطازج."],
+  ["There is a small garden behind the market too.","توجد حديقة صغيرة خلف السوق أيضاً."],
+  ["It is a busy Saturday, but a very good one.","إنه سبت مزدحم، لكنه جيد جداً."]
+ ],
+ vocab:[["house","بيت","/haʊs/"],["window","نافذة","/ˈwɪndəʊ/"],["school","مدرسة","/skuːl/"],["teacher","معلّم","/ˈtiːtʃə/"],
+        ["read","يقرأ","/riːd/"],["market","سوق","/ˈmɑːkɪt/"],["bread","خبز","/bred/"],["apple","تفاحة","/ˈæpl/"],
+        ["busy","مزدحم","/ˈbɪzi/"],["garden","حديقة","/ˈɡɑːdn/"]],
+ gram:{ t:"📖 مراجعة الوحدة ٢: There is/are + المضارع البسيط + a/an/some",
+   note:"خلاصة قواعد الوحدة الثانية — البيت، المدرسة، والسوق — في جدول واحد.",
+   rows:[["There is a door.","يوجد (مفرد)"],["There are three windows.","توجد (جمع)"],["I read. / She reads.","المضارع البسيط (+s مع he/she/it)"],["a book / an apple","a قبل صوت ساكن، an قبل صوت متحرك"],["some bread / some fish","كمية غير محددة"],["How much is it?","السؤال عن السعر"],["next to / behind / under","حروف مكان"]] },
+ pron:{ t:"مراجعة: TH ونهاية s الثلاثية",
+   note:"راجع صوتي TH (θ الثاء وð الذال)، ونهاية الفعل مع he/she/it التي تُنطق s أو z أو ɪz حسب الحرف الذي قبلها.",
+   groups:[["/θ/ و /ð/",["three","this","there"]],["نهاية s/z/ɪz",["reads","writes","teaches"]]] },
+ quiz:[
+  {t:"mcq",q:"There ___ a red door.",hint:"يوجد باب أحمر.",o:["is","are"],a:0},
+  {t:"mcq",q:"There ___ three windows.",hint:"توجد ثلاث نوافذ.",o:["is","are"],a:1},
+  {t:"mcq",q:"Nour ___ English very well.",hint:"تتكلم الإنكليزية جيداً.",o:["speak","speaks"],a:1},
+  {t:"mcq",q:"I want ___ apple.",hint:"أريد تفاحة.",o:["a","an"],a:1},
+  {t:"mcq",q:"We buy ___ bread.",hint:"نشتري بعض الخبز.",o:["a","some"],a:1},
+  {t:"listen",say:"market",o:["market","garden","teacher"],a:0},
+  {t:"order",hint:"كتبي على الرف.",w:["My","books","are","on","the","shelf"]},
+  {t:"match",p:[["school","مدرسة"],["market","سوق"],["bread","خبز"],["garden","حديقة"]]},
+  {t:"trans",hint:"بكم السمك اليوم؟",o:["How much is the fish today?","How many is the fish today?","How much are the fish today?"],a:0},
+  {t:"spell",say:"market",hint:"سوق"}
+ ]
+},
+{
+ t_en:"Review Stop", t_ar:"محطة مراجعة", icon:"🔁", unit:"الوحدة ٢ · عالمي حولي",
+ reserveReview:true,
+ sky:["#E6E6E6","#B9B9B9"], ground:"#8A8A8A",
+ items:[{e:"🔁",x:50,y:50,s:70}],
+ cap:"لنراجع الأسئلة التي أخطأت بها حتى الآن",
+ lines:[], vocab:[], quiz:[],
+ gram:{ t:"محطة مراجعة", note:"هذا درس مراجعة ديناميكي — لا يعلّم قاعدة جديدة، بل يجمع الأسئلة التي أخطأت بها سابقاً ليساعدك على إتقانها.", rows:[] },
+ pron:{ t:"", note:"", groups:[] }
+},
+{
  t_en:"A Day at the Park", t_ar:"يوم في الحديقة", icon:"🌳", unit:"الوحدة ٣ · ما أستطيع وما أفعل",
  sky:["#BFE7F5","#6FB6D9"], ground:"#5A9E62",
  items:[{e:"☀️",x:82,y:22,s:38},{e:"🌳",x:28,y:50,s:76},{e:"🚲",x:60,y:72,s:50},{e:"🥪",x:44,y:80,s:34}],
@@ -702,6 +815,47 @@ const BOOK=[
   {t:"listen",say:"breakfast",o:["breakfast","break","breathe"],a:0},
   {t:"order",hint:"أستيقظ دائماً في السابعة.",w:["I","always","get","up","at","seven"]},
   {t:"match",p:[["always","دائماً"],["usually","عادةً"],["sometimes","أحياناً"],["never","أبداً"]]},
+  {t:"spell",say:"breakfast",hint:"فطور"}
+ ]
+},
+{
+ t_en:"Saturday: Then and Now", t_ar:"يوم السبت: بالأمس والآن", icon:"🔄", unit:"الوحدة ٣ · ما أستطيع وما أفعل",
+ sky:["#D9F0D0","#7FC98A"], ground:"#4E8F5A",
+ items:[{e:"🌳",x:28,y:48,s:70},{e:"🚲",x:58,y:70,s:48},{e:"⏰",x:80,y:32,s:38}],
+ cap:"سامي يقارن بين ما يفعله دائماً وما يفعله الآن",
+ lines:[
+  ["I always get up at seven o'clock.","أستيقظ دائماً في السابعة."],
+  ["I usually have breakfast, then I go to the park.","عادةً أتناول الفطور، ثم أذهب إلى الحديقة."],
+  ["I can ride a bike, and I can play football well.","أستطيع ركوب الدراجة، وأستطيع لعب كرة القدم جيداً."],
+  ["Nour can't swim, but she can run very fast.","نور لا تستطيع السباحة، لكنها تستطيع الركض بسرعة."],
+  ["Right now, we are sitting under a big tree.","الآن، نحن جالسون تحت شجرة كبيرة."],
+  ["My father is cooking lunch at home.","أبي يطبخ الغداء في البيت."],
+  ["What are you doing now, Nour?","ماذا تفعلين الآن يا نور؟"],
+  ["I am eating a sandwich and watching the birds.","أنا آكل سندويشاً وأشاهد الطيور."],
+  ["Does your brother play football too?","هل يلعب أخوك كرة القدم أيضاً؟"],
+  ["No, he doesn't. He never plays outside.","لا. هو لا يلعب أبداً بالخارج."],
+  ["We sometimes stay at the park until evening.","أحياناً نبقى في الحديقة حتى المساء."],
+  ["Today, right now, is a perfect day.","اليوم، في هذه اللحظة، يوم مثالي."]
+ ],
+ vocab:[["park","حديقة عامة","/pɑːk/"],["ride","يركب","/raɪd/"],["swim","يسبح","/swɪm/"],["run","يركض","/rʌn/"],
+        ["cook","يطبخ","/kʊk/"],["watch","يشاهد","/wɒtʃ/"],["now","الآن","/naʊ/"],["always","دائماً","/ˈɔːlweɪz/"],
+        ["never","أبداً","/ˈnevə/"],["breakfast","فطور","/ˈbrekfəst/"]],
+ gram:{ t:"📖 مراجعة الوحدة ٣: can + المضارع المستمر + do/does",
+   note:"خلاصة قواعد الوحدة الثالثة — القدرة، اللحظة الحاضرة، والعادات اليومية.",
+   rows:[["I can swim.","القدرة"],["He can't swim.","النفي مع can"],["I am cooking now.","المضارع المستمر (الآن)"],["I cook every day.","المضارع البسيط (عادة)"],["Does he play football?","سؤال مع does"],["He doesn't play.","نفي مع doesn't"],["always / usually / sometimes / never","ظروف التكرار"]] },
+ pron:{ t:"مراجعة: نهاية ing وi القصيرة/الطويلة",
+   note:"راجع نهاية ing بصوت /ŋ/، والفرق بين i القصيرة /ɪ/ والطويلة /iː/ الذي يغيّر معنى الكلمة تماماً.",
+   groups:[["/ŋ/ في نهاية ing",["cooking","watching","playing"]],["/ɪ/ قصيرة مقابل /iː/ طويلة",["sit / seat","ship / sheep"]]] },
+ quiz:[
+  {t:"mcq",q:"I ___ ride a bike.",hint:"أستطيع ركوب الدراجة.",o:["can","cans"],a:0},
+  {t:"mcq",q:"Nour ___ swim.",hint:"لا تستطيع السباحة.",o:["can't","doesn't"],a:0},
+  {t:"mcq",q:"My father ___ lunch now.",hint:"يطبخ الآن.",o:["is cooking","cooks"],a:0},
+  {t:"mcq",q:"I cook dinner ___ day.",hint:"عادة يومية.",o:["every","now"],a:0},
+  {t:"mcq",q:"___ your brother play football?",hint:"هل يلعب أخوك؟",o:["Does","Is"],a:0},
+  {t:"mcq",q:"He ___ plays outside.",hint:"لا يلعب أبداً.",o:["never","always"],a:0},
+  {t:"listen",say:"running",o:["running","reading","ringing"],a:0},
+  {t:"order",hint:"ماذا تفعلين الآن؟",w:["What","are","you","doing","now"]},
+  {t:"match",p:[["park","حديقة عامة"],["swim","يسبح"],["cook","يطبخ"],["never","أبداً"]]},
   {t:"spell",say:"breakfast",hint:"فطور"}
  ]
 },
@@ -811,6 +965,57 @@ const BOOK=[
  ]
 },
 {
+ t_en:"The Best Weekend Ever", t_ar:"أفضل عطلة أسبوع على الإطلاق", icon:"📖", unit:"الوحدة ٤ · الماضي",
+ sky:["#E3D6EF","#9E86C4"], ground:"#5E4A82",
+ items:[{e:"🔑",x:70,y:66,s:40},{e:"🚗",x:24,y:70,s:50},{e:"🐈‍⬛",x:48,y:78,s:36}],
+ cap:"سامي يروي كل ما حدث في عطلة الأسبوع الماضية",
+ lines:[
+  ["Last weekend was amazing.","عطلة الأسبوع الماضية كانت رائعة."],
+  ["On Friday, the weather was rainy, so we stayed home.","يوم الجمعة، كان الطقس ممطراً، فبقينا في البيت."],
+  ["On Saturday, we visited my uncle in the countryside.","يوم السبت، زرنا عمّي في الريف."],
+  ["We travelled by car for two hours.","سافرنا بالسيارة ساعتين."],
+  ["My father cooked rice, and I helped him in the kitchen.","أبي طبخ رزاً، وساعدته في المطبخ."],
+  ["Then something strange happened.","ثم حدث شيء غريب."],
+  ["I lost my key near the garden.","أضعت مفتاحي قرب الحديقة."],
+  ["I looked everywhere, but I didn't find it.","بحثت في كل مكان، لكنني لم أجده."],
+  ["Then I saw my uncle's cat with something bright.","ثم رأيت قطة عمّي ومعها شيء لامع."],
+  ["The cat took my key and gave it back to me!","القطة أخذت مفتاحي وأعادته لي!"],
+  ["We were very happy, and we arrived home late at night.","كنا سعداء جداً، ووصلنا البيت متأخرين في الليل."],
+  ["It was the best weekend ever.","كانت أفضل عطلة أسبوع على الإطلاق."]
+ ],
+ vocab:[["yesterday","البارحة","/ˈjestədeɪ/"],["visit","يزور","/ˈvɪzɪt/"],["travel","يسافر","/ˈtrævl/"],["help","يساعد","/help/"],
+        ["lost","أضاع (ماضٍ)","/lɒst/"],["saw","رأى (ماضٍ)","/sɔː/"],["took","أخذ (ماضٍ)","/tʊk/"],["gave","أعطى (ماضٍ)","/ɡeɪv/"],
+        ["late","متأخر","/leɪt/"],["happy","سعيد","/ˈhæpi/"]],
+ gram:{ t:"📖 مراجعة الوحدة ٤: was/were + الماضي المنتظم والشاذ",
+   note:"خلاصة قواعد الوحدة الرابعة — الماضي بكل أشكاله.",
+   rows:[["I was. / They were.","ماضي فعل الكينونة"],["We visited. (منتظم +ed)","الماضي المنتظم"],["I saw. / I took. / I gave. (شاذّ)","الماضي الشاذ"],["I didn't find it.","النفي بـ didn't + فعل مجرد"],["Did you see it?","السؤال بـ did"],["It was the best weekend.","وصف بالماضي"]] },
+ pron:{ t:"مراجعة: نهاية ed وW مقابل V",
+   note:"راجع نهاية ed بثلاث طرق (t بعد مهموس، d بعد مجهور، ɪd بعد t/d)، والفرق بين W (شفتان) وV (أسنان على شفة).",
+   groups:[["نهاية ed",["visited","helped","travelled"]],["W مقابل V",["was","very"]]] },
+ quiz:[
+  {t:"mcq",q:"Last weekend ___ amazing.",hint:"كانت رائعة.",o:["was","were"],a:0},
+  {t:"mcq",q:"We ___ my uncle.",hint:"زرنا عمّي.",o:["visited","visit"],a:0},
+  {t:"mcq",q:"I ___ my key.",hint:"أضعت مفتاحي.",o:["lost","losed"],a:0},
+  {t:"mcq",q:"The cat ___ my key.",hint:"أخذت مفتاحي.",o:["took","taked"],a:0},
+  {t:"mcq",q:"I ___ find it at first.",hint:"لم أجده في البداية.",o:["didn't","wasn't"],a:0},
+  {t:"mcq",q:"___ you see the cat?",hint:"هل رأيت القطة؟",o:["Did","Was"],a:0},
+  {t:"listen",say:"travelled",o:["travelled","travel","trouble"],a:0},
+  {t:"order",hint:"ساعدته في المطبخ.",w:["I","helped","him","in","the","kitchen"]},
+  {t:"match",p:[["visit","يزور"],["lost","أضاع"],["saw","رأى"],["gave","أعطى"]]},
+  {t:"spell",say:"yesterday",hint:"البارحة"}
+ ]
+},
+{
+ t_en:"Review Stop", t_ar:"محطة مراجعة", icon:"🔁", unit:"الوحدة ٤ · الماضي",
+ reserveReview:true,
+ sky:["#E6E6E6","#B9B9B9"], ground:"#8A8A8A",
+ items:[{e:"🔁",x:50,y:50,s:70}],
+ cap:"لنراجع الأسئلة التي أخطأت بها حتى الآن",
+ lines:[], vocab:[], quiz:[],
+ gram:{ t:"محطة مراجعة", note:"هذا درس مراجعة ديناميكي — لا يعلّم قاعدة جديدة، بل يجمع الأسئلة التي أخطأت بها سابقاً ليساعدك على إتقانها.", rows:[] },
+ pron:{ t:"", note:"", groups:[] }
+},
+{
  t_en:"Next Summer", t_ar:"الصيف القادم", icon:"✈️", unit:"الوحدة ٥ · المستقبل والوصف",
  sky:["#BFE0F7","#63A8DC"], ground:"#3E7AA8",
  items:[{e:"✈️",x:76,y:26,s:46},{e:"🧳",x:34,y:66,s:52},{e:"🏖️",x:58,y:56,s:60},{e:"🗺️",x:20,y:52,s:44}],
@@ -881,6 +1086,47 @@ const BOOK=[
  ]
 },
 {
+ t_en:"Our Amazing Future Trip", t_ar:"رحلتنا المستقبلية الرائعة", icon:"🚀", unit:"الوحدة ٥ · المستقبل والوصف",
+ sky:["#C5E4F5","#5FA8DC"], ground:"#3E7AA8",
+ items:[{e:"✈️",x:76,y:26,s:44},{e:"🧳",x:32,y:66,s:50},{e:"⭐",x:56,y:34,s:32}],
+ cap:"سامي ونور يخططان ويقارنان قبل رحلة الصيف",
+ lines:[
+  ["Next summer, we are going to travel to Basra.","الصيف القادم، سنسافر إلى البصرة."],
+  ["My father is going to buy the tickets tomorrow.","أبي سيشتري التذاكر غداً."],
+  ["I think it will be very hot there.","أظن أن الجو سيكون حاراً جداً هناك."],
+  ["Nour is taller than me, but I am faster than her.","نور أطول مني، لكني أسرع منها."],
+  ["Her bag is heavier than my bag.","حقيبتها أثقل من حقيبتي."],
+  ["This trip is more interesting than last summer's trip.","هذه الرحلة أكثر تشويقاً من رحلة الصيف الماضي."],
+  ["Basra is not as big as Baghdad, but it is beautiful.","البصرة ليست كبيرة مثل بغداد، لكنها جميلة."],
+  ["I will send photos to my grandmother every day.","سأرسل صوراً إلى جدّتي كل يوم."],
+  ["Are you going to come with us, Karim?","هل ستأتي معنا يا كريم؟"],
+  ["Yes, I am. It is going to be the best trip.","نعم. ستكون أفضل رحلة."],
+  ["I won't forget my swimming things this time.","لن أنسى أدوات السباحة هذه المرة."],
+  ["Our future summer is going to be amazing.","صيفنا القادم سيكون رائعاً."]
+ ],
+ vocab:[["summer","صيف","/ˈsʌmə/"],["ticket","تذكرة","/ˈtɪkɪt/"],["tomorrow","غداً","/təˈmɒrəʊ/"],["tall","طويل","/tɔːl/"],
+        ["heavy","ثقيل","/ˈhevi/"],["interesting","مشوّق","/ˈɪntrəstɪŋ/"],["than","مِن (للمقارنة)","/ðæn/"],["best","الأفضل","/best/"],
+        ["send","يرسل","/send/"],["forget","ينسى","/fəˈɡet/"]],
+ gram:{ t:"📖 مراجعة الوحدة ٥: going to / will + المقارنة والتفضيل",
+   note:"خلاصة قواعد الوحدة الخامسة — المستقبل والمقارنة، قبل الوصول إلى القصة الكاملة.",
+   rows:[["I am going to travel.","خطة مقررة سلفاً"],["I will send photos.","وعد أو قرار لحظي"],["taller / faster","المقارنة +er (صفة قصيرة)"],["more interesting","المقارنة more (صفة طويلة)"],["the best / the tallest","التفضيل"],["not as big as","مقارنة بالتساوي (نفي)"],["I won't forget.","نفي will (will not)"]] },
+ pron:{ t:"مراجعة: نبر الكلمة و/æ/ مقابل /e/",
+   note:"راجع مكان النبر في الكلمة الطويلة، والفرق بين æ (فم مفتوح) وe (فم أضيق).",
+   groups:[["النبر",["INteresting","toMORrow"]],["/æ/ مقابل /e/",["bag / beg","sat / set"]]] },
+ quiz:[
+  {t:"mcq",q:"We are going ___ travel.",hint:"سنسافر.",o:["to","for"],a:0},
+  {t:"mcq",q:"I will ___ photos.",hint:"سأرسل صوراً.",o:["send","sending"],a:0},
+  {t:"mcq",q:"Nour is ___ than me.",hint:"أطول مني.",o:["taller","tall"],a:0},
+  {t:"mcq",q:"This trip is ___ than last one.",hint:"أكثر تشويقاً — صفة طويلة.",o:["more interesting","interestinger"],a:0},
+  {t:"mcq",q:"It is going to be the ___ trip.",hint:"أفضل رحلة — تفضيل.",o:["best","better"],a:0},
+  {t:"mcq",q:"Basra is not as big ___ Baghdad.",hint:"ليست كبيرة مثل.",o:["as","than"],a:0},
+  {t:"listen",say:"heavier",o:["heavier","heavy","happier"],a:0},
+  {t:"order",hint:"سأرسل صوراً كل يوم.",w:["I","will","send","photos","every","day"]},
+  {t:"match",p:[["summer","صيف"],["ticket","تذكرة"],["tall","طويل"],["heavy","ثقيل"]]},
+  {t:"spell",say:"tomorrow",hint:"غداً"}
+ ]
+},
+{
  t_en:"Things I Like", t_ar:"أشياء أحبّها", icon:"❤️", unit:"الوحدة ٦ · التعبير عن نفسي",
  sky:["#FFD6DE","#E88AA0"], ground:"#B95C74",
  items:[{e:"⚽",x:26,y:60,s:52},{e:"🎵",x:50,y:50,s:48},{e:"📖",x:70,y:62,s:48},{e:"🍕",x:84,y:76,s:40}],
@@ -935,7 +1181,7 @@ const BOOK=[
         ["please","من فضلك","/pliːz/"],["take care","اعتنِ","/teɪk keə/"]],
  gram:{ t:"الأمر و should / must",
    note:"للأمر نبدأ بالفعل مجرداً مباشرة. وللنهي نضع Don't قبله. وshould للنصيحة، وmust للضرورة القوية.",
-   rows:[["Open the window.","افتح النافذة"],["Don't watch TV.","لا تشاهد التلفاز"],["You should sleep more.","ينبغي أن تنام أكثر"],["You shouldn't eat sugar.","لا ينبغي أن تأكل السكر"],["We must wear a coat.","يجب أن نلبس معطفاً"],["بعد should و must الفعل مجرد","بلا to وبلا s"]] },
+   rows:[["Open the window.","افتح النافذة"],["Don't watch TV.","لا تشاهد التلفاز"],["You should sleep more.","ينبغي أن تنام أكثر"],["You shouldn't eat sugar.","لا ينبغي أن تأكل السكر"],["We must wear a coat.","يجب أن نلبس معطفاً"],["should / must + فعل مجرد","بلا to وبلا s — قاعدة عامة"]] },
  pron:{ t:"صوت الشوا /ə/ — أهم صوت في الإنكليزية",
    note:"في المقاطع غير المنبورة تتحوّل كل الحركات إلى صوت واحد خافت مسترخٍ /ə/. هذا ما يجعل الكلام يبدو إنكليزياً حقيقياً.",
    groups:[["/ə/ في المقطع الضعيف",["water","doctor","sugar","about","winter","teacher","banana","together"]]] },
@@ -985,7 +1231,9 @@ const BOOK=[
   {t:"match",p:[["sentence","جملة"],["page","صفحة"],["alone","وحيداً"],["again","مرة أخرى"]]},
   {t:"spell",say:"sentence",hint:"جملة"}
  ]
-}];
+},
+];
+const BOOK=[...BOOK_A1, ...(typeof BOOK_A2!=='undefined'?BOOK_A2:[])];
 
 /* مكتبة المقالات القصيرة — الصيغة المضغوطة
    [emoji, english title, arabic title, [ "en|ar", ... ], [ "word|معنى", ... ], [ "question|opt|opt|opt|correctIndex", ... ] ] */
@@ -2234,7 +2482,9 @@ function wordPopup(raw){
     '<button class="btn '+(known?'gold':'ghost')+'" id="wp-know" style="flex:1">'+(known?'✓ أعرفها':'أعرفها')+'</button></div>'+
     '<button class="btn ghost wide" id="wp-close" style="margin-top:8px">إغلاق</button>';
   document.body.appendChild(veil); document.body.appendChild(p);
-  veil.onclick=closePop;
+  /* تأخير بسيط قبل تفعيل الإغلاق بالنقر على الستارة — يمنع إغلاق النافذة فوراً بسبب
+     نقرة وهمية/تكرار حدث اللمس على بعض متصفحات الهاتف مباشرة بعد فتحها */
+  setTimeout(()=>{ veil.onclick=closePop; },260);
   p.querySelector('#wp-close').onclick=closePop;
   const say=()=>speak(clean,{rate:0.7});
   p.querySelector('#wp-say').onclick=say; say();
@@ -2580,9 +2830,9 @@ function unitList(){
   });
   return us;
 }
-/* الدرس مفتوح إذا سبقه درس منجز، أو إذا فعّل المستخدم الفتح الحر */
-function chapUnlocked(i){ return S.freeMode||i===0||!!S.done[i-1]; }
-function chestUnlocked(u){ return S.freeMode||u.chs.every(i=>S.done[i]); }
+/* الدرس مفتوح إذا سبقه درس منجز، أو إذا كان المستخدم مشرفاً وفعّل الفتح الحر (لأغراض الاختبار فقط) */
+function chapUnlocked(i){ return (S.freeMode&&isAdmin())||i===0||!!S.done[i-1]; }
+function chestUnlocked(u){ return (S.freeMode&&isAdmin())||u.chs.every(i=>S.done[i]); }
 function starsFor(pct){ return pct>=90?3:pct>=70?2:1; }
 function nextStep(){ for(let i=0;i<BOOK.length;i++) if(!S.done[i]) return i; return -1; }
 /* يجمع أسئلة الاختيار المتعدد (mcq) من كل فصول الوحدة، لبناء اختبار مراجعة تراكمي بعد إنهاء الوحدة */
@@ -2788,10 +3038,10 @@ function viewHome(){
   const unlockedN=BOOK.filter((_,i)=>chapUnlocked(i)).length;
   h+='<div class="row" style="margin-top:16px;gap:8px">'+
      '<button class="btn sm" id="toLib" style="flex:1">📰 كل المقالات</button>'+
-     '<button class="btn sm" id="freeT" style="flex:1">'+(S.freeMode?'🔓 الفتح الحر: مفعّل':'🔒 الفتح الحر: مغلق')+'</button></div>'+
+     (isAdmin()?'<button class="btn sm" id="freeT" style="flex:1">'+(S.freeMode?'🔓 الفتح الحر: مفعّل':'🔒 الفتح الحر: مغلق')+'</button>':'')+'</div>'+
      (unlockedN>=2?'<button class="btn sm gold wide" id="interleave" style="margin-top:8px">🔀 تدريب متداخل — يخلط أسئلة من كل الفصول</button>':'')+
-     '<div style="font-size:11px;color:#7FB0AA;text-align:center;margin-top:8px;line-height:1.8">'+
-     'الفتح الحر يتيح لك الدخول إلى أي درس دون ترتيب.</div></div>';
+     (isAdmin()?'<div style="font-size:11px;color:#7FB0AA;text-align:center;margin-top:8px;line-height:1.8">'+
+     'الفتح الحر (للمشرف فقط) يتيح لك الدخول إلى أي درس دون ترتيب لأغراض الاختبار.</div>':'')+'</div>';
 
   app.innerHTML=h;
   if($('#interleave')) $('#interleave').onclick=viewInterleaved;
@@ -2799,7 +3049,7 @@ function viewHome(){
 
   app.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{
     if(b.dataset.locked){ b.classList.add('shake'); setTimeout(()=>b.classList.remove('shake'),400);
-      return toast('أكمل الدرس السابق أولاً — أو فعّل الفتح الحر في الأسفل.'); }
+      return toast(isAdmin()?'أكمل الدرس السابق أولاً — أو فعّل الفتح الحر في الأسفل.':'أكمل امتحان الدرس السابق أولاً لفتح هذا الدرس.'); }
     viewChapter(+b.dataset.ch);
   });
   app.querySelectorAll('[data-chest]').forEach(b=>b.onclick=()=>{
@@ -2813,7 +3063,7 @@ function viewHome(){
     viewUnitTest(+b.dataset.unittest);
   });
   $('#toLib').onclick=viewLib;
-  $('#freeT').onclick=()=>{ S.freeMode=!S.freeMode; save(); viewHome(); };
+  if($('#freeT')) $('#freeT').onclick=()=>{ if(!isAdmin()){ S.freeMode=false; return; } S.freeMode=!S.freeMode; save(); viewHome(); };
 
   /* انتقل تلقائياً إلى الدرس الحالي */
   const cur=app.querySelector('.node.now');
@@ -2829,9 +3079,44 @@ const CH_STEPS=[
  {key:'vocab',icon:'📚',label:'المفردات'},
  {key:'quiz',icon:'✅',label:'الاختبار'}
 ];
+/* ============ درس احتياطي: يجمع تلقائياً الأسئلة التي أخطأتَ بها في كل ما سبق ============
+   لا يحتوي محتوى ثابتاً — يُبنى من S.qMiss في كل مرة، فيختلف من مستخدم لآخر. */
+function viewReserveReview(ci){
+  const ch=BOOK[ci];
+  S.qMiss=S.qMiss||{};
+  const pool=shuffle(Object.keys(S.qMiss)
+    .map(id=>{ const q=findQuestionById(id); return q?Object.assign({},q,{_id:id}):null; })
+    .filter(Boolean)).slice(0,20);
+  function goNext(){ if(ci<BOOK.length-1) viewChapter(ci+1,'hero'); else viewHome(); }
+  if(!pool.length){
+    S.done[ci]=true; save(); paintDots(ci);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الطريق</button></div>'+
+     '<section class="sheet" style="margin-top:20px;text-align:center">'+
+     '<div style="font-size:44px">🎉</div><h2 style="justify-content:center">لا توجد أخطاء بعد!</h2>'+
+     '<div class="note">لم تخطئ بأي سؤال حتى الآن عبر كل ما درسته — استمر بهذا الأداء الرائع.</div>'+
+     '<button class="btn gold wide" id="go" style="margin-top:14px">متابعة الطريق ›</button></section>';
+    $('#back').onclick=()=>viewHome();
+    $('#go').onclick=goNext;
+    return;
+  }
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الطريق</button></div>'+
+   '<section class="sheet" style="margin-top:20px;text-align:center">'+
+   '<div style="font-size:44px">🔁</div><h2 style="justify-content:center">'+esc(ch.t_ar)+'</h2>'+
+   '<div class="note" style="text-align:right;margin-top:10px">'+pool.length+' سؤالاً من الأسئلة التي أخطأت بها سابقاً في كل ما درسته حتى الآن — إتقانها الآن يرسّخها في ذاكرتك طويلاً.</div>'+
+   '<button class="btn gold wide" id="go" style="margin-top:14px">ابدأ المراجعة</button>'+
+   '<button class="btn ghost wide" id="skip" style="margin-top:8px">تخطَّ هذا الدرس</button></section>';
+  $('#back').onclick=()=>viewHome();
+  $('#skip').onclick=()=>{ S.done[ci]=true; save(); paintDots(ci); viewHome(); };
+  $('#go').onclick=()=>examQuiz(pool,'مراجعة أخطائي',(pct)=>{
+    S.done[ci]=true; S.scores[ci]=pct; addXP(15); save(); paintDots(ci);
+    goNext();
+  },{silent:true,sections:false});
+}
 function viewChapter(ci,startKey){
   stopSpeak(); paintDots(ci); setNav('home'); window.scrollTo(0,0);
   const ch=BOOK[ci];
+  /* الدروس الاحتياطية لا تمرّ بمعالج الخطوات العادي — بل بشاشة مراجعة أخطاء ديناميكية خاصة */
+  if(ch.reserveReview) return viewReserveReview(ci);
   let step=Math.max(0,CH_STEPS.findIndex(s=>s.key===startKey));
   let dir=1;
   let sentenceWordIdx=Math.floor(Math.random()*ch.vocab.length);
@@ -3047,7 +3332,10 @@ const TYPE_LABEL={mcq:'اختيار متعدد',listen:'استماع',trans:'ت�
 function viewQuiz(ci){
   stopSpeak(); window.scrollTo(0,0);
   const ch=BOOK[ci];
-  let queue=shuffle(ch.quiz.slice()), pass=1, wrong=[], right=0, total=queue.length, idx=0;
+  /* نضع معرّفاً ثابتاً (_id) لكل سؤال قبل الخلط — يتيح لاحقاً استرجاع هذا السؤال بعينه عبر findQuestionById
+     لبناء دروس المراجعة الاحتياطية من الأسئلة التي أخطأتَ بها */
+  const tagged=ch.quiz.map((q,qi)=>Object.assign({},q,{_id:'ch'+ci+'q'+qi}));
+  let queue=shuffle(tagged), pass=1, wrong=[], right=0, total=queue.length, idx=0;
 
   function reg(q){
     if(q.t==='mcq'||q.t==='trans') addCard(q.o[q.a],q.hint||'',ci);
@@ -3057,7 +3345,8 @@ function viewQuiz(ci){
   /* كل جولة تجمع أخطاءها هي فقط — ما تصحّحه لا يعود */
   function mark(q,ok){
     if(pass===1){ if(ok){right++;addXP(5);} else reg(q); }
-    if(!ok) wrong.push(q);
+    if(q._id){ S.qStatus=S.qStatus||{}; S.qStatus[q._id]=ok?'correct':'wrong'; }
+    if(!ok){ wrong.push(q); if(q._id){ S.qMiss=S.qMiss||{}; S.qMiss[q._id]=(S.qMiss[q._id]||0)+1; } }
   }
   function nextPass(){
     if(wrong.length&&pass<6){
@@ -3417,13 +3706,6 @@ function viewAccount(){
   (S.examDate&&daysToExam()!=null?'<div class="diag" style="color:#6B5A42;margin-top:8px">'+(daysToExam()>=0?'باقي '+daysToExam()+' يوماً':'مضى تاريخ الامتحان')+'</div>':'')+
   '</section>'+
 
-  '<section class="sheet"><h2><i>💾</i> نسخة احتياطية (تعمل الآن بلا إعداد)</h2>'+
-  '<div class="note">نزّل ملف نسختك واحفظه في Google Drive أو أرسله لبريدك. لاستعادته على أي جهاز، ارفع الملف نفسه هنا.</div>'+
-  '<div class="row" style="margin-top:12px"><button class="btn gold" id="exp" style="flex:1">⬇ نزّل نسخة</button>'+
-  '<button class="btn" id="impBtn" style="flex:1">⬆ استعد نسخة</button></div>'+
-  '<input type="file" id="imp" accept=".json,application/json" style="display:none">'+
-  '<div class="diag" style="color:#6B5A42">آخر حفظ: '+(S.updated?new Date(S.updated).toLocaleString('ar'):'—')+' · التخزين: '+STORE+'</div></section>'+
-
   '<section class="sheet"><h2><i>📊</i> تقدّمي</h2>'+
   '<div class="stats"><div class="stat" style="background:var(--paper2);border-color:#E2CFA9">'+
   '<div class="n" style="color:#8C6A1E">'+Object.keys(S.done).length+'</div><div class="l" style="color:var(--muted)">فصول</div></div>'+
@@ -3431,7 +3713,7 @@ function viewAccount(){
   '<div class="stat" style="background:var(--paper2);border-color:#E2CFA9"><div class="n" style="color:#8C6A1E">'+Object.keys(S.cards).length+'</div><div class="l" style="color:var(--muted)">بطاقات</div></div></div></section>'+
 
   '<section class="sheet"><h2><i>⚠️</i> إعادة ضبط</h2>'+
-  '<div class="qhint">يحذف كل التقدّم على هذا الجهاز. نزّل نسخة أولاً.</div>'+
+  '<div class="qhint">يحذف كل التقدّم على هذا الجهاز'+(FB_USER?' وفي السحابة':'')+'. لا يمكن التراجع عن هذا.</div>'+
   '<button class="btn ghost wide" id="reset">امسح كل شيء</button></section>';
 
   const stat=t=>{ const el=$('#gstat'); if(el) el.textContent=t; };
@@ -3496,14 +3778,16 @@ function viewAccount(){
       viewAccount();
     }catch(e){ stat('خطأ: '+fbErrMsg(e)); }
   };
-  $('#exp').onclick=()=>{
+  /* أزرار تنزيل/استعادة نسخة JSON اليدوية أُخفيت من الواجهة (الحفظ السحابي التلقائي عبر Firebase يغطي هذه الحاجة الآن)،
+     لكن نُبقي المعالجات هنا بحراسة آمنة تحسّباً لعودة الأزرار مستقبلاً أو لاستدعائها برمجياً. */
+  if($('#exp')) $('#exp').onclick=()=>{
     const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob); a.download='sami-a1-backup-'+todayStr()+'.json'; a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),3000);
   };
-  $('#impBtn').onclick=()=>$('#imp').click();
-  $('#imp').onchange=ev=>{
+  if($('#impBtn')) $('#impBtn').onclick=()=>$('#imp').click();
+  if($('#imp')) $('#imp').onchange=ev=>{
     const f=ev.target.files[0]; if(!f) return;
     const r=new FileReader();
     r.onload=()=>{ try{
@@ -3631,6 +3915,10 @@ function viewHelp(){
   'الميكروفون: '+(SR?'متاح':'غير متاح')+'<br>'+
   'حفظ التقدّم: '+STORE+'</div>'+
   '<div class="note" style="margin-top:10px">إن ظهر «غير متاح»، حمّل الملف وافتحه في متصفح الهاتف — عارض الملفات داخل التطبيق يمنع الميكروفون والنطق أحياناً.</div></section>'+
+  '<section class="sheet"><h2><i>📩</i> اقتراح أو مشكلة</h2>'+
+  '<div class="note">وجدت خطأ أو لديك اقتراح لتطوير الكتاب؟ أرسله مباشرة.</div>'+
+  '<a class="btn gold wide" style="margin-top:8px;display:block;text-align:center;text-decoration:none" '+
+  'href="mailto:'+ADMIN_EMAILS[0]+'?subject='+encodeURIComponent('اقتراح/مشكلة — قصة سامي A1')+'">✉️ أرسل ملاحظتك</a></section>'+
   '<section class="sheet"><h2><i>🔧</i> فحص تناسق بيانات الأسئلة (للمطوّر)</h2>'+
   '<div class="qhint">يفحص كل بنوك الأسئلة بحثاً عن مشاكل بنيوية (خيارات ناقصة، فهرس إجابة خاطئ، معرّفات مكرّرة) — مفيد بعد أي تعديل يدوي على ملفات البيانات.</div>'+
   '<button class="btn ghost wide" id="runCheck" style="margin-top:8px">تشغيل الفحص الآن</button>'+
@@ -3885,12 +4173,135 @@ function logAttempt(rec){
   }catch(e){}
 }
 
+/* ============ التدريب الذكي — يتكيّف تلقائياً مع مستوى الطالب على الخريطة ============ */
+/* إلى أي درس وصل الطالب فعلياً (آخر درس منجز + الدرس الحالي الذي لم يُنهِه بعد) */
+function reachedChapterIdx(){
+  const nx=nextStep();
+  return nx===-1 ? BOOK.length-1 : nx;
+}
+/* يبني حزمة أسئلة متكيّفة: أولوية لأخطائه المتكررة (S.qMiss)، ثم مادة الدروس التي وصل إليها ولم يُختبر
+   بها بعد، وأخيراً قليل من مادة قديمة أجاب عنها صحيحاً — مراجعة متباعدة غير مباشرة لترسيخها بالذاكرة.
+   لا يضع أبداً سؤالاً من درس لم يصل إليه الطالب بعد على الخريطة. */
+function smartPool(n){
+  n=n||16;
+  const upTo=reachedChapterIdx();
+  S.qStatus=S.qStatus||{}; S.qMiss=S.qMiss||{};
+  const chQs=[];
+  BOOK.forEach((c,ci)=>{
+    if(ci>upTo||c.reserveReview) return;
+    (c.quiz||[]).forEach((q,qi)=>chQs.push(Object.assign({},q,{_id:'ch'+ci+'q'+qi})));
+  });
+  const missQs=Object.keys(S.qMiss).sort((a,b)=>S.qMiss[b]-S.qMiss[a]).map(findQuestionById).filter(Boolean);
+  const unseen=chQs.filter(q=>!S.qStatus[q._id]);
+  const seenOk=chQs.filter(q=>S.qStatus[q._id]==='correct');
+  const nMiss=Math.min(missQs.length,Math.ceil(n*0.4));
+  const nUnseen=Math.min(unseen.length,Math.ceil(n*0.4));
+  const nReview=Math.max(0,n-nMiss-nUnseen);
+  let pool=[...shuffle(missQs).slice(0,nMiss),...shuffle(unseen).slice(0,nUnseen),...shuffle(seenOk).slice(0,nReview)];
+  if(pool.length<Math.min(n,5)) pool=chQs.slice(); /* بداية الطريق: مادة غير كافية بعد، استخدم كل ما وصل إليه */
+  return shuffle(pool).slice(0,n);
+}
+function viewSmartPractice(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const upTo=reachedChapterIdx();
+  const pool=smartPool(16);
+  const missN=Object.keys(S.qMiss||{}).length;
+  if(!pool.length){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet" style="text-align:center;margin-top:14px"><div style="font-size:40px">🎯</div>'+
+     '<h2 style="justify-content:center">ابدأ درساً أولاً</h2>'+
+     '<p class="note">التدريب الذكي يُبنى تلقائياً من الدروس التي وصلتَ إليها. أنهِ أول درس من الخريطة ليبدأ بالتكيّف معك.</p></section>';
+    $('#back').onclick=viewPractice;
+    return;
+  }
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+   '<section class="sheet"><h2><i>🎯</i> التدريب الذكي</h2>'+
+   '<div class="note">مبني تلقائياً على مستواك الحالي (حتى الدرس '+(upTo+1)+' من '+BOOK.length+'): يركّز على أخطائك المتكررة، يضيف مادة الدروس التي وصلتَ إليها حديثاً، ويستعرض بين الحين والآخر مادة قديمة لترسيخها — دون أن يسألك أبداً عن درس لم تصل إليه بعد.</div>'+
+   (missN?'<div class="row" style="margin-top:10px"><span class="diag">🔁 أخطاء تُراجَع الآن: '+missN+'</span></div>':'')+
+   '<button class="btn gold wide" id="go" style="margin-top:16px">ابدأ ('+pool.length+' سؤال)</button></section>';
+  $('#back').onclick=viewPractice;
+  $('#go').onclick=()=>{ examQuiz(pool,'التدريب الذكي',()=>viewPractice(),{silent:true,sections:false}); };
+}
+
+/* ============ مرادفات: كلمات قريبة أو متطابقة في المعنى ============ */
+function viewSynonyms(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const list=(typeof SYNONYMS_A1!=='undefined'?SYNONYMS_A1:[]);
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+   '<section class="sheet"><h2><i>🔗</i> مرادفات</h2>'+
+   '<div class="note">كلمتان قريبتان أو متطابقتان في المعنى — تعلّمهما معاً يوسّع مفرداتك بسرعة.</div>'+
+   '<button class="btn gold wide" id="startQuiz" style="margin-top:12px">🎯 اختبار المرادفات</button>'+
+   '<div style="display:grid;gap:8px;margin-top:14px">'+
+   list.map((g,i)=>'<div class="note" style="text-align:left">'+
+     '<div class="row" style="justify-content:space-between;align-items:center">'+
+     '<span class="en" style="font-weight:700;font-size:16px;direction:ltr">'+esc(g[0])+' = '+esc(g[1])+'</span>'+
+     '<button class="icobtn" data-say="'+i+'">🔊</button></div>'+
+     '<div style="direction:rtl;text-align:right;color:var(--muted);margin-top:4px;font-family:var(--ar)">'+esc(g[2])+'</div></div>').join('')+
+   '</div></section>';
+  $('#back').onclick=viewPractice;
+  $('#startQuiz').onclick=()=>synonymQuizStart();
+  app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{ const g=list[+b.dataset.say]; speak(g[0]+', '+g[1],{rate:0.75}); });
+}
+function synonymQuizStart(){
+  const base=(typeof SYNONYMS_A1!=='undefined'?SYNONYMS_A1:[]);
+  const list=shuffle(base.slice());
+  if(list.length<4){ toast('لا توجد مرادفات كافية بعد.'); return viewSynonyms(); }
+  const rounds=list.slice(0,12);
+  let idx=0, score=0;
+  function draw(){
+    if(idx>=rounds.length) return finish();
+    const g=rounds[idx];
+    const askFirst=Math.random()<0.5;
+    const ask=askFirst?g[0]:g[1], correct=askFirst?g[1]:g[0];
+    const distractors=shuffle(base.filter(x=>x!==g).map(x=>Math.random()<0.5?x[0]:x[1]).filter(w=>w!==ask&&w!==correct))
+      .filter((w,i2,arr)=>arr.indexOf(w)===i2).slice(0,3);
+    const opts=shuffle([correct,...distractors]);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خروج</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(idx+1)+'/'+rounds.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(idx/rounds.length*100)+'%"></i></span></div>'+
+     '<div class="qhint" style="text-align:center">ما الكلمة الأقرب في المعنى لِ</div>'+
+     '<div class="bigword">'+esc(ask)+'</div>'+
+     '<div style="display:grid;gap:8px;margin-top:14px">'+
+     opts.map((o,i2)=>'<button class="btn wide" data-o="'+i2+'">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    setTimeout(()=>speak(ask,{rate:0.75}),200);
+    app.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{
+      const picked=opts[+b.dataset.o]; const ok=picked===correct;
+      if(ok){ score++; addXP(3); }
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✓ صحيح!':'الصحيح: <b>'+esc(correct)+'</b>'; s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn gold wide'; nb.style.marginTop='12px';
+      nb.textContent='التالي ›'; nb.onclick=()=>{ idx++; draw(); }; s.appendChild(nb);
+      app.querySelectorAll('[data-o]').forEach(x=>{x.disabled=true;});
+    });
+  }
+  function finish(){
+    addXP(10);
+    const pct=Math.round(score/rounds.length*100);
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+score+' من '+rounds.length+'</div></div>'+
+      '<div class="row" style="margin-top:14px;gap:8px">'+
+      '<button class="btn gold" id="again" style="flex:1">أعد</button>'+
+      '<button class="btn" id="b" style="flex:1">تم</button></div></section>';
+    $('#again').onclick=()=>synonymQuizStart();
+    $('#b').onclick=viewSynonyms;
+  }
+  draw();
+}
+
 /* ============ مركز التدريب ============ */
 function viewPractice(){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
   const due=dueCards().length;
   const items=[
+    ['smart','🎯','التدريب الذكي','يتكيّف تلقائياً مع مستواك — لا يسألك عمّا لم تدرسه بعد','var(--gold,#B9862F)'],
+    ['syn','🔗','مرادفات','كلمات قريبة في المعنى + اختبر نفسك','#4A8FB8'],
     ['due','🔁','المراجعة المستحقة',due? due+' بطاقة تنتظرك اليوم':'لا شيء مستحق اليوم','var(--plum)'],
+    ['memory','🎴','لعبة الذاكرة','اقلب البطاقات وطابق كل كلمة بمعناها','#D1497A'],
+    ['scramble','🔤','رتّب الحروف','أعد ترتيب حروف مبعثرة لتكوين الكلمة الصحيحة','#2E9E7A'],
     ['sent','💬','تدريب الجُمل','اختر عدد الجمل والدروس ورتّب مراجعتها','var(--leaf)'],
     ['gram','📐','القواعد فقط','كل قواعد A1 في مكان واحد + اختبار قواعد شامل','#5B7FB9'],
     ['vocab','📚','المفردات فقط','تدريب سريع على المعاني في الاتجاهين','#B9862F'],
@@ -3907,10 +4318,146 @@ function viewPractice(){
      '<span class="thumb" style="background:'+i[4]+';font-size:24px">'+i[1]+'</span>'+
      '<span class="meta"><h3>'+i[2]+'</h3><span class="sub" style="direction:rtl;text-align:right;font-family:var(--ar)">'+i[3]+'</span></span>'+
      '<span class="tick">›</span></button>').join('')+'</div>';
-  const go={due:()=>viewReview(),sent:()=>viewSentSetup(),gram:()=>viewGrammar(),
+  const go={smart:()=>viewSmartPractice(),syn:()=>viewSynonyms(),due:()=>viewReview(),memory:()=>viewMemoryGame(),scramble:()=>viewScrambleGame(),
+            sent:()=>viewSentSetup(),gram:()=>viewGrammar(),
             vocab:()=>vocabDrillSetup(),listen:()=>listenSetup(),write:()=>writeSetup(),
             spellrules:()=>viewSpellRules(),minpairs:()=>viewMinimalPairs(),colloc:()=>viewCollocations()};
   app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>go[b.dataset.p]());
+}
+/* يجمع كل مفردات فصول القصة (بلا تكرار) — تُستعمل في الألعاب التفاعلية أدناه */
+function allBookVocab(){
+  const seen={}, out=[];
+  BOOK.forEach(c=>(c.vocab||[]).forEach(v=>{
+    const key=v[0].toLowerCase();
+    if(!seen[key]){ seen[key]=1; out.push(v); }
+  }));
+  return out;
+}
+/* ============ لعبة الذاكرة: اقلب بطاقتين وطابق كل كلمة إنكليزية بمعناها العربي ============ */
+function viewMemoryGame(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const PAIRS=8;
+  const pool=shuffle(allBookVocab()).slice(0,PAIRS);
+  if(pool.length<4){ toast('لا توجد مفردات كافية بعد لهذه اللعبة.'); return viewPractice(); }
+  let cards=[];
+  pool.forEach((v,i)=>{ cards.push({id:i,text:v[0]}); cards.push({id:i,text:v[1]}); });
+  cards=shuffle(cards);
+  let flipped=[], matched={}, moves=0, busy=false;
+  function draw(){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet"><h2><i>🎴</i> لعبة الذاكرة</h2>'+
+     '<div class="note">اقلب بطاقتين لتجد الكلمة الإنكليزية ومعناها العربي المطابق. حاول بأقل عدد محاولات ممكن.</div>'+
+     '<div class="row" style="margin:8px 0"><span class="diag">المحاولات: '+moves+'</span>'+
+     '<span class="diag" style="margin-inline-start:auto">تطابق: '+Object.keys(matched).length+'/'+pool.length+'</span></div>'+
+     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px">'+
+     cards.map((c,i)=>{
+       const isMatched=!!matched[c.id];
+       const isFlipped=flipped.indexOf(i)!==-1||isMatched;
+       return '<button class="btn sm'+(isMatched?' gold':'')+'" data-i="'+i+'" style="min-height:56px;font-size:12.5px;line-height:1.3;'+(isMatched?'opacity:.55':'')+'"'+(isMatched?' disabled':'')+'>'+
+         (isFlipped?esc(c.text):'❓')+'</button>';
+     }).join('')+
+     '</div></section>';
+    $('#back').onclick=()=>viewPractice();
+    app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>onPick(+b.dataset.i));
+  }
+  function onPick(i){
+    if(busy||flipped.indexOf(i)!==-1||matched[cards[i].id]) return;
+    flipped.push(i);
+    if(flipped.length<2){ draw(); return; }
+    moves++;
+    const [a,b]=flipped;
+    if(cards[a].id===cards[b].id){
+      matched[cards[a].id]=true; flipped=[]; addXP(3);
+      draw();
+      if(Object.keys(matched).length===pool.length) setTimeout(finish,400);
+    }else{
+      busy=true; draw();
+      setTimeout(()=>{ flipped=[]; busy=false; draw(); },900);
+    }
+  }
+  function finish(){
+    addXP(15);
+    app.innerHTML='<section class="sheet" style="margin-top:30px;text-align:center">'+
+     '<div style="font-size:44px">🎉</div><h2 style="justify-content:center">أحسنت!</h2>'+
+     '<div class="note">أكملت اللعبة في '+moves+' محاولة.</div>'+
+     '<div style="display:grid;gap:9px;margin-top:14px">'+
+     '<button class="btn gold wide" id="again">العب مجدداً</button>'+
+     '<button class="btn wide" id="back2">عودة</button></div></section>';
+    $('#again').onclick=()=>viewMemoryGame();
+    $('#back2').onclick=()=>viewPractice();
+  }
+  draw();
+}
+/* ============ لعبة رتّب الحروف: أعد بناء الكلمة من حروفها المبعثرة ============ */
+function viewScrambleGame(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const ROUNDS=10;
+  const words=shuffle(allBookVocab().filter(v=>/^[a-zA-Z]+$/.test(v[0])&&v[0].length>=3)).slice(0,ROUNDS);
+  if(words.length<3){ toast('لا توجد كلمات كافية بعد لهذه اللعبة.'); return viewPractice(); }
+  let idx=0, score=0, answer=[], letters=[];
+  function setupRound(){
+    const w=words[idx][0].toLowerCase();
+    letters=shuffle(w.split('').map((ch,i)=>({ch:ch,i:i,used:false})));
+    if(letters.map(l=>l.ch).join('')===w&&letters.length>1){ const t=letters[0]; letters[0]=letters[1]; letters[1]=t; }
+    answer=[];
+  }
+  setupRound();
+  function draw(){
+    const w=words[idx][0], ar=words[idx][1];
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet"><h2><i>🔤</i> رتّب الحروف</h2>'+
+     '<div class="row"><span class="diag">السؤال '+(idx+1)+'/'+words.length+'</span>'+
+     '<span class="diag" style="margin-inline-start:auto">النقاط: '+score+'</span></div>'+
+     '<div class="note" style="margin-top:8px;text-align:center;font-size:15px">المعنى: <b>'+esc(ar)+'</b></div>'+
+     '<div class="qtext en" style="text-align:center;letter-spacing:4px;min-height:34px;border-bottom:2px solid var(--gold,#B9862F);padding-bottom:8px">'+
+     (answer.length?answer.map(a=>esc(a.ch)).join(''):'<span style="opacity:.35">?</span>')+'</div>'+
+     '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px">'+
+     letters.map((l,i)=>'<button class="btn sm'+(l.used?' ghost':'')+'" data-l="'+i+'"'+(l.used?' disabled style="opacity:.25"':'')+'>'+esc(l.ch)+'</button>').join('')+
+     '</div>'+
+     '<div class="row" style="margin-top:14px;gap:8px">'+
+     '<button class="btn ghost" id="undo" style="flex:1">⌫ تراجع</button>'+
+     '<button class="btn" id="hearIt" style="flex:1">🔊 استمع</button></div>'+
+     '</section>';
+    $('#back').onclick=()=>viewPractice();
+    $('#hearIt').onclick=()=>speak(w,{rate:0.72});
+    $('#undo').onclick=()=>{ const last=answer.pop(); if(last) letters[last.i].used=false; draw(); };
+    app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.l; if(letters[i].used) return;
+      letters[i].used=true; answer.push(letters[i]);
+      if(answer.length===letters.length) checkAnswer(); else draw();
+    });
+  }
+  function checkAnswer(){
+    const built=answer.map(a=>a.ch).join('').toLowerCase();
+    const ok=built===words[idx][0].toLowerCase();
+    if(ok) score++;
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet" style="text-align:center">'+
+     '<div style="font-size:40px">'+(ok?'✅':'❌')+'</div>'+
+     '<h2 style="justify-content:center">'+(ok?'صحيح!':'ليست تماماً')+'</h2>'+
+     '<div class="qtext en" style="text-align:center;margin-top:8px">'+esc(words[idx][0])+'</div>'+
+     '<div class="note" style="text-align:center">'+esc(words[idx][1])+'</div>'+
+     '<button class="btn gold wide" id="next" style="margin-top:16px">'+(idx<words.length-1?'التالي ›':'إنهاء')+'</button>'+
+     '</section>';
+    $('#back').onclick=()=>viewPractice();
+    $('#next').onclick=()=>{
+      idx++;
+      if(idx>=words.length) return finish();
+      setupRound(); draw();
+    };
+  }
+  function finish(){
+    addXP(score*3);
+    app.innerHTML='<section class="sheet" style="margin-top:30px;text-align:center">'+
+     '<div style="font-size:44px">🏁</div><h2 style="justify-content:center">النتيجة النهائية</h2>'+
+     '<div class="big" style="font-size:34px;color:var(--leaf);margin-top:8px">'+score+'/'+words.length+'</div>'+
+     '<div style="display:grid;gap:9px;margin-top:14px">'+
+     '<button class="btn gold wide" id="again">العب مجدداً</button>'+
+     '<button class="btn wide" id="back2">عودة</button></div></section>';
+    $('#again').onclick=()=>viewScrambleGame();
+    $('#back2').onclick=()=>viewPractice();
+  }
+  draw();
 }
 
 
@@ -4228,17 +4775,17 @@ function viewGrammar(){
   stopSpeak(); window.scrollTo(0,0);
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
    '<h2 style="margin:12px 0 4px;font-size:21px">📐 كل قواعد A1</h2>'+
-   '<p style="color:#9FC7C1;font-size:13px;margin:0">'+BOOK.length+' قاعدة مرتّبة. اضغط أيّها لتفتح شرحها.</p></div>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0">'+BOOK.filter(c=>!c.reserveReview).length+' قاعدة مرتّبة. اضغط أيّها لتفتح شرحها.</p></div>'+
    '<section class="sheet"><button class="btn gold wide" id="gq">اختبار القواعد الشامل</button>'+
    '<div class="qhint" style="margin:10px 0 0;text-align:center">أسئلة قواعد من كل الدروس مخلوطة</div></section>'+
-   BOOK.map((c,i)=>'<section class="sheet"><h2><i>'+(i+1)+'</i> '+c.gram.t+'</h2>'+
+   BOOK.filter(c=>!c.reserveReview).map((c,i)=>'<section class="sheet"><h2><i>'+(i+1)+'</i> '+c.gram.t+'</h2>'+
      '<div class="note">'+c.gram.note+'</div>'+
      '<table class="gtable">'+c.gram.rows.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'+
      '<div class="diag" style="color:#6B5A42">'+c.unit+' · '+c.t_ar+'</div></section>').join('');
   $('#back').onclick=viewPractice;
   $('#gq').onclick=()=>{
     const qs=[];
-    BOOK.forEach((c,i)=>c.quiz.forEach(q=>{ if(q.t==='mcq'&&q.q) qs.push(Object.assign({},q,{_ci:i})); }));
+    BOOK.forEach((c,i)=>(c.quiz||[]).forEach(q=>{ if(q.t==='mcq'&&q.q) qs.push(Object.assign({},q,{_ci:i})); }));
     genericQuiz(shuffle(qs).slice(0,20),'اختبار القواعد');
   };
 }
@@ -5625,6 +6172,9 @@ function examWeak(){
 }
 /* يبحث عن سؤال بمعرّفه (_id) عبر كل البنوك — يُستخدم لبناء وضع "الأسئلة الأكثر تكراراً للخطأ" */
 function findQuestionById(id){
+  /* أسئلة مصدرها فصول القصة نفسها (اختبار الفصل ch، اختبار الوحدة ut، التدريب المتداخل il) */
+  const cm=/^(ch|ut|il)(\d+)q(\d+)$/.exec(id);
+  if(cm){ const c=BOOK[+cm[2]]; return c&&c.quiz&&c.quiz[+cm[3]]; }
   const mp=/^p(\d+)q(\d+)$/.exec(id);
   if(mp){ const p=EXAM.passages[+mp[1]]; return p&&p.q[+mp[2]]; }
   if(id.startsWith('dl')) return EXAM.dialogues[+id.slice(2)];
