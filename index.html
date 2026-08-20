@@ -377,7 +377,7 @@ nav .bdg{position:absolute;top:2px;inset-inline-end:14px;background:var(--plum);
 <header>
   <div class="wrap">
     <div class="bar">
-      <div class="brand">قصة سامي <small>المستوى A1 الكامل · <span id="who">ضيف</span></small></div>
+      <div class="brand">قصة سامي <small>A1 · A2 · B1 · <span id="who">ضيف</span></small></div>
       <div class="spacer"></div>
       <button class="chip" id="fireChip">🔥 <b id="stk">1</b></button>
       <button class="chip" id="xpChip">⭐ <b id="xp">0</b></button>
@@ -405,7 +405,10 @@ nav .bdg{position:absolute;top:2px;inset-inline-end:14px;background:var(--plum);
 <script src="data/a1/dialogues.js"></script>
 <script src="data/a1/dictionary.js"></script>
 <script src="data/a1/synonyms.js"></script>
+<script src="data/a1/reading.js"></script>
 <script src="data/a2/story.js"></script>
+<script src="data/a2/reading.js"></script>
+<script src="data/b1/story.js"></script>
 <script>
 /* المنهج الكامل للمستوى A1 — 16 فصلاً */
 const BOOK_A1=[
@@ -1233,7 +1236,9 @@ const BOOK_A1=[
  ]
 },
 ];
-const BOOK=[...BOOK_A1, ...(typeof BOOK_A2!=='undefined'?BOOK_A2:[])];
+const BOOK=[...BOOK_A1, ...(typeof BOOK_A2!=='undefined'?BOOK_A2:[]), ...(typeof BOOK_B1!=='undefined'?BOOK_B1:[])];
+/* مكتبة القراءة الإضافية — فقرات قصيرة متنوّعة (خارج فصول القصة) لتعميق مهارة الفهم المقروء، من المستويين */
+const READING_LIB=[...(typeof READING_A1!=='undefined'?READING_A1:[]), ...(typeof READING_A2!=='undefined'?READING_A2:[])];
 
 /* مكتبة المقالات القصيرة — الصيغة المضغوطة
    [emoji, english title, arabic title, [ "en|ar", ... ], [ "word|معنى", ... ], [ "question|opt|opt|opt|correctIndex", ... ] ] */
@@ -2436,6 +2441,15 @@ function lookup(word){
 }
 function isKnown(w){ return !!(S.known&&S.known[wkey(w)]); }
 function inReview(w){ return !!S.cards[wkey(w)]; }
+/* معرفة/عدم معرفة الجُمل — منفصلة عن المفردات المفردة، حتى لو لم تُضَف الجملة للمراجعة بعد */
+function isSentKnown(en){ return !!(S.sentKnown&&S.sentKnown[cardKey(en)]); }
+function setSentKnown(en,ar,ci,known){
+  S.sentKnown=S.sentKnown||{};
+  const k=cardKey(en);
+  if(known){ S.sentKnown[k]=1; if(S.cards[k]) gradeCard(k,true); }
+  else{ delete S.sentKnown[k]; if(S.cards[k]) gradeCard(k,false); else addCard(en,ar,ci); }
+  save();
+}
 
 /* ============ نافذة الكلمة ============ */
 function closePop(){ const p=document.getElementById('wpop'); if(p) p.remove();
@@ -2610,7 +2624,7 @@ function initFirebase(){
 
 /* ============ الحالة ============ */
 const KEY='talkbook:a1';
-const BLANK={user:null,done:{},scores:{},cards:{},read:{},known:{},exam:{done:{},best:{},gram:{seen:0,right:0}},examWrong:[],freeMode:false,rate:0.85,streak:1,streakFreeze:0,freezeUsed:false,lastDay:'',xp:0,dailyXP:0,dailyXPDate:'',updated:0};
+const BLANK={user:null,done:{},scores:{},cards:{},read:{},known:{},sentKnown:{},mockRecentIds:[],exam:{done:{},best:{},gram:{seen:0,right:0}},examWrong:[],freeMode:false,rate:0.85,streak:1,streakFreeze:0,freezeUsed:false,lastDay:'',xp:0,dailyXP:0,dailyXPDate:'',updated:0};
 let S=Object.assign({},BLANK);
 let STORE='device', CLOUD=null;
 
@@ -2964,7 +2978,7 @@ function viewHome(){
    '<div class="stat"><div class="n">'+pct+'٪</div><div class="l">من الطريق</div></div>'+
    '<div class="stat"><div class="n">'+(S.streak||1)+(S.streakFreeze?' <span title="رموز تجميد السلسلة" style="font-size:12px">🧊×'+S.streakFreeze+'</span>':'')+'</div><div class="l">أيام متتالية</div></div>'+
    '<div class="stat"><div class="n">'+readArt+'/'+totalArt+'</div><div class="l">مقالات</div></div>'+
-   '</div></div><div class="map">';
+   '</div></div><div id="hwBanner"></div><div class="map">';
   if(S.freezeUsed){ S.freezeUsed=false; save(); setTimeout(()=>toast('🧊 استُخدم رمز تجميد ليحافظ على سلسلتك بعد يوم غياب!'),400); }
 
   const units=unitList();
@@ -3044,6 +3058,27 @@ function viewHome(){
      'الفتح الحر (للمشرف فقط) يتيح لك الدخول إلى أي درس دون ترتيب لأغراض الاختبار.</div>':'')+'</div>';
 
   app.innerHTML=h;
+  if(fbDB && FB_USER) loadHomework(list=>{
+    if(!list.length) return;
+    const b=$('#hwBanner'); if(!b) return;
+    b.innerHTML='<div class="sheet" style="margin:14px 0;padding:14px">'+
+      '<h2 style="font-size:14px;margin-bottom:8px">📌 واجبات مطلوبة ('+list.length+')</h2>'+
+      list.map(hw=>{
+        const isCh=hw.type==='chapter';
+        const item=isCh?BOOK[hw.ci]:READING_LIB[hw.ri];
+        if(!item) return '';
+        const label=isCh?item.t_ar:item.t_ar;
+        const dueTxt=hw.due?(' · موعد: '+new Date(hw.due).toLocaleDateString('ar-IQ')):'';
+        return '<div class="ul-item" data-hwtype="'+hw.type+'" data-hwidx="'+(isCh?hw.ci:hw.ri)+'" style="display:block;cursor:pointer">'+
+          '<div style="font-weight:700">'+(isCh?'📘 ':'📰 ')+esc(label)+'</div>'+
+          (hw.note?'<div style="font-size:12px;color:var(--muted)">'+esc(hw.note)+'</div>':'')+
+          (dueTxt?'<div style="font-size:11px;color:var(--muted)">'+dueTxt+'</div>':'')+'</div>';
+      }).join('')+'</div>';
+    b.querySelectorAll('[data-hwtype]').forEach(el=>el.onclick=()=>{
+      const type=el.dataset.hwtype, idx=+el.dataset.hwidx;
+      if(type==='chapter') viewChapter(idx); else viewReadingPassage(idx);
+    });
+  });
   if($('#interleave')) $('#interleave').onclick=viewInterleaved;
   app.querySelectorAll('[data-cert]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); viewCertificate(+b.dataset.cert); });
 
@@ -3328,19 +3363,59 @@ function viewShadow(ci){
 }
 
 /* ============ الاختبار ============ */
-const TYPE_LABEL={mcq:'اختيار متعدد',listen:'استماع',trans:'ترجمة',order:'رتّب الجملة',match:'مطابقة',spell:'إملاء صوتي'};
+const TYPE_LABEL={mcq:'اختيار متعدد',listen:'استماع',trans:'ترجمة',order:'رتّب الجملة',match:'مطابقة',spell:'إملاء صوتي',tf:'صح أم خطأ',fill:'أكمل الفراغ'};
+/* ============ توليد أسئلة تلقائي لتنويع نمط الاختبار بين درس وآخر — من بيانات الفصل نفسه، بلا حاجة لكتابة محتوى جديد يدوياً ============ */
+function genTrueFalse(ch,count){
+  const mcqs=(ch.quiz||[]).filter(q=>q.t==='mcq'&&q.q&&q.q.indexOf('___')>=0);
+  if(!mcqs.length||count<=0) return [];
+  return shuffle(mcqs.slice()).slice(0,count).map(q=>{
+    const correctWord=q.o[q.a];
+    const wrongOpts=q.o.filter((_,oi)=>oi!==q.a);
+    const useCorrect=Math.random()<0.5||!wrongOpts.length;
+    const word=useCorrect?correctWord:shuffle(wrongOpts)[0];
+    return {t:'tf',stmt:q.q.replace('___',word),ans:useCorrect,correctStmt:q.q.replace('___',correctWord),hint:q.hint||''};
+  });
+}
+function genFillBlank(ch,count){
+  if(!ch.lines||!ch.lines.length||!ch.vocab||ch.vocab.length<4||count<=0) return [];
+  const vocabWords=ch.vocab.map(v=>v[0]);
+  const candidates=[];
+  ch.lines.forEach(([en,ar])=>{
+    vocabWords.forEach(w=>{
+      const clean=w.replace(/[^a-zA-Z' ]/g,'');
+      if(!clean) return;
+      const re=new RegExp('\\b'+clean+'\\b','i');
+      if(re.test(en)) candidates.push({en,ar,word:w,clean});
+    });
+  });
+  if(!candidates.length) return [];
+  return shuffle(candidates).slice(0,count).map(c=>{
+    const re=new RegExp('\\b'+c.clean+'\\b','i');
+    const blanked=c.en.replace(re,'_____');
+    const distractors=shuffle(vocabWords.filter(w=>w.toLowerCase()!==c.word.toLowerCase())).slice(0,3);
+    const opts=shuffle([c.word,...distractors]);
+    return {t:'fill',blanked:blanked,ar:c.ar,o:opts,a:opts.indexOf(c.word),hint:'اختر الكلمة الصحيحة لإكمال الجملة.'};
+  });
+}
 function viewQuiz(ci){
   stopSpeak(); window.scrollTo(0,0);
   const ch=BOOK[ci];
-  /* نضع معرّفاً ثابتاً (_id) لكل سؤال قبل الخلط — يتيح لاحقاً استرجاع هذا السؤال بعينه عبر findQuestionById
+  /* نضع معرّفاً ثابتاً (_id) لكل سؤال أصيل قبل الخلط — يتيح لاحقاً استرجاع هذا السؤال بعينه عبر findQuestionById
      لبناء دروس المراجعة الاحتياطية من الأسئلة التي أخطأتَ بها */
-  const tagged=ch.quiz.map((q,qi)=>Object.assign({},q,{_id:'ch'+ci+'q'+qi}));
-  let queue=shuffle(tagged), pass=1, wrong=[], right=0, total=queue.length, idx=0;
+  const authored=ch.quiz.map((q,qi)=>Object.assign({},q,{_id:'ch'+ci+'q'+qi}));
+  /* تنويع تلقائي بين الأنماط من درس لآخر — صح/خطأ وأكمل الفراغ تُولَّد من بيانات الفصل نفسه فتضيف نمطاً مختلفاً
+     كل مرة بلا تكرار رتيب لنفس البنية (٤ اختيار + استماع + ترتيب + مطابقة + إملاء) في كل درس. لا معرّف دائم لها
+     (أسئلة إضافية للتنويع داخل هذا الاختبار، وتُضاف لبطاقات المراجعة عند الخطأ فيها كأي سؤال آخر). */
+  const rot=ci%3;
+  const extra=[...genTrueFalse(ch, rot===0?2:rot===1?1:0), ...genFillBlank(ch, rot===0?0:rot===1?2:1)];
+  let queue=shuffle([...authored,...extra]), pass=1, wrong=[], right=0, total=queue.length, idx=0;
 
   function reg(q){
     if(q.t==='mcq'||q.t==='trans') addCard(q.o[q.a],q.hint||'',ci);
     else if(q.t==='listen'||q.t==='spell') addCard(q.say,q.hint||'',ci);
     else if(q.t==='order') addCard(q.w.join(' '),q.hint||'',ci);
+    else if(q.t==='fill') addCard(q.o[q.a],q.hint||'',ci);
+    else if(q.t==='tf') addCard(q.correctStmt,q.hint||'',ci);
   }
   /* كل جولة تجمع أخطاءها هي فقط — ما تصحّحه لا يعود */
   function mark(q,ok){
@@ -3380,7 +3455,7 @@ function viewQuiz(ci){
   function render(){
     if(idx>=queue.length) return nextPass();
     const q=queue[idx];
-    ({mcq:rChoice,trans:rChoice,listen:rListen,order:rOrder,match:rMatch,spell:rSpell}[q.t])(q);
+    ({mcq:rChoice,trans:rChoice,listen:rListen,order:rOrder,match:rMatch,spell:rSpell,tf:rTrueFalse,fill:rFill}[q.t])(q);
   }
 
   function rChoice(q){
@@ -3408,6 +3483,36 @@ function viewQuiz(ci){
       else if(conf==='guess'&&ok) msg='✅ صحيح، لكنك خمّنت — ستعود هذه للمراجعة لترسيخها فعلاً.';
       else msg=ok?'أحسنت ✓':'الجواب الصحيح: <span class="en">'+esc(q.o[q.a])+'</span>';
       fbNext(ok, msg);
+    });
+  }
+  function rTrueFalse(q){
+    shell('<div class="qtype">'+TYPE_LABEL.tf+'</div>'+
+      '<div class="qtext en" style="text-align:center">'+esc(q.stmt)+'</div>'+
+      '<div class="qhint" style="text-align:center">'+(q.hint||'هل هذه الجملة صحيحة أم لا؟')+'</div>'+
+      '<div class="opts" style="margin-top:12px">'+
+      '<button class="opt" data-v="1"><span class="en">✅ صحيحة — True</span></button>'+
+      '<button class="opt" data-v="0"><span class="en">❌ خاطئة — False</span></button>'+
+      '</div>');
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const picked=b.dataset.v==='1';
+      const ok=picked===q.ans;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if((x.dataset.v==='1')===q.ans)x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      speak(q.correctStmt); mark(q,ok);
+      fbNext(ok, ok?'صحيح ✓':'الجملة الصحيحة: <span class="en">'+esc(q.correctStmt)+'</span>');
+    });
+  }
+  function rFill(q){
+    shell('<div class="qtype">'+TYPE_LABEL.fill+'</div>'+
+      '<div class="qtext en" style="text-align:left;direction:ltr">'+esc(q.blanked)+'</div>'+
+      (q.ar?'<div class="qhint">'+esc(q.ar)+'</div>':'')+
+      '<div class="opts" style="margin-top:10px">'+q.o.map((o,i)=>'<button class="opt" data-i="'+i+'"><span class="en">'+esc(o)+'</span></button>').join('')+'</div>');
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.i===q.a;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.i===q.a)x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      speak(q.o[q.a]); mark(q,ok);
+      fbNext(ok, ok?'أحسنت ✓':'الكلمة الصحيحة: <span class="en">'+esc(q.o[q.a])+'</span>');
     });
   }
   function rListen(q){
@@ -3811,8 +3916,59 @@ function viewAdmin(){
   app.innerHTML='<div style="padding-top:20px"><button class="btn sm" id="back">‹ رجوع</button>'+
    '<h2 style="margin:10px 0 4px;font-size:22px">🛠 لوحة الإدارة</h2>'+
    '<p style="color:#9FC7C1;font-size:13px">كل المستخدمين المسجّلين عبر Firebase.</p></div>'+
+   '<section class="sheet" id="hwAdmin" style="margin-bottom:14px"><div class="note">جارٍ تحميل الواجبات…</div></section>'+
    '<section class="sheet" id="adminBody"><div class="note">جارٍ التحميل…</div></section>';
   $('#back').onclick=viewAccount;
+
+  /* إدارة الواجبات: نشر واجب جديد (درس أو مقالة) بموعد وملاحظة اختياريين، وعرض/حذف الواجبات الحالية */
+  function drawHwAdmin(){
+    const chOpts=BOOK.map((c,i)=>'<option value="'+i+'">'+esc(c.t_ar)+'</option>').join('');
+    const rdOpts=READING_LIB.map((r,i)=>'<option value="'+i+'">'+esc(r.t_ar)+'</option>').join('');
+    $('#hwAdmin').innerHTML='<h2 style="font-size:15px"><i>📌</i> إدارة الواجبات</h2>'+
+      '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">'+
+      '<select id="hwType" class="fin" style="width:auto"><option value="chapter">درس</option><option value="reading">مقالة</option></select>'+
+      '<select id="hwItem" class="fin" style="flex:1;min-width:160px">'+chOpts+'</select>'+
+      '</div>'+
+      '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">'+
+      '<input id="hwDue" type="date" class="fin" style="width:auto">'+
+      '<input id="hwNote" type="text" placeholder="ملاحظة (اختياري)" class="fin" style="flex:1;min-width:160px">'+
+      '</div>'+
+      '<button class="btn sm gold" id="hwPost" style="margin-top:8px">➕ نشر واجب جديد</button>'+
+      '<div id="hwList" style="margin-top:12px"><div class="note">جارٍ التحميل…</div></div>';
+    $('#hwType').onchange=()=>{ $('#hwItem').innerHTML = $('#hwType').value==='chapter'?chOpts:rdOpts; };
+    $('#hwPost').onclick=()=>{
+      const type=$('#hwType').value, idx=+$('#hwItem').value;
+      const dueV=$('#hwDue').value, note=$('#hwNote').value.trim();
+      const item={type:type, note:note};
+      if(type==='chapter') item.ci=idx; else item.ri=idx;
+      if(dueV) item.due=new Date(dueV+'T23:59:59').getTime();
+      postHomework(item,(ok,e)=>{
+        if(ok){ toast('✅ تم نشر الواجب.'); $('#hwNote').value=''; refreshHwList(); }
+        else toast('⚠ تعذّر النشر: '+fbErrMsg(e));
+      });
+    };
+    refreshHwList();
+    function refreshHwList(){
+      fbDB.collection('homework').orderBy('postedAt','desc').limit(30).get().then(snap=>{
+        const list=[]; snap.forEach(d=>list.push(Object.assign({id:d.id},d.data())));
+        $('#hwList').innerHTML=list.length?list.map(hw=>{
+          const isCh=hw.type==='chapter';
+          const item=isCh?BOOK[hw.ci]:READING_LIB[hw.ri];
+          const label=item?item.t_ar:'(محذوف)';
+          const dueTxt=hw.due?new Date(hw.due).toLocaleDateString('ar-IQ'):'بدون موعد';
+          return '<div class="ul-item" style="display:flex;justify-content:space-between;align-items:center;gap:8px">'+
+            '<div><div style="font-weight:700">'+(isCh?'📘 ':'📰 ')+esc(label)+'</div>'+
+            (hw.note?'<div style="font-size:12px;color:var(--muted)">'+esc(hw.note)+'</div>':'')+
+            '<div style="font-size:11px;color:var(--muted)">موعد: '+dueTxt+'</div></div>'+
+            '<button class="btn ghost sm" data-hwdel="'+hw.id+'">🗑</button></div>';
+        }).join(''):'<div class="note">لا توجد واجبات منشورة بعد.</div>';
+        $('#hwList').querySelectorAll('[data-hwdel]').forEach(b2=>b2.onclick=()=>{
+          deleteHomework(b2.dataset.hwdel,(ok)=>{ if(ok){ toast('🗑 تم الحذف.'); refreshHwList(); } else toast('⚠ تعذّر الحذف.'); });
+        });
+      }).catch(e=>{ $('#hwList').innerHTML='<div class="note" style="color:var(--plum)">تعذّر تحميل الواجبات: '+esc(fbErrMsg(e))+'</div>'; });
+    }
+  }
+  drawHwAdmin();
 
   function fmtDT(ts){ if(!ts) return '—'; const d=new Date(ts); return d.toLocaleDateString('ar-IQ')+' '+d.toLocaleTimeString('ar-IQ',{hour:'2-digit',minute:'2-digit'}); }
   function userSummary(u){
@@ -3824,10 +3980,41 @@ function viewAdmin(){
     const bestMock=mh.length?Math.max.apply(null,mh.map(h=>h.pct||0)):null;
     return {acc:acc,total:total,bestMock:bestMock,streak:u.streak||0,cardsN:Object.keys(u.cards||{}).length};
   }
+  /* نظرة عامة على الصف كاملاً: متوسط الدقة، متوسط أفضل تجريبي، عدد الطلاب النشطين هذا الأسبوع،
+     وأكثر الأقسام التي يخطئ بها الطلاب مجتمعين — لتحديد أين يحتاج الصف تركيزاً إضافياً */
+  function classOverview(users){
+    const withAcc=users.map(u=>userSummary(u)).filter(s=>s.acc!=null);
+    const avgAcc=withAcc.length?Math.round(withAcc.reduce((a,s)=>a+s.acc,0)/withAcc.length):null;
+    const withMock=users.map(u=>userSummary(u)).filter(s=>s.bestMock!=null);
+    const avgMock=withMock.length?Math.round(withMock.reduce((a,s)=>a+s.bestMock,0)/withMock.length):null;
+    const weekAgo=Date.now()-7*864e5;
+    const activeThisWeek=users.filter(u=>u.lastSeen&&u.lastSeen>=weekAgo).length;
+    /* تجميع أخطاء الأقسام عبر كل الطلاب من qStatus الخاص بكل واحد */
+    const secMiss={}, secTotal={};
+    users.forEach(u=>{
+      const qs=u.qStatus||{};
+      Object.entries(qs).forEach(([id,st])=>{
+        const sec=id.replace(/\d.*$/,''); /* بادئة نوع السؤال كتقريب للقسم: ch/g/f/dl/i/d/p */
+        secTotal[sec]=(secTotal[sec]||0)+1;
+        if(st==='wrong') secMiss[sec]=(secMiss[sec]||0)+1;
+      });
+    });
+    const secLabel={ch:'فصول القصة',g:'القواعد',f:'الوظائف اللغوية',dl:'المحادثات',i:'التعابير الاصطلاحية',d:'أساليب مباشرة',p:'الفهم المقروء'};
+    const secRates=Object.keys(secTotal).filter(k=>secTotal[k]>=5).map(k=>({k,rate:Math.round((secMiss[k]||0)/secTotal[k]*100)})).sort((a,b)=>b.rate-a.rate).slice(0,3);
+    return '<section class="sheet" style="margin-bottom:14px"><h2 style="font-size:15px"><i>📊</i> نظرة عامة على الصف</h2>'+
+      '<div class="stats" style="margin-top:8px">'+
+      '<div class="stat"><div class="n">'+users.length+'</div><div class="l">طالب مسجّل</div></div>'+
+      '<div class="stat"><div class="n">'+activeThisWeek+'</div><div class="l">نشط هذا الأسبوع</div></div>'+
+      '<div class="stat"><div class="n">'+(avgAcc!=null?avgAcc+'٪':'—')+'</div><div class="l">متوسط الدقة</div></div>'+
+      '<div class="stat"><div class="n">'+(avgMock!=null?avgMock+'٪':'—')+'</div><div class="l">متوسط أفضل تجريبي</div></div></div>'+
+      (secRates.length?('<div class="note" style="margin-top:10px"><b>أضعف الأقسام على مستوى الصف:</b><br>'+
+        secRates.map(r=>esc(secLabel[r.k]||r.k)+' — نسبة الخطأ '+r.rate+'٪').join('<br>')+'</div>'):'')+
+      '</section>';
+  }
   function drawList(users){
     const rows=users.map(u=>{
       const s=userSummary(u);
-      return '<div class="ul-item" data-uid="'+esc(u.uid)+'" style="cursor:pointer">'+
+      return '<div class="ul-item" data-uid="'+esc(u.uid)+'" style="display:block;cursor:pointer">'+
         '<div style="display:flex;justify-content:space-between;align-items:center">'+
         '<div><div style="font-weight:700">'+esc(u.name||'بلا اسم')+'</div>'+
         '<div class="en" style="font-size:12px;color:var(--muted)">'+esc(u.email||'')+'</div></div>'+
@@ -3838,7 +4025,8 @@ function viewAdmin(){
         '<div style="font-size:11px;color:var(--muted);margin-top:4px">🔥 '+s.streak+' يوم · آخر ظهور: '+fmtDT(u.lastSeen)+'</div>'+
         '</div>';
     }).join('');
-    $('#adminBody').innerHTML='<h2 style="font-size:16px">👥 المستخدمون ('+users.length+')</h2>'+
+    $('#adminBody').innerHTML=classOverview(users)+
+      '<h2 style="font-size:16px">👥 المستخدمون ('+users.length+')</h2>'+
       '<button class="btn ghost sm" id="expUsers" style="margin-bottom:10px">📊 تصدير الملخص (Excel/CSV)</button>'+
       (users.length?rows:'<div class="note">لا يوجد مستخدمون مسجّلون بعد.</div>');
     if($('#expUsers')) $('#expUsers').onclick=()=>{
@@ -3868,7 +4056,7 @@ function viewAdmin(){
     fbDB.collection('users').doc(u.uid).collection('attempts').orderBy('at','desc').limit(300).get().then(snap=>{
       const atts=[]; snap.forEach(d=>atts.push(d.data()));
       $('#attList').innerHTML=atts.length?('<h2 style="font-size:15px">📋 سجل المحاولات ('+atts.length+')</h2>'+
-        atts.map(a=>'<div class="ul-item"><div style="display:flex;justify-content:space-between"><span>'+esc(a.title||'')+'</span>'+
+        atts.map(a=>'<div class="ul-item" style="display:block"><div style="display:flex;justify-content:space-between"><span>'+esc(a.title||'')+'</span>'+
           '<span style="font-weight:700;color:'+((a.pct||0)>=60?'var(--leaf)':'var(--plum)')+'">'+(a.pct!=null?a.pct+'٪':'')+'</span></div>'+
           '<div style="font-size:11px;color:var(--muted)">'+(a.right!=null?a.right+'/'+a.total+' · ':'')+fmtDT(a.at)+(a.timedOut?' · ⏱ انتهى الوقت':'')+'</div></div>').join('')):
         '<div class="note">لا توجد محاولات مسجّلة لهذا المستخدم بعد.</div>';
@@ -4146,6 +4334,27 @@ function fbErrMsg(e){
   return map[c]||(e&&e.message)||'حدث خطأ غير متوقع.';
 }
 function isAdmin(){ return !!(FB_USER && FB_USER.email && ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(FB_USER.email.toLowerCase())); }
+/* الواجبات: مجموعة Firestore منفصلة 'homework' يديرها المشرف فقط (نشر/حذف)، ويقرأها أي مستخدم مسجّل دخول لعرضها في الصفحة الرئيسية */
+let HW_CACHE=null;
+function loadHomework(cb){
+  if(!fbDB){ cb([]); return; }
+  fbDB.collection('homework').orderBy('postedAt','desc').limit(20).get().then(snap=>{
+    const list=[]; snap.forEach(d=>list.push(Object.assign({id:d.id},d.data())));
+    const now=Date.now();
+    const active=list.filter(h=>!h.due || h.due>=now-864e5); /* نُبقي الواجب ظاهراً حتى يوم بعد موعده كسماحية */
+    HW_CACHE=active; cb(active);
+  }).catch(()=>cb([]));
+}
+function postHomework(item,cb){
+  if(!fbDB||!isAdmin()) return;
+  fbDB.collection('homework').add(Object.assign({postedAt:Date.now(),postedBy:(FB_USER&&FB_USER.email)||''},item))
+    .then(()=>{ HW_CACHE=null; cb&&cb(true); }).catch(e=>{ cb&&cb(false,e); });
+}
+function deleteHomework(id,cb){
+  if(!fbDB||!isAdmin()) return;
+  fbDB.collection('homework').doc(id).delete()
+    .then(()=>{ HW_CACHE=null; cb&&cb(true); }).catch(e=>{ cb&&cb(false,e); });
+}
 async function onFbAuthChange(user){
   FB_USER=user||null;
   if(!user) return;
@@ -4292,12 +4501,98 @@ function synonymQuizStart(){
   draw();
 }
 
+/* ============ مكتبة القراءة الإضافية ============ */
+function viewReadingList(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const lib=(typeof READING_LIB!=='undefined'?READING_LIB:[]);
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+   '<section class="sheet"><h2><i>📖</i> قراءة إضافية</h2>'+
+   '<div class="note">فقرات قصيرة بمواضيع متنوّعة من الحياة اليومية — اقرأ الفقرة ثم أجب عن أسئلة الفهم. المستوى موضّح على كل بطاقة.</div>'+
+   '<div style="display:grid;gap:8px;margin-top:14px">'+
+   (lib.length?lib.map((r,i)=>{
+     const done=S.reading&&S.reading[i];
+     return '<div class="ul-item" data-i="'+i+'" style="cursor:pointer">'+
+       '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'+
+       '<div style="display:flex;align-items:center;gap:10px;min-width:0">'+
+       '<span class="icobtn" style="background:'+(r.level==='A1'?'var(--saffron)':'var(--plum)')+';color:#fff;flex:0 0 auto">'+esc(r.icon)+'</span>'+
+       '<div style="min-width:0"><div class="en" style="font-weight:700;font-size:14.5px">'+esc(r.t_en)+(r.long?' <span style="font-size:10px;background:#8C6A1E;color:#FFF0CD;padding:2px 6px;border-radius:99px;vertical-align:middle">📗 طويلة</span>':'')+'</div>'+
+       '<div style="font-size:12px;color:var(--muted)">'+esc(r.t_ar)+'</div></div></div>'+
+       '<div style="text-align:end;font-size:11px;flex:0 0 auto"><div class="lv">'+r.level+'</div>'+(done?'<div style="color:var(--leaf);margin-top:2px">✓ أُنجزت</div>':'')+'</div>'+
+       '</div></div>';
+   }).join(''):'<div class="empty">لا توجد فقرات بعد.</div>')+
+   '</div></section>';
+  $('#back').onclick=viewPractice;
+  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>viewReadingPassage(+b.dataset.i));
+}
+function viewReadingPassage(i){
+  stopSpeak(); window.scrollTo(0,0);
+  const lib=(typeof READING_LIB!=='undefined'?READING_LIB:[]);
+  const r=lib[i]; if(!r) return viewReadingList();
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ القراءة</button></div>'+
+   '<section class="sheet"><h2><i>'+esc(r.icon)+'</i> '+esc(r.t_en)+'</h2>'+
+   '<div style="font-size:12.5px;color:var(--muted);margin-top:-6px;margin-bottom:10px">'+esc(r.t_ar)+' · <span class="qtype" style="padding:2px 8px">'+r.level+'</span>'+(r.long?' · <span class="qtype" style="padding:2px 8px;background:#FFF0CD;color:#8C6A1E">📗 قصة طويلة</span>':'')+'</div>'+
+   '<button class="btn sm" id="playAll">🔊 استمع للفقرة كاملة</button>'+
+   '<div class="qtext en" style="text-align:left;line-height:1.9;font-size:15.5px;font-weight:400;margin-top:12px">'+esc(r.text)+'</div>'+
+   '<div class="rhint" style="margin-top:8px">اضغط أي كلمة إنكليزية لمعرفة معناها</div>'+
+   '<button class="btn gold wide" id="startQ" style="margin-top:16px">ابدأ أسئلة الفهم ('+r.q.length+')</button>'+
+   '</section>';
+  $('#back').onclick=viewReadingList;
+  $('#playAll').onclick=()=>speak(r.text,{rate:Math.min(S.rate||0.85,0.85)});
+  $('#startQ').onclick=()=>readingQuizStart(i);
+}
+function readingQuizStart(i){
+  stopSpeak(); window.scrollTo(0,0);
+  const lib=(typeof READING_LIB!=='undefined'?READING_LIB:[]);
+  const r=lib[i]; if(!r) return viewReadingList();
+  const qs=r.q; let idx=0, right=0;
+  function render(){
+    if(idx>=qs.length) return finish();
+    const q=qs[idx];
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="quit">‹ خروج</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(idx+1)+'/'+qs.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(idx/qs.length*100)+'%"></i></span></div>'+
+     '<div class="qtext en">'+esc(q.q)+'</div>'+
+     '<div class="opts" style="margin-top:10px">'+q.o.map((o,oi)=>'<button class="opt" data-i="'+oi+'"><span class="en">'+esc(o)+'</span></button>').join('')+'</div>'+
+     '</section>';
+    $('#quit').onclick=()=>viewReadingPassage(i);
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.i===q.a;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.i===q.a)x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){ right++; addXP(3); }
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=(ok?'✓ صحيح!':'الصحيح: <span class="en">'+esc(q.o[q.a])+'</span>')+(q.exp?'<div class="fb-exp">'+esc(q.exp)+'</div>':'');
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn gold wide'; nb.style.marginTop='12px';
+      nb.textContent=idx<qs.length-1?'التالي ›':'النتيجة ›'; nb.onclick=()=>{ idx++; render(); }; s.appendChild(nb);
+      try{nb.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}
+    });
+  }
+  function finish(){
+    S.reading=S.reading||{}; S.reading[i]=true; save();
+    const pct=Math.round(right/qs.length*100);
+    addXP(10);
+    if(pct>=80){ try{confetti();}catch(e){} }
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+     '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+     '<div class="lab">'+right+' إجابة صحيحة من '+qs.length+'</div></div>'+
+     '<div class="row" style="margin-top:14px;gap:8px">'+
+     '<button class="btn gold" id="again" style="flex:1">أعد</button>'+
+     '<button class="btn" id="lst" style="flex:1">فقرات أخرى</button></div></section>';
+    $('#again').onclick=()=>readingQuizStart(i);
+    $('#lst').onclick=viewReadingList;
+  }
+  render();
+}
+
 /* ============ مركز التدريب ============ */
 function viewPractice(){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
   const due=dueCards().length;
   const items=[
     ['smart','🎯','التدريب الذكي','يتكيّف تلقائياً مع مستواك — لا يسألك عمّا لم تدرسه بعد','var(--gold,#B9862F)'],
+    ['reading','📖','قراءة إضافية','فقرات قصيرة متنوّعة بمواضيع الحياة اليومية + أسئلة فهم','#3E9E7A'],
     ['syn','🔗','مرادفات','كلمات قريبة في المعنى + اختبر نفسك','#4A8FB8'],
     ['due','🔁','المراجعة المستحقة',due? due+' بطاقة تنتظرك اليوم':'لا شيء مستحق اليوم','var(--plum)'],
     ['memory','🎴','لعبة الذاكرة','اقلب البطاقات وطابق كل كلمة بمعناها','#D1497A'],
@@ -4307,6 +4602,7 @@ function viewPractice(){
     ['vocab','📚','المفردات فقط','تدريب سريع على المعاني في الاتجاهين','#B9862F'],
     ['listen','🎧','الاستماع','اسمع الجملة بلا نصّ ثم اختر معناها','#7A5A96'],
     ['write','✍️','الكتابة والإملاء','اكتب الجملة بنفسك مع تصحيح دقيق','#8C3A56'],
+    ['paragraph','📝','كتابة فقرة','فقرة كاملة برأي أو وصف أو قصة + مراجعة فورية للطول والتنوّع والمفردات','#6B4FA0'],
     ['spellrules','🔤','قواعد التهجئة','كيف تُكتب الكلمات وتُضاف الحروف','#2E7D6F'],
     ['minpairs','👂','أزواج نطق دنيا','ميّز كلمات متقاربة الصوت يخلط بينها العرب عادة (ship/sheep)','#C0562E'],
     ['colloc','🧩','عبارات متلازمة','احفظ عبارات جاهزة ككتلة واحدة بدل كلمات منفصلة','#3E7CB1']
@@ -4318,9 +4614,9 @@ function viewPractice(){
      '<span class="thumb" style="background:'+i[4]+';font-size:24px">'+i[1]+'</span>'+
      '<span class="meta"><h3>'+i[2]+'</h3><span class="sub" style="direction:rtl;text-align:right;font-family:var(--ar)">'+i[3]+'</span></span>'+
      '<span class="tick">›</span></button>').join('')+'</div>';
-  const go={smart:()=>viewSmartPractice(),syn:()=>viewSynonyms(),due:()=>viewReview(),memory:()=>viewMemoryGame(),scramble:()=>viewScrambleGame(),
+  const go={smart:()=>viewSmartPractice(),reading:()=>viewReadingList(),syn:()=>viewSynonyms(),due:()=>viewReview(),memory:()=>viewMemoryGame(),scramble:()=>viewScrambleGame(),
             sent:()=>viewSentSetup(),gram:()=>viewGrammar(),
-            vocab:()=>vocabDrillSetup(),listen:()=>listenSetup(),write:()=>writeSetup(),
+            vocab:()=>vocabDrillSetup(),listen:()=>listenSetup(),write:()=>writeSetup(),paragraph:()=>viewParagraphSetup(),
             spellrules:()=>viewSpellRules(),minpairs:()=>viewMinimalPairs(),colloc:()=>viewCollocations()};
   app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>go[b.dataset.p]());
 }
@@ -4495,9 +4791,15 @@ function wireDictRow(row){
 }
 /* يحدّث العدّادات العلوية فقط */
 function bumpCounts(){
-  const keys=Object.keys(WORDS).filter(k=>WORDS[k].t.toLowerCase()===k);
-  const st=[keys.filter(k=>isKnown(k)).length, keys.filter(k=>!isKnown(k)).length,
-            keys.filter(k=>inReview(k)).length];
+  let st;
+  if(S.dictF&&S.dictF.tab==='sents'){
+    const know=SENTS.filter(s=>isSentKnown(s.en)).length;
+    st=[know, SENTS.length-know, SENTS.filter(s=>!!S.cards[cardKey(s.en)]).length];
+  }else{
+    const keys=Object.keys(WORDS).filter(k=>WORDS[k].t.toLowerCase()===k);
+    st=[keys.filter(k=>isKnown(k)).length, keys.filter(k=>!isKnown(k)).length,
+        keys.filter(k=>inReview(k)).length];
+  }
   app.querySelectorAll('.stats .stat .n').forEach((el,i)=>{ if(st[i]!=null) el.textContent=st[i]; });
   paintHead();
 }
@@ -4509,8 +4811,11 @@ function viewDict(){
   S.dictF=S.dictF||{tab:'words',filt:'all',q:''};
   const F=S.dictF;
   const keys=Object.keys(WORDS).filter(k=>WORDS[k].t.toLowerCase()===k);
-  const stat={all:keys.length,know:keys.filter(k=>isKnown(k)).length,rev:keys.filter(k=>inReview(k)).length};
-  stat.un=stat.all-stat.know;
+  const wstat={all:keys.length,know:keys.filter(k=>isKnown(k)).length,rev:keys.filter(k=>inReview(k)).length};
+  wstat.un=wstat.all-wstat.know;
+  const sstat={all:SENTS.length,know:SENTS.filter(s=>isSentKnown(s.en)).length,rev:SENTS.filter(s=>!!S.cards[cardKey(s.en)]).length};
+  sstat.un=sstat.all-sstat.know;
+  const stat=F.tab==='words'?wstat:sstat;
 
   let pool;
   if(F.tab==='words'){
@@ -4524,7 +4829,8 @@ function viewDict(){
   }else{
     pool=SENTS.filter(s=>{
       if(F.filt==='rev'&&!S.cards[cardKey(s.en)]) return false;
-      if(F.filt==='know'&&S.cards[cardKey(s.en)]) return false;
+      if(F.filt==='know'&&!isSentKnown(s.en)) return false;
+      if(F.filt==='un'&&isSentKnown(s.en)) return false;
       if(F.q){ const q=F.q.toLowerCase(); if(s.en.toLowerCase().indexOf(q)<0&&s.ar.indexOf(F.q)<0) return false; }
       return true;
     });
@@ -4532,7 +4838,7 @@ function viewDict(){
   const shown=pool.slice(0,150);
 
   app.innerHTML='<div style="padding-top:18px"><h2 style="margin:0 0 4px;font-size:22px">قاموسي</h2>'+
-   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">كل ما مرّ بك: '+stat.all+' مفردة و'+SENTS.length+' جملة. صنّفها وابحث فيها ودرّب نفسك عليها.</p>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">كل ما مرّ بك: '+wstat.all+' مفردة و'+SENTS.length+' جملة. صنّفها وابحث فيها ودرّب نفسك عليها.</p>'+
    '<div class="stats" style="margin-top:14px">'+
    '<div class="stat"><div class="n">'+stat.know+'</div><div class="l">أعرفها</div></div>'+
    '<div class="stat"><div class="n">'+stat.un+'</div><div class="l">لا أعرفها</div></div>'+
@@ -4543,8 +4849,7 @@ function viewDict(){
    '</div>'+
    '<input class="fin" id="dq" placeholder="ابحث بالإنكليزية أو بالعربية" value="'+esc(F.q)+'" style="margin-top:10px">'+
    '<div class="segs" style="margin-top:8px">'+
-   (F.tab==='words'?['all|الكل','un|لا أعرفها','know|أعرفها','rev|في المراجعة']
-                   :['all|الكل','rev|في المراجعة','know|خارجها']).map(x=>{const[k,n]=x.split('|');
+   ['all|الكل','un|لا أعرفها','know|أعرفها','rev|في المراجعة'].map(x=>{const[k,n]=x.split('|');
      return '<button class="seg sm '+(F.filt===k?'on':'')+'" data-f="'+k+'">'+n+'</button>';}).join('')+
    '</div></div>'+
 
@@ -4553,7 +4858,9 @@ function viewDict(){
      '<div class="row" style="margin-bottom:12px;gap:8px">'+
      '<button class="btn gold sm" id="drill" style="flex:1">درّبني على المعروض ('+Math.min(pool.length,50)+')</button>'+
      '<button class="btn sm" id="addAll" style="flex:1">➕ أضف المعروض للمراجعة</button></div>':
-     '<div class="row" style="margin-bottom:12px"><button class="btn gold sm" id="drillS" style="flex:1">درّبني على هذه الجمل</button></div>')+
+     '<div class="row" style="margin-bottom:12px;gap:8px">'+
+     '<button class="btn gold sm" id="drillS" style="flex:1">درّبني على المعروض ('+Math.min(pool.length,50)+')</button>'+
+     '<button class="btn sm" id="fullSetup" style="flex:1">⚙️ إعداد مخصّص (حتى ١٠٠)</button></div>')+
    (shown.length?shown.map(x=>F.tab==='words'?dictWordRow(x):dictSentRow(x)).join(''):
      '<div class="empty">لا نتائج مطابقة.</div>')+
    (pool.length>150?'<div class="empty">…و'+(pool.length-150)+' غيرها. ضيّق البحث لرؤيتها.</div>':'')+
@@ -4581,12 +4888,18 @@ function viewDict(){
     if(S.cards[k]) delete S.cards[k]; else addCard(s.en,s.ar,s.ci);
     save(); refreshRow(b, dictSentRow(s)); bumpCounts();
   });
+  app.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{
+    const s=SENTS.find(x=>x.key===b.dataset.sk); if(!s) return;
+    setSentKnown(s.en,s.ar,s.ci,!isSentKnown(s.en));
+    refreshRow(b, dictSentRow(s)); bumpCounts();
+  });
   if($('#addAll')) $('#addAll').onclick=()=>{
     let n=0; pool.slice(0,200).forEach(k=>{ if(!inReview(k)){ delete (S.known||{})[k]; addCard(WORDS[k].t,WORDS[k].ar,-1); n++; } });
     toast('أُضيفت '+n+' مفردة إلى المراجعة'); viewDict();
   };
   if($('#drill')) $('#drill').onclick=()=>vocabDrill(shuffle(pool).slice(0,50));
-  if($('#drillS')) $('#drillS').onclick=()=>sentDrill(shuffle(pool).slice(0,30),'ar2en');
+  if($('#drillS')) $('#drillS').onclick=()=>sentDrill(shuffle(pool).slice(0,50),'ar2en');
+  if($('#fullSetup')) $('#fullSetup').onclick=()=>viewSentSetup();
 }
 function dictWordRow(k){
   const w=WORDS[k], kn=isKnown(k), rv=inReview(k);
@@ -4597,11 +4910,12 @@ function dictWordRow(k){
    '<button class="icobtn '+(kn?'':'p')+'" data-wk="'+k+'" title="أعرفها">'+(kn?'✓':'○')+'</button></div>';
 }
 function dictSentRow(s){
-  const rv=!!S.cards[cardKey(s.en)];
+  const rv=!!S.cards[cardKey(s.en)], kn=isSentKnown(s.en);
   return '<div class="ul-item"><button class="icobtn" data-say="'+esc(s.en)+'">🔊</button>'+
    '<div class="t"><div class="e" style="font-size:14px">'+esc(s.en)+'</div>'+
    '<div class="a">'+esc(s.ar)+'</div><div class="lv">'+esc(s.src)+'</div></div>'+
-   '<button class="icobtn '+(rv?'':'p')+'" data-sr="'+s.key+'">'+(rv?'🔁':'➕')+'</button></div>';
+   '<button class="icobtn '+(rv?'':'p')+'" data-sr="'+s.key+'" title="مراجعة">'+(rv?'🔁':'➕')+'</button>'+
+   '<button class="icobtn '+(kn?'':'p')+'" data-sk="'+s.key+'" title="أعرفها">'+(kn?'✓':'○')+'</button></div>';
 }
 
 /* ============ تدريب المفردات ============ */
@@ -4613,20 +4927,20 @@ function vocabDrillSetup(){
    '<h2 style="margin:12px 0 4px;font-size:21px">📚 المفردات فقط</h2>'+
    '<p style="color:#9FC7C1;font-size:13px;margin:0">اختر المجموعة والعدد.</p></div>'+
    '<section class="sheet"><h2><i>1</i> من أين؟</h2>'+
-   '<div class="segs">'+['un|لا أعرفها ('+un.length+')','rev|في المراجعة ('+Object.keys(S.cards).length+')','all|الكل ('+keys.length+')']
+   '<div class="segs">'+['un|لا أعرفها ('+un.length+')','know|أعرفها ('+(keys.length-un.length)+')','rev|في المراجعة ('+Object.keys(S.cards).length+')','all|الكل ('+keys.length+')']
      .map((x,i)=>{const[k,n]=x.split('|');return '<button class="seg '+(i===0?'on':'')+'" data-src="'+k+'">'+n+'</button>';}).join('')+'</div>'+
    '<h2 style="margin-top:18px"><i>2</i> كم كلمة؟</h2>'+
-   '<div class="segs">'+[10,20,50].map((n,i)=>'<button class="seg '+(i===1?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+
+   '<div class="segs">'+[10,20,50,100].map((n,i)=>'<button class="seg '+(i===2?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+
    '<button class="seg" data-n="999">الكل</button></div>'+
    '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button></section>';
   $('#back').onclick=viewPractice;
-  let src='un',n=20;
+  let src='un',n=50;
   app.querySelectorAll('[data-src]').forEach(b=>b.onclick=()=>{src=b.dataset.src;
     app.querySelectorAll('[data-src]').forEach(x=>x.classList.toggle('on',x===b));});
   app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{n=+b.dataset.n;
     app.querySelectorAll('[data-n]').forEach(x=>x.classList.toggle('on',x===b));});
   $('#go').onclick=()=>{
-    let pool=src==='all'?keys:src==='rev'?Object.keys(S.cards).filter(k=>WORDS[k]):un;
+    let pool=src==='all'?keys:src==='rev'?Object.keys(S.cards).filter(k=>WORDS[k]):src==='know'?keys.filter(k=>isKnown(k)):un;
     if(!pool.length) return toast('لا توجد كلمات في هذه المجموعة.');
     vocabDrill(shuffle(pool).slice(0,n));
   };
@@ -4685,11 +4999,12 @@ function viewSentSetup(){
    '<div class="segs"><button class="seg on" data-src="all">كل الجمل</button>'+
    '<button class="seg" data-src="ch">دروس القصة</button>'+
    '<button class="seg" data-src="art">المقالات</button>'+
-   '<button class="seg" data-src="un">لا أعرفها فقط</button></div>'+
+   '<button class="seg" data-src="un">لا أعرفها فقط</button>'+
+   '<button class="seg" data-src="know">أعرفها فقط</button></div>'+
    '<div style="margin-top:12px"><div class="qhint" style="margin-bottom:6px">أو حدّد وحدات بعينها:</div>'+
    '<div class="segs">'+units.map((u,i)=>'<button class="seg sm" data-u="'+i+'">و'+(i+1)+'</button>').join('')+'</div></div>'+
    '<h2 style="margin-top:18px"><i>2</i> كم جملة؟</h2>'+
-   '<div class="segs">'+[10,20,50].map((n,i)=>'<button class="seg '+(i===1?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+
+   '<div class="segs">'+[10,20,50,100].map((n,i)=>'<button class="seg '+(i===2?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+
    '<button class="seg" data-n="999">الكل</button></div>'+
    '<h2 style="margin-top:18px"><i>3</i> نمط التدريب</h2>'+
    '<div class="segs"><button class="seg on" data-m="ar2en">عربي ← إنكليزي</button>'+
@@ -4698,13 +5013,14 @@ function viewSentSetup(){
    '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button>'+
    '<div id="cnt" class="diag" style="color:#6B5A42"></div></section>';
   $('#back').onclick=viewPractice;
-  let src='all',n=20,mode='ar2en',us=[];
+  let src='all',n=50,mode='ar2en',us=[];
   const pool=()=>{
     let p=SENTS.slice();
     if(us.length) p=p.filter(s=>s.ci>=0&&us.some(ui=>unitList()[ui].chs.indexOf(s.ci)>=0));
     else if(src==='ch') p=p.filter(s=>s.ci>=0);
     else if(src==='art') p=p.filter(s=>s.ci<0);
-    else if(src==='un') p=p.filter(s=>!!S.cards[cardKey(s.en)]);
+    else if(src==='un') p=p.filter(s=>!isSentKnown(s.en));
+    else if(src==='know') p=p.filter(s=>isSentKnown(s.en));
     return p;
   };
   const upd=()=>{ $('#cnt').textContent='المتاح الآن: '+pool().length+' جملة'; };
@@ -4750,9 +5066,8 @@ function sentDrill(list,mode){
     $('#back').onclick=viewPractice;
     $('#hear').onclick=()=>speak(s.en,{rate:0.75});
     if(show){
-      $('#yes').onclick=()=>{ const k=cardKey(s.en); if(S.cards[k]) gradeCard(k,true); ok++; addXP(3); i++; draw(false); };
-      $('#no').onclick=()=>{ const k=cardKey(s.en);
-        if(S.cards[k]) gradeCard(k,false); else addCard(s.en,s.ar,s.ci); i++; draw(false); };
+      $('#yes').onclick=()=>{ setSentKnown(s.en,s.ar,s.ci,true); ok++; addXP(3); i++; draw(false); };
+      $('#no').onclick=()=>{ setSentKnown(s.en,s.ar,s.ci,false); i++; draw(false); };
     }else $('#show').onclick=()=>draw(true);
     if(mode==='audio'||mode==='en2ar') setTimeout(()=>speak(s.en,{rate:0.75}),280);
   }
@@ -5076,6 +5391,117 @@ function writeDrill(list,mode){
   draw();
 }
 
+/* ============ كتابة فقرة — تدريب الفقرات الكاملة بتغذية راجعة قائمة على قواعد ============ */
+/* كل مثال: مستوى، نوع (وصف/رأي/قصة)، سؤال بالإنكليزية، إرشاد بالعربية، كلمات مقترحة، حدّ أدنى لعدد الكلمات والجمل */
+const WRITING_PROMPTS=[
+ {level:'A1',type:'وصف',t_ar:'صف يومك',en:'Describe your typical day. What do you do in the morning, afternoon, and evening?',guide_ar:'اذكر ثلاثة أوقات من يومك على الأقل (الصباح، الظهر، المساء) وماذا تفعل في كل منها.',target:['morning','afternoon','evening','usually','every day'],minWords:35,minSentences:4},
+ {level:'A1',type:'وصف',t_ar:'صف عائلتك',en:'Describe your family. How many people are in your family? What are their names and jobs?',guide_ar:'اذكر عدد أفراد عائلتك وأسماءهم ووظيفة كل واحد منهم.',target:['family','mother','father','brother','sister'],minWords:35,minSentences:4},
+ {level:'A1',type:'رأي',t_ar:'مدينتك المفضلة',en:'What is your favorite city? Why do you like it?',guide_ar:'اذكر اسم المدينة وثلاثة أسباب على الأقل لماذا تحبها.',target:['city','because','like','beautiful','people'],minWords:35,minSentences:4},
+ {level:'A1',type:'قصة',t_ar:'يوم في المدرسة',en:'Write about a day at school. What did you do first, next, and last?',guide_ar:'استخدم كلمات الترتيب: أولاً first، ثم then، وأخيراً finally.',target:['first','then','after that','finally','school'],minWords:35,minSentences:4},
+ {level:'A2',type:'وصف',t_ar:'صف صديقك المقرّب',en:'Describe your best friend. What does he or she look like? What is his or her personality like?',guide_ar:'صف الشكل الخارجي والشخصية، واذكر مثالاً على شيء فعلتماه معاً.',target:['friend','because','personality','looks like','together'],minWords:50,minSentences:5},
+ {level:'A2',type:'رأي',t_ar:'التكنولوجيا في حياتنا',en:'Do you think technology makes our lives better or worse? Give reasons for your opinion.',guide_ar:'اذكر رأيك بوضوح في البداية، ثم قدّم سببين أو ثلاثة أسباب تدعم رأيك.',target:['technology','because','however','I think','important'],minWords:50,minSentences:5},
+ {level:'A2',type:'قصة',t_ar:'رحلة لن أنساها',en:'Write about a trip you will never forget. Where did you go? What happened?',guide_ar:'استخدم الماضي البسيط ورتّب الأحداث زمنياً باستخدام first, then, after that, finally.',target:['went','saw','because','then','finally'],minWords:50,minSentences:5},
+ {level:'A2',type:'وصف',t_ar:'منزل أحلامك',en:'Describe your dream house. What rooms does it have? Where is it located?',guide_ar:'صف عدد الغرف وموقع المنزل ولماذا تحبه.',target:['house','rooms','because','would like','garden'],minWords:50,minSentences:5},
+ {level:'B1',type:'رأي',t_ar:'العمل من المنزل',en:'Some people prefer working from home while others prefer the office. Discuss both views and give your opinion.',guide_ar:'اعرض رأي الطرفين (مؤيد ومعارض) قبل أن تذكر رأيك الشخصي مع الأسباب.',target:['on the other hand','however','in my opinion','advantage','disadvantage'],minWords:80,minSentences:7},
+ {level:'B1',type:'وصف',t_ar:'تغيير مهم في حياتك',en:'Describe an important change in your life. How did it affect you?',guide_ar:'صف الحدث، ثم اشرح تأثيره عليك بالتفصيل مستخدماً أزمنة مناسبة.',target:['changed','affected','since then','before','after'],minWords:80,minSentences:7},
+ {level:'B1',type:'قصة',t_ar:'لو كنت تستطيع تغيير قرار',en:'If you could change one decision in your past, what would it be and why?',guide_ar:'استخدم الشرط الثالث (Third Conditional): If I had... I would have... واشرح السبب.',target:['if I had','I would have','because','regret','learned'],minWords:80,minSentences:7},
+ {level:'B1',type:'رأي',t_ar:'التعليم عن بعد مقابل التعليم الحضوري',en:'Compare online education and traditional classroom education. Which do you prefer and why?',guide_ar:'قارن بين الطريقتين بذكر ميزة وعيب لكل منهما قبل ذكر تفضيلك الشخصي.',target:['compared to','whereas','in contrast','prefer','flexible'],minWords:80,minSentences:7}
+];
+function viewParagraphSetup(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  let lvl='all', typ='all';
+  function list(){
+    return WRITING_PROMPTS.map((p,i)=>({p,i})).filter(({p})=>(lvl==='all'||p.level===lvl)&&(typ==='all'||p.type===typ));
+  }
+  function draw(){
+    const items=list();
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
+     '<h2 style="margin:12px 0 4px;font-size:21px">📝 كتابة فقرة</h2>'+
+     '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">اختر موضوعاً واكتب فقرة كاملة. يراجع التطبيق فوراً طولها وتنوّع جملها واستخدامك للمفردات المقترحة.</p></div>'+
+     '<section class="sheet"><h2><i>1</i> المستوى</h2>'+
+     '<div class="segs">'+['all','A1','A2','B1'].map(l=>'<button class="seg '+(l===lvl?'on':'')+'" data-l="'+l+'">'+(l==='all'?'الكل':l)+'</button>').join('')+'</div>'+
+     '<h2 style="margin-top:16px"><i>2</i> النوع</h2>'+
+     '<div class="segs">'+['all','وصف','رأي','قصة'].map(t=>'<button class="seg '+(t===typ?'on':'')+'" data-t="'+esc(t)+'">'+(t==='all'?'الكل':esc(t))+'</button>').join('')+'</div>'+
+     '<h2 style="margin-top:16px"><i>3</i> اختر موضوعاً ('+items.length+')</h2>'+
+     '<div style="margin-top:8px">'+
+     items.map(({p,i})=>'<div class="ul-item" data-go="'+i+'" style="display:block;cursor:pointer">'+
+       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">'+
+       '<span style="font-weight:700">'+esc(p.t_ar)+'</span>'+
+       '<span style="font-size:11px;color:var(--muted);white-space:nowrap">'+p.level+' · '+esc(p.type)+'</span></div>'+
+       '<div class="en" style="font-size:12px;color:var(--muted);margin-top:2px">'+esc(p.en)+'</div></div>').join('')+
+     (items.length?'':'<div class="note">لا توجد مواضيع مطابقة.</div>')+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{lvl=b.dataset.l;draw();});
+    app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{typ=b.dataset.t;draw();});
+    app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>viewParagraphWrite(+b.dataset.go));
+  }
+  draw();
+}
+/* يحلّل فقرة المستخدم بقواعد بسيطة وموثوقة (بلا حاجة لذكاء اصطناعي أو اتصال إنترنت):
+   الطول، عدد الجمل، تنوّع استخدام المفردات المقترحة، الحرف الكبير في بداية كل جملة، علامة ترقيم ختامية، وضمير I كبيراً دائماً */
+function analyzeParagraph(text,p){
+  const trimmed=text.trim();
+  const words=trimmed.split(/\s+/).filter(Boolean);
+  const wordCount=words.length;
+  const sentences=trimmed.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
+  const sentenceCount=sentences.length;
+  const targetHits=p.target.filter(w=>new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(trimmed));
+  const checks=[
+    {k:'words',label:'الطول: '+wordCount+' كلمة (المطلوب '+p.minWords+'+)',ok:wordCount>=p.minWords},
+    {k:'sentences',label:'عدد الجمل: '+sentenceCount+' (المطلوب '+p.minSentences+'+)',ok:sentenceCount>=p.minSentences},
+    {k:'vocab',label:'استخدمتَ '+targetHits.length+' من '+p.target.length+' كلمات مقترحة',ok:targetHits.length>=Math.min(2,p.target.length)},
+    {k:'cap',label:'كل جملة تبدأ بحرف كبير',ok:sentences.length>0 && sentences.every(s=>/^[A-Z]/.test(s))},
+    {k:'punct',label:'الفقرة تنتهي بعلامة ترقيم (. أو ! أو ؟)',ok:/[.!?]\s*$/.test(trimmed)},
+    {k:'capI',label:'ضمير I مكتوب دائماً بحرف كبير',ok:!/(^|\s)i(\s|$|[.,!?'])/.test(text)}
+  ];
+  const passed=checks.filter(c=>c.ok).length;
+  const pct=Math.round(passed/checks.length*100);
+  return {checks:checks,pct:pct,passed:passed,total:checks.length,wordCount:wordCount,sentenceCount:sentenceCount,targetHits:targetHits};
+}
+function viewParagraphWrite(idx){
+  stopSpeak(); window.scrollTo(0,0);
+  const p=WRITING_PROMPTS[idx];
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ المواضيع</button>'+
+   '<div style="font-size:11px;color:var(--saffron);margin-top:12px">'+p.level+' · '+esc(p.type)+'</div></div>'+
+   '<section class="sheet"><h2 style="font-size:17px">'+esc(p.t_ar)+'</h2>'+
+   '<div class="en" style="margin-top:6px;font-size:14.5px;line-height:1.8">'+esc(p.en)+'</div>'+
+   '<div class="note" style="margin-top:10px">💡 '+esc(p.guide_ar)+'</div>'+
+   '<div class="rhint" style="margin-top:8px">حاول استخدام بعض هذه الكلمات/العبارات:</div>'+
+   '<div class="chips" style="margin-top:4px">'+p.target.map(w=>'<span class="wchip" style="cursor:default">'+esc(w)+'</span>').join('')+'</div>'+
+   '<textarea class="tin" id="para" rows="8" autocomplete="off" spellcheck="false" style="margin-top:12px;direction:ltr;text-align:left;font-size:15px" placeholder="Write your paragraph here..."></textarea>'+
+   '<div id="liveCount" style="font-size:11px;color:var(--muted);margin-top:4px">0 كلمة</div>'+
+   '<button class="btn gold wide" id="chk" style="margin-top:10px">تحقّق من فقرتي</button>'+
+   '<div id="fbBox" style="margin-top:12px"></div></section>';
+  $('#back').onclick=()=>viewParagraphSetup();
+  const ta=$('#para');
+  ta.addEventListener('input',()=>{
+    const n=ta.value.trim().split(/\s+/).filter(Boolean).length;
+    $('#liveCount').textContent=n+' كلمة';
+  });
+  $('#chk').onclick=()=>{
+    const text=ta.value;
+    if(text.trim().split(/\s+/).filter(Boolean).length<5){ toast('اكتب فقرة أولاً.'); return; }
+    const r=analyzeParagraph(text,p);
+    S.writingDone=S.writingDone||[];
+    S.writingDone.push({idx:idx,at:Date.now(),pct:r.pct});
+    if(S.writingDone.length>200) S.writingDone=S.writingDone.slice(-200);
+    save();
+    if(r.pct>=60) addXP(8);
+    if(r.pct>=80){ try{confetti();}catch(e){} }
+    logAttempt({title:'كتابة فقرة: '+p.t_ar,pct:r.pct,right:r.passed,total:r.total});
+    $('#fbBox').innerHTML='<div class="score" style="margin:6px 0"><div class="big" style="color:'+(r.pct>=60?'var(--leaf)':'var(--plum)')+'">'+r.pct+'٪</div>'+
+      '<div class="lab">'+r.passed+' من '+r.total+' معايير محقّقة</div></div>'+
+      r.checks.map(c=>'<div class="fb '+(c.ok?'ok':'no')+'" style="margin-top:6px">'+(c.ok?'✅ ':'⚠️ ')+esc(c.label)+'</div>').join('')+
+      '<div class="row" style="margin-top:14px;gap:8px">'+
+      '<button class="btn gold" id="another" style="flex:1">موضوع آخر</button>'+
+      '<button class="btn" id="retry" style="flex:1">أعد الكتابة</button></div>';
+    $('#another').onclick=()=>viewParagraphSetup();
+    $('#retry').onclick=()=>viewParagraphWrite(idx);
+    try{ $('#fbBox').scrollIntoView({block:'nearest',behavior:'smooth'}); }catch(e){}
+  };
+}
+
 /* ============ قواعد التهجئة والكتابة ============ */
 const SPELL=[
  ["🔠","الحروف الكبيرة — متى؟",
@@ -5257,7 +5683,7 @@ function viewMore(){
 /* ============ جعل كل نصّ إنكليزي قابلاً للنقر ============ */
 /* المناطق التي نفعّل فيها النقر — نستثني أزرار الاختيار حتى لا يتعارض النقر مع الإجابة */
 const TAP_SEL = '.gtable td, .note, .qtext, .fb, .bigword, .pg .lab, .exp-text, .wp-m, .qhint-en';
-const TAP_SKIP = 'button, .opt, .mcell, .tok, .seg, .wchip, .vc, .rtxt, nav, .card-ch, .node, .wpop';
+const TAP_SKIP = 'button, .opt, .mcell, .tok, .seg, .wchip, .vc, .vc-card, .rtxt, nav, .card-ch, .node, .wpop';
 
 function wrapWords(el){
   if(el.dataset.tapped) return;
@@ -5756,16 +6182,28 @@ function examGrammarSetup(){
 }
 
 /* --- امتحان تجريبي كامل — يحاكي بنية الاختبار الوطني الحقيقي (٤٠ سؤالاً / ٦٠ دقيقة / ٤ أقسام) --- */
-function pickBankSection(bankKey,n,secLabel){
-  return shuffle((EXAM[bankKey]||[]).slice()).slice(0,n).map(q=>Object.assign({},q,{_sec:secLabel}));
+/* عشوائية حقيقية + عدم تكرار قريب: كل محاولة تتجنّب أسئلة آخر محاولة (أو محاولتين) قدر الإمكان،
+   حتى لو كان بنك الأسئلة كبيراً، لضمان أن الامتحان لا "يشعر" بأنه نفسه في كل مرة. */
+function pickBankSection(bankKey,n,secLabel,avoidIds){
+  const all=(EXAM[bankKey]||[]).slice();
+  let pool=avoidIds&&avoidIds.size?all.filter(q=>!avoidIds.has(q._id)):all;
+  if(pool.length<n) pool=all; /* البنك صغير جداً لتجنّب التكرار كاملاً — ارجع للكل بدل الفشل */
+  return shuffle(pool).slice(0,n).map(q=>Object.assign({},q,{_sec:secLabel}));
 }
-function pickPassageSection(target){
-  const pool=shuffle(EXAM.passages.slice());
+function pickPassageSection(target,avoidIds){
+  const allPassages=EXAM.passages.slice();
+  const fresh=allPassages.filter(p=>!(p.q||[]).every(q=>avoidIds&&avoidIds.has(q._id)));
+  const pool=shuffle(fresh.length?fresh:allPassages);
   let qs=[],texts=[];
   for(const p of pool){
     if(qs.length>=target) break;
     const need=target-qs.length;
-    const chosen=shuffle(p.q.slice()).slice(0,Math.min(need,p.q.length));
+    let cand=shuffle(p.q.slice());
+    if(avoidIds&&avoidIds.size){
+      const notSeen=cand.filter(q=>!avoidIds.has(q._id));
+      if(notSeen.length) cand=notSeen;
+    }
+    const chosen=cand.slice(0,Math.min(need,cand.length));
     if(!chosen.length) continue;
     qs=qs.concat(chosen.map(q=>Object.assign({},q,{_sec:'الفهم المقروء'})));
     texts.push(p.text);
@@ -5820,11 +6258,15 @@ function mockExam(mode){
   const N_GRAM=full?12:6,N_FUNC=full?8:4,N_DIAL=full?8:4,N_READ=full?12:6;
   const TIME_SEC=full?60*60:25*60;
   const title=full?'امتحان تجريبي كامل':'امتحان تجريبي سريع';
-  const gram=pickBankSection('grammar',N_GRAM,'القواعد');
-  const func=pickBankSection('functions',N_FUNC,'الوظائف اللغوية');
-  const dial=pickBankSection('dialogues',N_DIAL,'المحادثات الكتابية');
-  const read=pickPassageSection(N_READ);
+  /* تجنّب تكرار أسئلة آخر محاولتين قدر الإمكان، حتى يشعر كل امتحان بأنه مختلف فعلاً */
+  const avoidIds=new Set((S.mockRecentIds||[]).slice());
+  const gram=pickBankSection('grammar',N_GRAM,'القواعد',avoidIds);
+  const func=pickBankSection('functions',N_FUNC,'الوظائف اللغوية',avoidIds);
+  const dial=pickBankSection('dialogues',N_DIAL,'المحادثات الكتابية',avoidIds);
+  const read=pickPassageSection(N_READ,avoidIds);
   const qs=[].concat(gram,func,dial,read.qs);
+  S.mockRecentIds=[...(S.mockRecentIds||[]).slice(-40), ...qs.map(q=>q._id).filter(Boolean)].slice(-80);
+  save();
   const timeLab=full?'٦٠:٠٠':'٢٥:٠٠';
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الاختبار</button></div>'+
    '<section class="sheet" style="margin-top:20px;text-align:center">'+
