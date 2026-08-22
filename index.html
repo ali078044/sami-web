@@ -186,7 +186,55 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .tip-list{margin:0;padding-right:20px;font-size:13px;line-height:1.9;color:#3A3A3A}
 .tip-list li{margin-bottom:10px}
 .tip-panel{font-size:13px}
+/* عزل ثنائي الاتجاه (bidi) للكلمات/العبارات الإنكليزية المتداخلة داخل نص عربي — يمنع انعكاس ترتيبها
+   أو علامات الترقيم المحيطة بها، ويميّزها بصرياً بخط إنكليزي واضح داخل الفقرة العربية. */
+.note bdi.en-inline, .note-line bdi.en-inline{font-family:var(--en);font-weight:700;color:#8C5A1E;unicode-bidi:isolate;direction:ltr}
+/* شرح ممنهج: كل فكرة بسطرها الخاص بدل فقرة واحدة متلاحمة، لسهولة المسح البصري والفهم السريع */
+.note-line{background:#FFF6E3;border-right:3px solid var(--saffron);padding:9px 12px;border-radius:9px;font-size:13.5px;line-height:1.85;color:#5A4A34;margin-bottom:7px}
+.note-line:last-child{margin-bottom:0}
+/* تمييز بصري لقسم الشواذّ/الاستثناءات عن القاعدة الأساسية — لون مختلف يلفت الانتباه */
+.note-line.note-exc{background:#FBEAF0;border-right-color:var(--plum);color:#6B3A4A}
+/* عنوان قسم صغير (الصيغة/الاستخدام/أمثلة...) يفصل بصرياً بين أجزاء شرح القاعدة أو النطق */
+.sect-lbl{font-size:11.5px;font-weight:700;color:var(--saffron);letter-spacing:.03em;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.sect-lbl:first-child{margin-top:0}
+/* صندوق الصيغة/القاعدة الأساسية — يبرز الشكل النحوي الثابت بخط واضح ومربّع مميّز */
+.rule-box{background:#EAF2FB;border:1.5px solid #B9D3EE;border-radius:10px;padding:12px 14px;margin-bottom:4px}
+.rule-box .rb-en{font-family:var(--en);direction:ltr;text-align:left;font-size:16px;font-weight:700;color:#2A5A82;line-height:1.5}
+/* قائمة أمثلة واضحة (مثال إنكليزي + ترجمته) تُعرض دائماً بشكل ثابت — مكمّلة لبطاقات القلب أدناه */
+.ex-list{display:flex;flex-direction:column;gap:0}
+.ex-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed #E2CFA9}
+.ex-item:last-child{border-bottom:0}
+.ex-item .ex-en{font-family:var(--en);direction:ltr;text-align:left;font-size:14px;font-weight:600;color:var(--ink);flex:1.3}
+.ex-item .ex-ar{font-size:12.5px;color:var(--muted);flex:1;text-align:right}
 
+/* قائمة كلمات المقاطع والنبر — كل كلمة زر كامل العرض يعرض مقاطعها مع تمييز المقطع المنبور */
+.syll-list{display:flex;flex-direction:column;gap:6px}
+.syll-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--paper2);border:1.5px solid #E2CFA9;border-radius:10px;padding:10px 12px}
+.syll-item .en{font-family:var(--en);font-size:15px;font-weight:600;color:var(--ink)}
+.syll-item .en .syll-on{color:var(--saffron);font-weight:800;text-decoration:underline}
+.syll-item .en .syll-dash{color:var(--muted);margin:0 1px}
+.syll-item .ar{font-size:12px;color:var(--muted)}
+.opt.syll-opt{font-family:var(--en);direction:ltr;flex:0 0 auto;padding:12px 18px}
+/* شبكة الحروف الأبجدية A-Z في وحدة تدريب النطق حسب الحرف والصوت */
+.letter-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.letter-btn{background:var(--paper2);border:1.5px solid #E2CFA9;border-radius:10px;padding:14px 0;font-family:var(--en);direction:ltr;font-size:19px;font-weight:700;color:var(--ink);text-align:center}
+.letter-btn:active{background:var(--saffron);color:#fff}
+.letter-btn .pcount{position:absolute;top:3px;left:4px;font-size:9px;color:var(--plum);font-family:var(--mono);font-weight:500}
+/* صفوف أنماط النطق التفصيلية (حرف واحد قد يُنطق بأكثر من طريقة حسب سياق تهجئته) — كل صف كلمة حقيقية
+   مع تفريغها الصوتي العربي التقريبي والمعنى وتفسير تطبيق القاعدة عليها */
+.pat-row{background:var(--paper2);border:1px solid #E2CFA9;border-radius:10px;padding:9px 12px;margin-bottom:6px;cursor:pointer}
+.pat-row .pat-en{font-family:var(--en);direction:ltr;text-align:left;font-weight:700;font-size:16px;color:var(--ink)}
+.pat-row .pat-mid{display:flex;justify-content:space-between;margin-top:3px;font-size:12.5px;color:var(--muted)}
+.pat-row .pat-ph{font-weight:700;color:var(--plum)}
+.pat-row .pat-tag{margin-top:4px;font-size:10.5px;color:#8C6A1E;background:#FFF0CD;display:inline-block;padding:1px 9px;border-radius:99px}
+/* نافذة تقسيم الكلمة إلى مقاطع مع كتابة نطق كل مقطع بالعربي — تظهر عند الضغط على أي كلمة داخل درس نمط نطق */
+.syl-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.syl-chip{background:var(--paper2);border:2px solid #E2CFA9;border-radius:12px;padding:9px 14px;text-align:center;min-width:58px;position:relative;transition:transform .15s}
+.syl-chip .syl-en{display:block;font-family:var(--en);direction:ltr;font-weight:800;font-size:18px;color:var(--ink)}
+.syl-chip .syl-ar{display:block;margin-top:4px;font-size:14px;color:var(--plum);font-weight:700}
+.syl-chip.syl-stress{transform:scale(1.12);box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.syl-chip.syl-stress .syl-en{font-size:20px}
+.syl-chip .syl-mark{position:absolute;top:-2px;left:50%;transform:translateX(-50%);font-size:10px;line-height:1}
 .pg{margin-bottom:10px}
 .pg .lab{font-family:var(--mono);font-size:12.5px;color:var(--plum);font-weight:500;margin-bottom:6px;direction:ltr;text-align:left}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -273,6 +321,8 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .node.chest{border-radius:24px;background:var(--plum);color:#FFE6EE;box-shadow:0 6px 0 #632338}
 .node.chest:active{box-shadow:0 2px 0 #632338}
 .node.chest.lock{background:#20504C;color:#4E7D77;box-shadow:0 6px 0 #163C39}
+.node.placement{background:#3E7CB1;color:#EAF2FB;box-shadow:0 6px 0 #2A5A82}
+.node.placement:active{box-shadow:0 2px 0 #2A5A82}
 .node.now{animation:ring 1.8s infinite}
 @keyframes ring{0%,100%{box-shadow:0 6px 0 #A6741A,0 0 0 0 rgba(229,162,43,.5)}
   50%{box-shadow:0 6px 0 #A6741A,0 0 0 12px rgba(229,162,43,0)}}
@@ -292,6 +342,7 @@ input[type=range]{accent-color:var(--saffron);width:88px}
   border-radius:14px;padding:12px 15px;font-size:13px;font-weight:600;text-align:center;
   box-shadow:0 14px 34px -14px rgba(0,0,0,.8)}
 .shake{animation:sh .35s}
+.mic-listening{animation:ring 1.2s infinite}
 @keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* ===== قارئ الجمل بكلمات قابلة للنقر ===== */
@@ -299,6 +350,7 @@ input[type=range]{accent-color:var(--saffron);width:88px}
 .rline{display:flex;gap:9px;align-items:flex-start;padding:9px 8px;border-radius:12px;
   border:1px solid transparent;margin-bottom:3px}
 .rline.active{background:#FFF6E3;border-color:var(--saffron)}
+.rline.pstart{margin-top:16px}
 .playb{width:34px;height:34px;border-radius:10px;background:var(--deep3);color:var(--paper);
   font-size:12px;flex:0 0 auto;margin-top:2px}
 .rbody{flex:1;min-width:0}
@@ -405,10 +457,15 @@ nav .bdg{position:absolute;top:2px;inset-inline-end:14px;background:var(--plum);
 <script src="data/a1/dialogues.js"></script>
 <script src="data/a1/dictionary.js"></script>
 <script src="data/a1/synonyms.js"></script>
+<script src="data/a1/antonyms.js"></script>
 <script src="data/a1/reading.js"></script>
 <script src="data/a2/story.js"></script>
 <script src="data/a2/reading.js"></script>
 <script src="data/b1/story.js"></script>
+<script src="data/books/books.js"></script>
+<script src="data/phonics/phonics.js"></script>
+<script src="data/phonics/patterns.js"></script>
+<script src="data/phonics/pron_dict.js"></script>
 <script>
 /* المنهج الكامل للمستوى A1 — 16 فصلاً */
 const BOOK_A1=[
@@ -2441,6 +2498,24 @@ function lookup(word){
 }
 function isKnown(w){ return !!(S.known&&S.known[wkey(w)]); }
 function inReview(w){ return !!S.cards[wkey(w)]; }
+/* يجمع كل الكلمات الإنكليزية التي "وصل إليها" المتعلّم فعلياً: من دروس القصة المكتملة على الخريطة،
+   من قاموس المراجعة وقائمة "أعرفها"، من الكتب الطويلة التي بدأ قراءتها، ومن المقالات القصيرة التي
+   أنهى أسئلة فهمها — تُستخدم لتخصيص شاشتَي المرادفات والأضداد تلقائياً حسب تقدّم كل متعلّم. */
+function learnedWordSet(){
+  const set=new Set();
+  const add=(w)=>{ const k=wkey(w); if(k) set.add(k); };
+  if(typeof BOOK!=='undefined') BOOK.forEach((c,i)=>{ if(S.done&&S.done[i]&&c.vocab) c.vocab.forEach(v=>add(v[0])); });
+  Object.keys(S.cards||{}).forEach(k=>set.add(k));
+  Object.keys(S.known||{}).forEach(k=>set.add(k));
+  if(typeof BOOKS_LONG!=='undefined') BOOKS_LONG.forEach(b=>{
+    const p=(S.bookProg&&S.bookProg[b.id])||null;
+    if(p && ((p.unlocked||1)>1 || Object.keys(p.done||{}).length)) (b.vocab||[]).forEach(v=>add(v[0]));
+  });
+  if(typeof READING_LIB!=='undefined') READING_LIB.forEach((r,i)=>{
+    if(S.reading&&S.reading[i]) String(r.text).split(/[^A-Za-z']+/).forEach(w=>{ if(w.length>=3) add(w); });
+  });
+  return set;
+}
 /* معرفة/عدم معرفة الجُمل — منفصلة عن المفردات المفردة، حتى لو لم تُضَف الجملة للمراجعة بعد */
 function isSentKnown(en){ return !!(S.sentKnown&&S.sentKnown[cardKey(en)]); }
 function setSentKnown(en,ar,ci,known){
@@ -2474,12 +2549,86 @@ function autoTranslate(word, onDone){
     .catch(()=>onDone(null, true));
 }
 
+/* يحدّد أقرب مدخل في وحدة الفونيكس (حرف أو صوت خاص) يناسب الكلمة المضغوطة في النافذة المنبثقة،
+   لإضافة زر "كيف يُنطق هذا الصوت؟" يفتح شرح النطق المرتبط مباشرة من أي كلمة في التطبيق.
+   الأولوية: الأصوات المزدوجة الصعبة على العرب (TH بنوعيه، NG، SH، CH) لأنها أهم من الحرف المفرد،
+   ثم يُرجَع لأول حرف في الكلمة كحلّ احتياطي إن لم تُطابق أي صوت خاص. */
+var PHONICS_TH_VOICED=new Set(['the','this','that','these','those','they','them','their','theirs','there','then','than','though','although','thus','therefore','with','within','without','mother','father','brother','weather','together','other','another','either','neither','smooth','breathe','breathes','clothe','clothes','bathe','worthy','northern','southern','rhythm','rather','gather','further','feather','leather']);
+function phonicsMatchForWord(word){
+  const w=String(word).toLowerCase().replace(/[^a-z]/g,'');
+  if(!w) return null;
+  if(w.includes('th')) return {tab:'sounds', id:PHONICS_TH_VOICED.has(w)?'th-voiced':'th-voiceless'};
+  if(w.includes('ng')) return {tab:'sounds', id:'ng'};
+  if(w.includes('sh')) return {tab:'sounds', id:'sh'};
+  if(w.includes('ch')) return {tab:'sounds', id:'ch'};
+  const first=w[0];
+  if(typeof PHONICS_LETTERS!=='undefined' && PHONICS_LETTERS.some(e=>e.id===first)) return {tab:'letters', id:first};
+  return null;
+}
+/* يبحث عن الكلمة بالضبط داخل بيانات أنماط النطق التفصيلية المستوردة (PHONICS_PATTERNS/PHONICS_SUFFIXES)
+   — إن وُجدت، فتفريغها الصوتي العربي هناك حقيقي ومؤلَّف بعناية، وليس تخميناً. */
+function findAuthoredPhonetic(word){
+  const w=String(word).toLowerCase();
+  if(!w) return null;
+  if(typeof PHONICS_PATTERNS!=='undefined'){
+    for(let i=0;i<PHONICS_PATTERNS.length;i++){
+      const hit=PHONICS_PATTERNS[i].words.find(x=>x.word.toLowerCase()===w);
+      if(hit) return hit.phonetic;
+    }
+  }
+  if(typeof PHONICS_SUFFIXES!=='undefined'){
+    for(let i=0;i<PHONICS_SUFFIXES.length;i++){
+      const hit=PHONICS_SUFFIXES[i].words.find(x=>x.word.toLowerCase()===w);
+      if(hit) return hit.phonetic;
+    }
+  }
+  return null;
+}
+/* PRON_DICT: قاموس نطق آلي واسع (أكثر من ٧٠٠٠ كلمة) مُستخرج من قاموس CMU الصوتي الأمريكي (ARPABET) —
+   لكل كلمة: تقسيم مقاطعها الصوتية الحقيقي (وليس تخميناً من التهجئة) وتفريغها العربي التقريبي لكل مقطع،
+   بالإضافة إلى فهرس المقطع المنبور. يُستخدم كطبقة احتياطية واسعة التغطية عندما لا تكون الكلمة موجودة في
+   القائمة المؤلَّفة يدوياً (PHONICS_PATTERNS/PHONICS_SUFFIXES، ٦٤٥ كلمة فقط) — لضمان أن أي كلمة تقريباً
+   في التطبيق تحصل على تفريغ صوتي عربي حقيقي بدل رسالة "لا يتوفر" المزعجة. */
+function pronDictEntry(word){
+  const w=String(word).toLowerCase().replace(/[^a-z]/g,'');
+  if(!w) return null;
+  return (typeof PRON_DICT!=='undefined' && PRON_DICT[w]) ? PRON_DICT[w] : null;
+}
+/* يُرجع أفضل تفريغ صوتي عربي متاح للكلمة كاملة، بالأولوية: التفريغ المؤلَّف يدوياً (الأدق) أولاً،
+   ثم قاموس CMU الآلي الواسع (لتغطية أي كلمة أخرى تقريباً)، ثم null إن لم يوجد أي منهما. */
+function findAnyPhonetic(word){
+  const authored=findAuthoredPhonetic(word);
+  if(authored) return authored;
+  const pd=pronDictEntry(word);
+  return pd ? pd.s.join('') : null;
+}
+/* أنماط تهجئة إنجليزية شائعة يصعب توقّع نطقها على متعلّم عربي، مرتّبة من الأطول/الأكثر تحديداً للأقصر
+   لتُفحص أولاً — تُستخدم لمسح الكلمة كاملة (وليس حرفها الأول فقط) عند فتح نافذة تقسيم المقاطع، فتظهر
+   كل الأنماط الملحوظة الموجودة فعلياً داخل الكلمة، لا نمطاً واحداً فقط. */
+var SPELLING_HINTS=[
+ ['tion','tion = شِن'],['sion','sion = شِن/جِن'],['cian','cian = شِن'],['cial','cial = شَل'],
+ ['ture','ture = تشَر'],['sure','sure = جَ/شور'],['ence','ence = إنْس'],['ious','ious = يَس'],['acy','acy = أَسي'],
+ ['augh','augh = أو'],['ough','ough = أو/أف'],['igh','igh = آي'],
+ ['th','th = ث/ذ'],['sh','sh = ش'],['ch','ch = تش'],['ph','ph = ف'],['wh','wh = و/هـ'],
+ ['ng','ng = نج/ن'],['ck','ck = ك'],['qu','qu = كو'],
+ ['ai','ai = إي'],['ay','ay = إي'],['ee','ee = إي'],['ea','ea = إي'],['oo','oo = و'],
+ ['ou','ou = او'],['ow','ow = او/أو'],['oy','oy = وي'],['oi','oi = وي'],
+ ['all','all = أول'],['aw','aw = أو'],['ar','ar = آر'],['or','or = أور'],
+ ['er','er = ر'],['ir','ir = ر'],['ur','ur = ر']
+];
+function wordSpellingHints(word){
+  const w=String(word).toLowerCase().replace(/[^a-z]/g,'');
+  const found=[];
+  SPELLING_HINTS.forEach(pair=>{ if(w.includes(pair[0])) found.push({pattern:pair[0],hint:pair[1]}); });
+  return found.slice(0,4);
+}
 function wordPopup(raw){
   closePop();
   const clean=String(raw).replace(/[^A-Za-z'-]/g,'');
   if(!clean) return;
   const hit=lookup(clean);
   const cached=!hit?NET_TR_CACHE[wkey(clean)]:null;
+  const anyPh=findAnyPhonetic(clean);
   const veil=document.createElement('div'); veil.id='wveil'; veil.className='veil';
   const p=document.createElement('div'); p.id='wpop'; p.className='wpop';
   const known=isKnown(clean), rev=inReview(clean);
@@ -2494,8 +2643,10 @@ function wordPopup(raw){
     '<div class="row" style="margin-top:14px;gap:8px">'+
     '<button class="btn '+(rev?'':'gold')+'" id="wp-add" style="flex:1">'+(rev?'✓ في المراجعة':'➕ لا أعرفها')+'</button>'+
     '<button class="btn '+(known?'gold':'ghost')+'" id="wp-know" style="flex:1">'+(known?'✓ أعرفها':'أعرفها')+'</button></div>'+
+    '<button class="btn ghost wide" id="wp-pron" style="margin-top:8px">🔤 قسّم الكلمة واعرف نطقها</button>'+
     '<button class="btn ghost wide" id="wp-close" style="margin-top:8px">إغلاق</button>';
   document.body.appendChild(veil); document.body.appendChild(p);
+  { const pb=p.querySelector('#wp-pron'); if(pb) pb.onclick=()=>syllablePopup(clean, anyPh||''); }
   /* تأخير بسيط قبل تفعيل الإغلاق بالنقر على الستارة — يمنع إغلاق النافذة فوراً بسبب
      نقرة وهمية/تكرار حدث اللمس على بعض متصفحات الهاتف مباشرة بعد فتحها */
   setTimeout(()=>{ veil.onclick=closePop; },260);
@@ -2540,7 +2691,7 @@ function gramHighlightWords(ch){
 }
 function readerHTML(lines,hiSet){
   return '<div class="rdr">'+lines.map((l,i)=>
-    '<div class="rline" data-i="'+i+'">'+
+    '<div class="rline'+(l[2]==='pbreak'?' pstart':'')+'" data-i="'+i+'">'+
     '<button class="playb" data-play="'+i+'">▶</button>'+
     '<div class="rbody"><div class="rtxt">'+
       l[0].split(' ').map(w=>{
@@ -2548,9 +2699,22 @@ function readerHTML(lines,hiSet){
         const hi=hiSet&&hiSet.has(clean);
         return '<span class="w'+(hi?' gramHi':'')+'" data-word="'+esc(w)+'">'+esc(w)+'</span>';
       }).join(' ')+
-    '</div><div class="rar">'+l[1]+'</div></div></div>').join('')+'</div>'+
+    '</div>'+(l[1]?'<div class="rar">'+l[1]+'</div>':'')+'</div></div>').join('')+'</div>'+
     '<div class="rhint">اضغط ▶ لسماع الجملة · اضغط أي كلمة لمعناها وإضافتها'+
     (hiSet&&hiSet.size?' · <span class="gramHi" style="padding:1px 5px;border-radius:4px">هكذا</span> تُبرَز صيغة قاعدة هذا الفصل':'')+'</div>';
+}
+/* يقسّم نصاً طويلاً (فقرات مفصولة بسطرين فارغين) إلى جُمل مفردة لتُستخدم مع readerHTML/wireReader
+   فيصبح ممكناً تشغيلها جملة جملة مع تظليل الكلمة المنطوقة تلقائياً أثناء القراءة. */
+function splitIntoSentences(text){
+  const paras=String(text).split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
+  const out=[];
+  paras.forEach((para,pi)=>{
+    const raw=para.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/g)||[para];
+    raw.map(s=>s.trim()).filter(Boolean).forEach((s,si)=>{
+      out.push([s,'',(si===0&&pi>0)?'pbreak':'']);
+    });
+  });
+  return out.length?out:[[String(text).trim(),'','']];
 }
 
 function wireReader(host, lines, opts){
@@ -2624,7 +2788,7 @@ function initFirebase(){
 
 /* ============ الحالة ============ */
 const KEY='talkbook:a1';
-const BLANK={user:null,done:{},scores:{},cards:{},read:{},known:{},sentKnown:{},mockRecentIds:[],exam:{done:{},best:{},gram:{seen:0,right:0}},examWrong:[],freeMode:false,rate:0.85,streak:1,streakFreeze:0,freezeUsed:false,lastDay:'',xp:0,dailyXP:0,dailyXPDate:'',updated:0};
+const BLANK={user:null,done:{},scores:{},cards:{},read:{},known:{},sentKnown:{},mockRecentIds:[],bookProg:{},exam:{done:{},best:{},gram:{seen:0,right:0}},examWrong:[],freeMode:false,rate:0.85,streak:1,streakFreeze:0,freezeUsed:false,lastDay:'',xp:0,dailyXP:0,dailyXPDate:'',updated:0};
 let S=Object.assign({},BLANK);
 let STORE='device', CLOUD=null;
 
@@ -2817,6 +2981,25 @@ function stopSpeak(){
 const $=s=>document.querySelector(s);
 const app=$('#app');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* يعزل كل كلمة أو عبارة إنكليزية متداخلة داخل نص عربي بوسم <bdi> (Bi-Directional Isolate) كي تُعرض
+   دائماً من اليسار لليمين بترتيبها الصحيح، بلا انعكاس أو تشوّه في ترتيب الكلمات وعلامات الترقيم —
+   وهي مشكلة شائعة عند خلط الإنكليزية داخل فقرات عربية بلا عزل. يُطبَّق على نصوص الشرح (note) التي
+   تُدرَج كما هي بلا esc()، لذا لا حاجة لترميزها هنا أيضاً — فقط عزل الأجزاء الإنكليزية. */
+function bidiSafe(s){
+  if(!s) return s;
+  return String(s).replace(/([A-Za-z0-9][A-Za-z0-9 '".,!?()/+:_\-]*[A-Za-z0-9)"'.]|[A-Za-z0-9])/g,
+    m=>'<bdi class="en-inline">'+m+'</bdi>');
+}
+/* يحوّل نص شرح حر (note) إلى نقاط مرتّبة قابلة للمسح البصري بدل فقرة واحدة متلاحمة — "شرح ممنهج":
+   يقسّم النص عند علامات الترقيم الفاصلة الرئيسية (نقطة، فاصلة منقوطة، سطر جديد) فيعطي كل فكرة سطرها
+   الخاص. إن كان النص قصيراً (جملة واحدة) يُترك كما هو بلا تجزئة غير مفيدة. */
+function methodicalNote(note,variant){
+  if(!note) return '';
+  const cls='note-line'+(variant?' '+variant:'');
+  const parts=String(note).split(/(?<=[.؛])\s+(?=\S)/).map(p=>p.trim()).filter(Boolean);
+  if(parts.length<2) return '<div class="'+cls+'">'+bidiSafe(note)+'</div>';
+  return parts.map(p=>'<div class="'+cls+'">'+bidiSafe(p)+'</div>').join('');
+}
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 const norm=s=>String(s).toLowerCase().replace(/[^a-z' ]/g,'').replace(/\s+/g,' ').trim();
 function plate(ch){
@@ -2879,6 +3062,72 @@ function viewUnitTest(ui){
     S.unitScores[ui]=Math.max(S.unitScores[ui]||0,pct);
     addXP(15); save();
     if(firstTime) viewCertificate(ui); else viewHome();
+  },{silent:true,sections:true});
+}
+
+/* ============ اختبار تجاوز الوحدة (Placement/Bypass) ============
+   يسمح للمتعلّم الذي وصل إلى وحدة (فُتح أول فصل فيها) لكنه لم ينهِ كل فصولها بعد، أن يخوض
+   امتحاناً شاملاً واحداً (20 سؤالاً أو أكثر، يمزج اختيار متعدد وصح/خطأ وإكمال فراغ) يغطّي مادة
+   كل فصول الوحدة دفعة واحدة. النجاح (٨٠٪ فأكثر) يُكمل كل فصول الوحدة تلقائياً ويفتح الوحدة التالية،
+   بلا حاجة لإنهاء كل درس على حدة — لفائدة المتعلّم الذي يعرف المادة مسبقاً. */
+/* يحوّل سؤال صح/خطأ أو إكمال فراغ المولَّد تلقائياً إلى الشكل المسطّح q/o/a/exp الذي يفهمه محرّك examQuiz العام */
+function normalizeGenQ(q){
+  if(q.t==='tf'){
+    return {q:q.stmt,o:['صحيح — True','خطأ — False'],a:q.ans?0:1,
+      exp:(q.hint?q.hint+' ':'')+(q.ans?'':'— العبارة الصحيحة: '+q.correctStmt),t:'tf'};
+  }
+  if(q.t==='fill'){
+    return {q:q.blanked+(q.ar?'  («'+q.ar+'»)':''),o:q.o.slice(),a:q.a,exp:q.hint||'',t:'fill'};
+  }
+  return q;
+}
+/* يبني بنك أسئلة الوحدة كاملة من كل فصولها (بصرف النظر عن إنجازها)، مازجاً ٣ أنماط لتنويع الاختبار */
+function unitPlacementPool(u){
+  const out=[];
+  u.chs.forEach(ci=>{
+    const ch=BOOK[ci];
+    (ch.quiz||[]).forEach((q,qi)=>{
+      if(q.t==='mcq'&&q.q) out.push({q:q.q,o:q.o.slice(),a:q.a,exp:q.hint||'',_sec:ch.t_ar,_id:'up'+ci+'q'+qi});
+    });
+    genTrueFalse(ch,4).forEach((q,qi)=>{
+      const nq=normalizeGenQ(q);
+      out.push(Object.assign({},nq,{_sec:ch.t_ar,_id:'uptf'+ci+'_'+qi}));
+    });
+    genFillBlank(ch,3).forEach((q,qi)=>{
+      const nq=normalizeGenQ(q);
+      out.push(Object.assign({},nq,{_sec:ch.t_ar,_id:'upfb'+ci+'_'+qi}));
+    });
+  });
+  return shuffle(out);
+}
+function viewUnitPlacement(ui){
+  stopSpeak(); window.scrollTo(0,0);
+  const units=unitList(); const u=units[ui];
+  const full=unitPlacementPool(u);
+  if(full.length<12){ toast('لا توجد أسئلة كافية بعد لاختبار تجاوز هذه الوحدة.'); return viewHome(); }
+  const pool=full.slice(0,Math.min(full.length,25));
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الطريق</button></div>'+
+   '<section class="sheet" style="margin-top:20px;text-align:center">'+
+   '<div style="font-size:44px">⏩</div><h2 style="justify-content:center">اختبار تجاوز الوحدة</h2>'+
+   '<div class="en" style="color:#8FBDB6;font-size:13px;text-align:center">'+esc(u.name)+'</div>'+
+   '<div class="note" style="text-align:right;margin-top:10px">'+pool.length+' سؤالاً (اختيار متعدد + صح/خطأ + إكمال فراغ) تغطّي كل فصول هذه الوحدة دفعة واحدة. '+
+   'إن كنت تعرف هذه المادة مسبقاً، اجتز ٨٠٪ فأكثر لتُنجَز كل فصول الوحدة تلقائياً وتُفتح الوحدة التالية فوراً — بلا حاجة للمرور بكل درس على حدة.</div>'+
+   '<button class="btn gold wide" id="go" style="margin-top:14px">ابدأ الاختبار</button></section>';
+  $('#back').onclick=()=>viewHome();
+  $('#go').onclick=()=>examQuiz(pool,'اختبار تجاوز الوحدة',(pct)=>{
+    if(pct>=80){
+      u.chs.forEach(ci=>{ S.done[ci]=true; if(S.scores[ci]==null) S.scores[ci]=pct; });
+      S.unitScores=S.unitScores||{};
+      const firstTime=S.unitScores[ui]==null;
+      S.unitScores[ui]=Math.max(S.unitScores[ui]||0,pct);
+      addXP(30); save();
+      try{confetti();}catch(e){}
+      toast('🎉 اجتزت اختبار التجاوز — أُنجزت كل فصول الوحدة!');
+      if(firstTime) viewCertificate(ui); else viewHome();
+    } else {
+      toast('النتيجة '+pct+'٪ — تحتاج ٨٠٪ فأكثر لتجاوز الوحدة. راجع الفصول ثم أعد المحاولة.');
+      save(); viewHome();
+    }
   },{silent:true,sections:true});
 }
 
@@ -3014,6 +3263,13 @@ function viewHome(){
           (i===nx&&open&&!done)?'ابدأ هنا':'', 'data-ch="'+i+'"'+(open?'':' data-locked="1"'))});
     });
 
+    const placementReady=u.chs.length>=2 && uDone<u.chs.length && chapUnlocked(u.chs[0]);
+    if(placementReady){
+      rows.push({off:WAVE[step++%WAVE.length],
+        html:nodeHTML('placement','⏩','اختبار تجاوز الوحدة',null,'',
+          'data-placement="'+ui+'"')});
+    }
+
     const ck=CHESTS[ui%CHESTS.length], cat=CATS.find(x=>x.k===ck);
     if(cat){
       const openC=chestUnlocked(u);
@@ -3097,6 +3353,7 @@ function viewHome(){
       return toast('أنهِ كل دروس هذه الوحدة ليُفتح اختبارها.'); }
     viewUnitTest(+b.dataset.unittest);
   });
+  app.querySelectorAll('[data-placement]').forEach(b=>b.onclick=()=>viewUnitPlacement(+b.dataset.placement));
   $('#toLib').onclick=viewLib;
   if($('#freeT')) $('#freeT').onclick=()=>{ if(!isAdmin()){ S.freeMode=false; return; } S.freeMode=!S.freeMode; save(); viewHome(); };
 
@@ -3169,7 +3426,7 @@ function viewChapter(ci,startKey){
     return '<section class="sheet hero-step">'+plate(ch)+'<div class="caption">'+ch.cap+'</div>'+
      '<h2 style="margin:14px 0 2px;font-size:20px">'+ch.t_ar+'</h2>'+
      '<div class="en" style="color:#8FBDB6;font-size:13px">'+esc(ch.t_en)+'</div>'+
-     '<div class="note" style="margin-top:12px">في هذا الدرس: <b>'+esc(ch.gram.t)+'</b> — نطق <b>'+esc(ch.pron.t)+'</b> — '+ch.vocab.length+' مفردة جديدة — اختبار من '+ch.quiz.length+' أسئلة.</div>'+
+     '<div class="note" style="margin-top:12px">في هذا الدرس: <b>'+bidiSafe(esc(ch.gram.t))+'</b> — نطق <b>'+bidiSafe(esc(ch.pron.t))+'</b> — '+ch.vocab.length+' مفردة جديدة — اختبار من '+ch.quiz.length+' أسئلة.</div>'+
      (S.done[ci]?'<div class="note" style="margin-top:8px;background:#DCF0E7;color:#1B5B4F;border-color:var(--leaf)">✓ أنهيت هذا الدرس بدرجة '+(S.scores[ci]||0)+'٪ — يمكنك مراجعته أو إعادة اختباره.</div>':'')+
      '<button class="btn gold wide" id="heroStart" style="margin-top:14px">'+(S.done[ci]?'راجع الدرس ›':'ابدأ الدرس ›')+'</button>'+
      '<div class="row" style="margin-top:14px;gap:8px">'+
@@ -3203,10 +3460,15 @@ function viewChapter(ci,startKey){
       '<span class="tz'+(zone==='present'||zone==='all'?' on':'')+'">الحاضر<br><span class="en" style="font-size:10px">Present</span></span>'+
       '<span class="tz'+(zone==='future'||zone==='all'?' on':'')+'">المستقبل<br><span class="en" style="font-size:10px">Future</span></span>'+
       '</div></div>'):'';
-    return '<section class="sheet"><h2><i style="background:#5B7FB9;color:#0E1E33">📐</i> القاعدة — '+ch.gram.t+'</h2>'+
-    '<div class="note">'+ch.gram.note+'</div>'+
+    return '<section class="sheet"><h2><i style="background:#5B7FB9;color:#0E1E33">📐</i> القاعدة — '+bidiSafe(ch.gram.t)+'</h2>'+
+    '<div class="sect-lbl">📖 الشرح</div>'+
+    methodicalNote(ch.gram.note)+
     tlineHTML+
-    '<div class="rhint" style="margin:8px 0">اضغط كل بطاقة لقلبها ومعرفة معناها</div>'+
+    '<div class="sect-lbl">✏️ أمثلة من الدرس</div>'+
+    '<div class="ex-list">'+
+    ch.gram.rows.map(r=>'<div class="ex-item"><bdi class="ex-en">'+esc(r[0])+'</bdi><span class="ex-ar">'+r[1]+'</span></div>').join('')+
+    '</div>'+
+    '<div class="sect-lbl">🔁 راجعها ببطاقات القلب — اضغط كل بطاقة لاختبار نفسك</div>'+
     '<div class="vocab flip">'+
     ch.gram.rows.map((r,ri)=>'<button class="vc-card" data-gi="'+ri+'"><span class="vc-in">'+
       '<span class="vc-f"><span class="e" style="font-size:13.5px">'+esc(r[0])+'</span><span class="tap">اضغط للمعنى</span></span>'+
@@ -3215,8 +3477,10 @@ function viewChapter(ci,startKey){
     '<button class="btn '+(done?'gold':'ghost')+' wide" id="gramOk" style="margin-top:14px">'+(done?'✓ فهمت القاعدة':'فهمت القاعدة ✓')+'</button></section>';
   }
   function bodyPron(){
-    return '<section class="sheet"><h2><i style="background:#2F8F8A;color:#EAF7F2">🗣️</i> النطق — '+ch.pron.t+'</h2>'+
-    '<div class="note">'+ch.pron.note+'</div><div style="margin-top:12px">'+
+    return '<section class="sheet"><h2><i style="background:#2F8F8A;color:#EAF7F2">🗣️</i> النطق — '+bidiSafe(ch.pron.t)+'</h2>'+
+    '<div class="sect-lbl">📖 الشرح</div>'+
+    methodicalNote(ch.pron.note)+
+    '<div class="sect-lbl" style="margin-top:14px">🔊 كلمات للتدريب</div><div>'+
     ch.pron.groups.map(g=>'<div class="pg"><div class="lab">'+esc(g[0])+'</div><div class="chips">'+
       g[1].map(w=>'<button class="wchip" data-word="'+esc(w)+'">'+esc(w)+'</button>').join('')+'</div></div>').join('')+
     '<div class="rhint">اضغط أي كلمة: تُنطق ويظهر معناها ويمكنك إضافتها إلى قاموسك</div>'+
@@ -3909,6 +4173,31 @@ function viewAccount(){
 }
 
 /* ============ لوحة الإدارة (تظهر فقط لبريد مدرج في ADMIN_EMAILS) ============ */
+/* يحلّل قائمة من كائنات qStatus (لطالب واحد أو مجمّعة من عدة طلاب) ليستخرج أضعف فصول القصة تحديداً
+   بالاسم — بالاعتماد على أن معرّفات أسئلة الفصول (ch/ut/il) تحمل رقم الفصل مباشرة داخل الـ_id،
+   بخلاف classOverview القديمة التي كانت تجمّع فقط حسب نوع القسم العام (قواعد/وظائف/...) بلا تحديد
+   الفصل بالاسم. minAttempts يستبعد الفصول التي لم تُجب عليها محاولات كافية بعد لتفادي نتائج مضلّلة. */
+function aggChapterWeakness(qStatusList, minAttempts){
+  minAttempts = minAttempts==null ? 3 : minAttempts;
+  const byChapter={};
+  (qStatusList||[]).forEach(qs=>{
+    Object.entries(qs||{}).forEach(([id,st])=>{
+      const m=/^(ch|ut|il)(\d+)q\d+$/.exec(id);
+      if(!m) return;
+      const ci=+m[2];
+      byChapter[ci]=byChapter[ci]||{wrong:0,total:0};
+      byChapter[ci].total++;
+      if(st==='wrong') byChapter[ci].wrong++;
+    });
+  });
+  return Object.entries(byChapter)
+    .filter(([ci,v])=>v.total>=minAttempts)
+    .map(([ci,v])=>{
+      const c=BOOK[+ci];
+      return { ci:+ci, title:c?c.t_ar:('فصل #'+ci), unit:c?(c.unit||''):'', wrong:v.wrong, total:v.total, rate:Math.round(v.wrong/v.total*100) };
+    })
+    .sort((a,b)=>b.rate-a.rate || b.wrong-a.wrong);
+}
 function viewAdmin(){
   stopSpeak(); paintDots(-1); setNav('more'); window.scrollTo(0,0);
   if(!isAdmin()){ app.innerHTML='<div style="padding-top:40px" class="note">🚫 هذه الصفحة للمشرف فقط.</div>'; return; }
@@ -4001,6 +4290,8 @@ function viewAdmin(){
     });
     const secLabel={ch:'فصول القصة',g:'القواعد',f:'الوظائف اللغوية',dl:'المحادثات',i:'التعابير الاصطلاحية',d:'أساليب مباشرة',p:'الفهم المقروء'};
     const secRates=Object.keys(secTotal).filter(k=>secTotal[k]>=5).map(k=>({k,rate:Math.round((secMiss[k]||0)/secTotal[k]*100)})).sort((a,b)=>b.rate-a.rate).slice(0,3);
+    /* أضعف الفصول تحديداً بالاسم (وليس فقط القسم العام) عبر كل طلاب الصف مجتمعين — أساس اقتراح الواجب التلقائي */
+    const classWeak=aggChapterWeakness(users.map(u=>u.qStatus), 5).slice(0,5);
     return '<section class="sheet" style="margin-bottom:14px"><h2 style="font-size:15px"><i>📊</i> نظرة عامة على الصف</h2>'+
       '<div class="stats" style="margin-top:8px">'+
       '<div class="stat"><div class="n">'+users.length+'</div><div class="l">طالب مسجّل</div></div>'+
@@ -4009,6 +4300,10 @@ function viewAdmin(){
       '<div class="stat"><div class="n">'+(avgMock!=null?avgMock+'٪':'—')+'</div><div class="l">متوسط أفضل تجريبي</div></div></div>'+
       (secRates.length?('<div class="note" style="margin-top:10px"><b>أضعف الأقسام على مستوى الصف:</b><br>'+
         secRates.map(r=>esc(secLabel[r.k]||r.k)+' — نسبة الخطأ '+r.rate+'٪').join('<br>')+'</div>'):'')+
+      (classWeak.length?('<div class="note" style="margin-top:10px"><b>🎯 أضعف فصول القصة تحديداً على مستوى الصف:</b><br>'+
+        classWeak.map(w=>esc(w.title)+' <span style="color:var(--muted);font-size:11px">('+esc(w.unit)+')</span> — نسبة الخطأ '+w.rate+'٪ ('+w.wrong+'/'+w.total+')').join('<br>')+
+        '</div><button class="btn sm gold" id="suggestHwBtn" style="margin-top:10px">🎯 اقترح واجباً لأضعف فصلين تلقائياً</button>'+
+        '<div id="suggestHwResult"></div>'):'')+
       '</section>';
   }
   function drawList(users){
@@ -4034,6 +4329,25 @@ function viewAdmin(){
       const data=users.map(u=>{ const s=userSummary(u); return [u.name||'',u.email||'',fmtDT(u.lastSeen),s.streak,s.acc!=null?s.acc:'',s.total,s.bestMock!=null?s.bestMock:'']; });
       downloadCSV('سامي-ملخص-المستخدمين-'+todayStr()+'.csv',hdr,data);
     };
+    /* اقتراح واجب تلقائي: يأخذ أضعف فصلين على مستوى الصف (محسوبة في classOverview) وينشرهما مباشرة
+       كواجب جديد بموعد أسبوع من الآن، مع ملاحظة توضّح أنه مقترح تلقائياً ونسبة الخطأ التي استند إليها. */
+    if($('#suggestHwBtn')) $('#suggestHwBtn').onclick=()=>{
+      const weak=aggChapterWeakness(users.map(u=>u.qStatus), 5).slice(0,2);
+      if(!weak.length){ toast('لا توجد بيانات كافية بعد لاقتراح واجب.'); return; }
+      const names=weak.map(w=>w.title+' ('+w.rate+'٪ خطأ)').join(' و ');
+      if(!confirm('سيُنشر واجب لكل من: '+names+'\nهل تريد المتابعة؟')) return;
+      const dueTs=Date.now()+7*864e5;
+      let remaining=weak.length, failed=0;
+      weak.forEach(w=>{
+        postHomework({ type:'chapter', ci:w.ci, due:dueTs, note:'🎯 مقترح تلقائياً — أضعف فصل هذا الأسبوع (نسبة الخطأ '+w.rate+'٪ على مستوى الصف)' }, (ok)=>{
+          remaining--; if(!ok) failed++;
+          if(remaining===0){
+            toast(failed?('⚠ نُشر جزء من الواجبات، تعذّر نشر '+failed+'.'):'✅ تم نشر الواجبات المقترحة.');
+            drawHwAdmin();
+          }
+        });
+      });
+    };
     app.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>{
       const u=users.find(x=>x.uid===el.dataset.uid);
       if(u) drawDetail(u);
@@ -4041,6 +4355,8 @@ function viewAdmin(){
   }
   function drawDetail(u){
     const s=userSummary(u);
+    /* أضعف فصول هذا الطالب تحديداً — لمعرفة أين يحتاج مساعدة فردية بدل الاكتفاء بالدقة العامة فقط */
+    const weak=aggChapterWeakness([u.qStatus], 2).slice(0,5);
     $('#adminBody').innerHTML='<button class="btn sm" id="backList">‹ كل المستخدمين</button>'+
       '<h2 style="font-size:17px;margin-top:10px">'+esc(u.name||'بلا اسم')+'</h2>'+
       '<div class="en" style="font-size:13px;color:var(--muted)">'+esc(u.email||'')+'</div>'+
@@ -4050,9 +4366,19 @@ function viewAdmin(){
       '<div class="stat"><div class="n">'+(s.bestMock!=null?s.bestMock+'٪':'—')+'</div><div class="l">أفضل تجريبي</div></div>'+
       '<div class="stat"><div class="n">'+s.cardsN+'</div><div class="l">كلمات في قاموسه</div></div>'+
       '</div>'+
+      (weak.length?('<div class="note" style="margin-top:12px"><b>🎯 أضعف فصول هذا الطالب تحديداً:</b><br>'+
+        weak.map(w=>esc(w.title)+' <span style="color:var(--muted);font-size:11px">('+esc(w.unit)+')</span> — نسبة الخطأ '+w.rate+'٪ ('+w.wrong+'/'+w.total+')').join('<br>')+
+        '</div><button class="btn sm gold" id="suggestHwOneBtn" style="margin-top:8px">🎯 اقترح واجباً لهذا الطالب</button>'):'')+
       '<button class="btn ghost sm" id="expAtt" style="margin-top:12px">📊 تصدير محاولات هذا المستخدم (CSV)</button>'+
       '<div id="attList" style="margin-top:12px"><div class="note">جارٍ تحميل سجل المحاولات…</div></div>';
     $('#backList').onclick=()=>viewAdmin();
+    if($('#suggestHwOneBtn')) $('#suggestHwOneBtn').onclick=()=>{
+      const top=weak[0];
+      if(!confirm('نشر واجب فصل «'+top.title+'» (نسبة خطأ '+top.rate+'٪ لدى هذا الطالب)؟')) return;
+      postHomework({ type:'chapter', ci:top.ci, due:Date.now()+7*864e5, note:'🎯 مقترح تلقائياً لـ'+(u.name||u.email||'الطالب')+' — نسبة خطأه في هذا الفصل '+top.rate+'٪' }, (ok)=>{
+        toast(ok?'✅ تم نشر الواجب.':'⚠ تعذّر النشر.');
+      });
+    };
     fbDB.collection('users').doc(u.uid).collection('attempts').orderBy('at','desc').limit(300).get().then(snap=>{
       const atts=[]; snap.forEach(d=>atts.push(d.data()));
       $('#attList').innerHTML=atts.length?('<h2 style="font-size:15px">📋 سجل المحاولات ('+atts.length+')</h2>'+
@@ -4398,7 +4724,10 @@ function smartPool(n){
   const chQs=[];
   BOOK.forEach((c,ci)=>{
     if(ci>upTo||c.reserveReview) return;
-    (c.quiz||[]).forEach((q,qi)=>chQs.push(Object.assign({},q,{_id:'ch'+ci+'q'+qi})));
+    (c.quiz||[]).forEach((q,qi)=>{
+      const nq=normalizeChapterQ(q);
+      if(nq) chQs.push(Object.assign(nq,{_id:'ch'+ci+'q'+qi}));
+    });
   });
   const missQs=Object.keys(S.qMiss).sort((a,b)=>S.qMiss[b]-S.qMiss[a]).map(findQuestionById).filter(Boolean);
   const unseen=chQs.filter(q=>!S.qStatus[q._id]);
@@ -4433,28 +4762,140 @@ function viewSmartPractice(){
 }
 
 /* ============ مرادفات: كلمات قريبة أو متطابقة في المعنى ============ */
+function synMatchesLearned(g,learned){ return learned.has(wkey(g[0]))||learned.has(wkey(g[1])); }
+function antMatchesLearned(g,learned){ return learned.has(wkey(g[0]))||learned.has(wkey(g[2])); }
 function viewSynonyms(){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
-  const list=(typeof SYNONYMS_A1!=='undefined'?SYNONYMS_A1:[]);
-  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
-   '<section class="sheet"><h2><i>🔗</i> مرادفات</h2>'+
-   '<div class="note">كلمتان قريبتان أو متطابقتان في المعنى — تعلّمهما معاً يوسّع مفرداتك بسرعة.</div>'+
-   '<button class="btn gold wide" id="startQuiz" style="margin-top:12px">🎯 اختبار المرادفات</button>'+
-   '<div style="display:grid;gap:8px;margin-top:14px">'+
-   list.map((g,i)=>'<div class="note" style="text-align:left">'+
-     '<div class="row" style="justify-content:space-between;align-items:center">'+
-     '<span class="en" style="font-weight:700;font-size:16px;direction:ltr">'+esc(g[0])+' = '+esc(g[1])+'</span>'+
-     '<button class="icobtn" data-say="'+i+'">🔊</button></div>'+
-     '<div style="direction:rtl;text-align:right;color:var(--muted);margin-top:4px;font-family:var(--ar)">'+esc(g[2])+'</div></div>').join('')+
-   '</div></section>';
-  $('#back').onclick=viewPractice;
-  $('#startQuiz').onclick=()=>synonymQuizStart();
-  app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{ const g=list[+b.dataset.say]; speak(g[0]+', '+g[1],{rate:0.75}); });
+  const all=(typeof SYNONYMS_A1!=='undefined'?SYNONYMS_A1:[]);
+  const learned=learnedWordSet();
+  const mineIdx=all.map((g,i)=>i).filter(i=>synMatchesLearned(all[i],learned));
+  let tab=mineIdx.length?'mine':'all';
+  function draw(){
+    const idxs=tab==='mine'?mineIdx:all.map((_,i)=>i);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet"><h2><i>🔗</i> مرادفات</h2>'+
+     '<div class="note">كلمتان قريبتان أو متطابقتان في المعنى — تعلّمهما معاً يوسّع مفرداتك بسرعة. تظهر هنا تلقائياً الكلمات المرتبطة بدروسك المكتملة، كتبك، مقالاتك، وقاموسك.</div>'+
+     '<div class="segs" style="margin-top:10px"><button class="seg'+(tab==='mine'?' on':'')+'" data-tab="mine">📘 كلماتي ('+mineIdx.length+')</button>'+
+     '<button class="seg'+(tab==='all'?' on':'')+'" data-tab="all">الكل ('+all.length+')</button></div>'+
+     (tab==='mine'&&!mineIdx.length?'<div class="empty" style="margin-top:10px">لا توجد مرادفات من كلماتك بعد — أكمل درساً، أو أضِف كلمة لقاموسك، أو أنهِ مقالة، وستظهر هنا تلقائياً.</div>':'')+
+     '<div class="row" style="gap:8px;margin-top:12px"><button class="btn gold wide" id="startQuiz" style="flex:1">🎯 اختبار المرادفات</button>'+
+     '<button class="btn ghost sm" id="antLink" style="flex:0 0 auto">🔀 الأضداد</button></div>'+
+     '<div style="display:grid;gap:8px;margin-top:14px">'+
+     idxs.map(i=>{ const g=all[i], mine=mineIdx.includes(i);
+       return '<div class="note" style="text-align:left">'+
+       '<div class="row" style="justify-content:space-between;align-items:center">'+
+       '<span class="en" style="font-weight:700;font-size:16px;direction:ltr">'+esc(g[0])+' = '+esc(g[1])+
+       (mine?' <span style="font-size:10px;background:#2F8F8A;color:#fff;padding:1px 6px;border-radius:99px;vertical-align:middle">📘 من كلماتك</span>':'')+'</span>'+
+       '<span style="display:flex;gap:6px"><button class="icobtn" data-say="'+i+'">🔊</button>'+
+       '<button class="icobtn p" data-add="'+i+'" title="أضف إلى المراجعة">➕</button></span></div>'+
+       '<div style="direction:rtl;text-align:right;color:var(--muted);margin-top:4px;font-family:var(--ar)">'+esc(g[2])+'</div></div>';
+     }).join('')+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    $('#startQuiz').onclick=()=>synonymQuizStart(tab==='mine'?mineIdx:null);
+    $('#antLink').onclick=()=>viewAntonyms();
+    app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; draw(); });
+    app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{ const g=all[+b.dataset.say]; speak(g[0]+', '+g[1],{rate:0.75}); });
+    app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ const g=all[+b.dataset.add];
+      addCard(g[0],g[2],-1); addCard(g[1],g[2],-1); toast('أُضيفت «'+g[0]+'» و«'+g[1]+'» إلى قاموس المراجعة'); });
+  }
+  draw();
 }
-function synonymQuizStart(){
+/* ============ أضداد ============ */
+function viewAntonyms(){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const all=(typeof ANTONYMS_A1!=='undefined'?ANTONYMS_A1:[]);
+  const learned=learnedWordSet();
+  const mineIdx=all.map((g,i)=>i).filter(i=>antMatchesLearned(all[i],learned));
+  let tab=mineIdx.length?'mine':'all';
+  function draw(){
+    const idxs=tab==='mine'?mineIdx:all.map((_,i)=>i);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet"><h2><i>🔀</i> أضداد</h2>'+
+     '<div class="note">كلمتان بمعنى متعاكس تماماً — معرفة الضد تُثبّت الكلمتين معاً في ذاكرتك. تظهر هنا تلقائياً الكلمات المرتبطة بدروسك المكتملة، كتبك، مقالاتك، وقاموسك.</div>'+
+     '<div class="segs" style="margin-top:10px"><button class="seg'+(tab==='mine'?' on':'')+'" data-tab="mine">📘 كلماتي ('+mineIdx.length+')</button>'+
+     '<button class="seg'+(tab==='all'?' on':'')+'" data-tab="all">الكل ('+all.length+')</button></div>'+
+     (tab==='mine'&&!mineIdx.length?'<div class="empty" style="margin-top:10px">لا توجد أضداد من كلماتك بعد — أكمل درساً، أو أضِف كلمة لقاموسك، أو أنهِ مقالة، وستظهر هنا تلقائياً.</div>':'')+
+     '<div class="row" style="gap:8px;margin-top:12px"><button class="btn gold wide" id="startQuiz" style="flex:1">🎯 اختبار الأضداد</button>'+
+     '<button class="btn ghost sm" id="synLink" style="flex:0 0 auto">🔗 المرادفات</button></div>'+
+     '<div style="display:grid;gap:8px;margin-top:14px">'+
+     idxs.map(i=>{ const g=all[i], mine=mineIdx.includes(i);
+       return '<div class="note" style="text-align:left">'+
+       '<div class="row" style="justify-content:space-between;align-items:center">'+
+       '<span class="en" style="font-weight:700;font-size:16px;direction:ltr">'+esc(g[0])+' <span style="color:var(--muted);font-weight:400">↔</span> '+esc(g[2])+
+       (mine?' <span style="font-size:10px;background:#2F8F8A;color:#fff;padding:1px 6px;border-radius:99px;vertical-align:middle">📘 من كلماتك</span>':'')+'</span>'+
+       '<span style="display:flex;gap:6px"><button class="icobtn" data-say="'+i+'">🔊</button>'+
+       '<button class="icobtn p" data-add="'+i+'" title="أضف إلى المراجعة">➕</button></span></div>'+
+       '<div style="direction:rtl;text-align:right;color:var(--muted);margin-top:4px;font-family:var(--ar)">'+esc(g[1])+' ↔ '+esc(g[3])+'</div></div>';
+     }).join('')+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    $('#startQuiz').onclick=()=>antonymQuizStart(tab==='mine'?mineIdx:null);
+    $('#synLink').onclick=()=>viewSynonyms();
+    app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; draw(); });
+    app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{ const g=all[+b.dataset.say]; speak(g[0]+', '+g[2],{rate:0.75}); });
+    app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ const g=all[+b.dataset.add];
+      addCard(g[0],g[1],-1); addCard(g[2],g[3],-1); toast('أُضيفت «'+g[0]+'» و«'+g[2]+'» إلى قاموس المراجعة'); });
+  }
+  draw();
+}
+function antonymQuizStart(idxsFilter){
+  const base=(typeof ANTONYMS_A1!=='undefined'?ANTONYMS_A1:[]);
+  if(base.length<4){ toast('لا توجد أضداد كافية بعد.'); return viewAntonyms(); }
+  let askPool=(idxsFilter&&idxsFilter.length>=4)?idxsFilter.map(i=>base[i]):base.slice();
+  if(idxsFilter&&idxsFilter.length&&idxsFilter.length<4) toast('كلماتك المرتبطة بالأضداد قليلة حتى الآن — نكمل بالقائمة الكاملة.');
+  const list=shuffle(askPool);
+  const rounds=list.slice(0,12);
+  let idx=0, score=0;
+  function draw(){
+    if(idx>=rounds.length) return finish();
+    const g=rounds[idx];
+    const askFirst=Math.random()<0.5;
+    const ask=askFirst?g[0]:g[2], correct=askFirst?g[2]:g[0];
+    const distractors=shuffle(base.filter(x=>x!==g).map(x=>Math.random()<0.5?x[0]:x[2]).filter(w=>w!==ask&&w!==correct))
+      .filter((w,i2,arr)=>arr.indexOf(w)===i2).slice(0,3);
+    const opts=shuffle([correct,...distractors]);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خروج</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(idx+1)+'/'+rounds.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(idx/rounds.length*100)+'%"></i></span></div>'+
+     '<div class="qhint" style="text-align:center">ما ضد كلمة</div>'+
+     '<div class="bigword">'+esc(ask)+'</div>'+
+     '<div style="display:grid;gap:8px;margin-top:14px">'+
+     opts.map((o,i2)=>'<button class="btn wide" data-o="'+i2+'">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    setTimeout(()=>speak(ask,{rate:0.75}),200);
+    app.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{
+      const picked=opts[+b.dataset.o]; const ok=picked===correct;
+      if(ok){ score++; addXP(3); }
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✓ صحيح!':'الصحيح: <b>'+esc(correct)+'</b>'; s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn gold wide'; nb.style.marginTop='12px';
+      nb.textContent='التالي ›'; nb.onclick=()=>{ idx++; draw(); }; s.appendChild(nb);
+      app.querySelectorAll('[data-o]').forEach(x=>{x.disabled=true;});
+    });
+  }
+  function finish(){
+    addXP(10);
+    const pct=Math.round(score/rounds.length*100);
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+score+' من '+rounds.length+'</div></div>'+
+      '<div class="row" style="margin-top:14px;gap:8px">'+
+      '<button class="btn gold" id="again" style="flex:1">أعد</button>'+
+      '<button class="btn" id="b" style="flex:1">تم</button></div></section>';
+    $('#again').onclick=()=>antonymQuizStart(idxsFilter);
+    $('#b').onclick=viewAntonyms;
+  }
+  draw();
+}
+function synonymQuizStart(idxsFilter){
   const base=(typeof SYNONYMS_A1!=='undefined'?SYNONYMS_A1:[]);
-  const list=shuffle(base.slice());
-  if(list.length<4){ toast('لا توجد مرادفات كافية بعد.'); return viewSynonyms(); }
+  if(base.length<4){ toast('لا توجد مرادفات كافية بعد.'); return viewSynonyms(); }
+  let askPool=(idxsFilter&&idxsFilter.length>=4)?idxsFilter.map(i=>base[i]):base.slice();
+  if(idxsFilter&&idxsFilter.length&&idxsFilter.length<4) toast('كلماتك المرتبطة بالمرادفات قليلة حتى الآن — نكمل بالقائمة الكاملة.');
+  const list=shuffle(askPool);
   const rounds=list.slice(0,12);
   let idx=0, score=0;
   function draw(){
@@ -4495,49 +4936,81 @@ function synonymQuizStart(){
       '<div class="row" style="margin-top:14px;gap:8px">'+
       '<button class="btn gold" id="again" style="flex:1">أعد</button>'+
       '<button class="btn" id="b" style="flex:1">تم</button></div></section>';
-    $('#again').onclick=()=>synonymQuizStart();
+    $('#again').onclick=()=>synonymQuizStart(idxsFilter);
     $('#b').onclick=viewSynonyms;
   }
   draw();
 }
 
 /* ============ مكتبة القراءة الإضافية ============ */
-function viewReadingList(){
+function viewReadingList(initialTab){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
   const lib=(typeof READING_LIB!=='undefined'?READING_LIB:[]);
-  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
-   '<section class="sheet"><h2><i>📖</i> قراءة إضافية</h2>'+
-   '<div class="note">فقرات قصيرة بمواضيع متنوّعة من الحياة اليومية — اقرأ الفقرة ثم أجب عن أسئلة الفهم. المستوى موضّح على كل بطاقة.</div>'+
-   '<div style="display:grid;gap:8px;margin-top:14px">'+
-   (lib.length?lib.map((r,i)=>{
-     const done=S.reading&&S.reading[i];
-     return '<div class="ul-item" data-i="'+i+'" style="cursor:pointer">'+
-       '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'+
-       '<div style="display:flex;align-items:center;gap:10px;min-width:0">'+
-       '<span class="icobtn" style="background:'+(r.level==='A1'?'var(--saffron)':'var(--plum)')+';color:#fff;flex:0 0 auto">'+esc(r.icon)+'</span>'+
-       '<div style="min-width:0"><div class="en" style="font-weight:700;font-size:14.5px">'+esc(r.t_en)+(r.long?' <span style="font-size:10px;background:#8C6A1E;color:#FFF0CD;padding:2px 6px;border-radius:99px;vertical-align:middle">📗 طويلة</span>':'')+'</div>'+
-       '<div style="font-size:12px;color:var(--muted)">'+esc(r.t_ar)+'</div></div></div>'+
-       '<div style="text-align:end;font-size:11px;flex:0 0 auto"><div class="lv">'+r.level+'</div>'+(done?'<div style="color:var(--leaf);margin-top:2px">✓ أُنجزت</div>':'')+'</div>'+
-       '</div></div>';
-   }).join(''):'<div class="empty">لا توجد فقرات بعد.</div>')+
-   '</div></section>';
-  $('#back').onclick=viewPractice;
-  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>viewReadingPassage(+b.dataset.i));
+  const books=(typeof BOOKS_LONG!=='undefined'?BOOKS_LONG:[]);
+  let tab=initialTab==='long'?'long':'short';
+  function draw(){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet"><h2><i>📖</i> مقالات</h2>'+
+     '<div class="note">فقرات قصيرة بمواضيع متنوّعة من الحياة اليومية، وقصص طويلة كاملة بعدة صفحات مع اختبار مرحلة كل ٢-٣ صفحات — اقرأ ثم أجب عن أسئلة الفهم. المستوى موضّح على كل بطاقة.</div>'+
+     '<div class="segs" style="margin-top:10px"><button class="seg'+(tab==='short'?' on':'')+'" data-tab="short">📄 مقالات قصيرة ('+lib.length+')</button>'+
+     '<button class="seg'+(tab==='long'?' on':'')+'" data-tab="long">📚 كتب طويلة ('+books.length+')</button></div>'+
+     '<div style="display:grid;gap:8px;margin-top:14px">'+
+     (tab==='short'?
+       (lib.length?lib.map((r,i)=>{
+         const done=S.reading&&S.reading[i];
+         return '<div class="ul-item" data-i="'+i+'" style="cursor:pointer">'+
+           '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'+
+           '<div style="display:flex;align-items:center;gap:10px;min-width:0">'+
+           '<span class="icobtn" style="background:'+(r.level==='A1'?'var(--saffron)':'var(--plum)')+';color:#fff;flex:0 0 auto">'+esc(r.icon)+'</span>'+
+           '<div style="min-width:0"><div class="en" style="font-weight:700;font-size:14.5px">'+esc(r.t_en)+(r.long?' <span style="font-size:10px;background:#8C6A1E;color:#FFF0CD;padding:2px 6px;border-radius:99px;vertical-align:middle">📗 طويلة</span>':'')+'</div>'+
+           '<div style="font-size:12px;color:var(--muted)">'+esc(r.t_ar)+'</div></div></div>'+
+           '<div style="text-align:end;font-size:11px;flex:0 0 auto"><div class="lv">'+r.level+'</div>'+(done?'<div style="color:var(--leaf);margin-top:2px">✓ أُنجزت</div>':'')+'</div>'+
+           '</div></div>';
+       }).join(''):'<div class="empty">لا توجد فقرات بعد.</div>')
+     :
+       (books.length?books.map((b,i)=>{
+         const p=bookProgress(b.id);
+         const doneCk=Object.keys(p.done).length, totalCk=b.checkpoints.length;
+         const pagesRead=Math.min(p.unlocked-1,b.pages.length);
+         const pctPages=Math.round(pagesRead/b.pages.length*100);
+         return '<div class="ul-item" data-book="'+i+'" style="display:block;cursor:pointer">'+
+           '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'+
+           '<div style="display:flex;align-items:center;gap:10px;min-width:0">'+
+           '<span class="icobtn" style="background:var(--plum);color:#fff;flex:0 0 auto">'+esc(b.icon)+'</span>'+
+           '<div style="min-width:0"><div class="en" style="font-weight:700;font-size:14.5px">'+esc(b.t_en)+'</div>'+
+           '<div style="font-size:12px;color:var(--muted)">'+esc(b.t_ar)+'</div></div></div>'+
+           '<div style="text-align:end;font-size:11px;flex:0 0 auto"><div class="lv">'+b.level+'</div></div></div>'+
+           '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+b.pages.length+' صفحة · '+totalCk+' اختبار مرحلة · أُنجز '+doneCk+'/'+totalCk+' ('+pctPages+'٪ من القراءة)</div>'+
+           '</div>';
+       }).join(''):'<div class="empty">لا توجد كتب بعد.</div>')
+     )+
+     '</div></section>';
+    $('#back').onclick=viewPractice;
+    app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; draw(); });
+    if(tab==='short') app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>viewReadingPassage(+b.dataset.i));
+    else app.querySelectorAll('[data-book]').forEach(bt=>bt.onclick=()=>{
+      const bk=books[+bt.dataset.book]; const p=bookProgress(bk.id);
+      viewBookPage(+bt.dataset.book, Math.min(p.unlocked-1,bk.pages.length-1));
+    });
+  }
+  draw();
 }
 function viewReadingPassage(i){
   stopSpeak(); window.scrollTo(0,0);
   const lib=(typeof READING_LIB!=='undefined'?READING_LIB:[]);
   const r=lib[i]; if(!r) return viewReadingList();
+  const sents=splitIntoSentences(r.text);
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ القراءة</button></div>'+
    '<section class="sheet"><h2><i>'+esc(r.icon)+'</i> '+esc(r.t_en)+'</h2>'+
    '<div style="font-size:12.5px;color:var(--muted);margin-top:-6px;margin-bottom:10px">'+esc(r.t_ar)+' · <span class="qtype" style="padding:2px 8px">'+r.level+'</span>'+(r.long?' · <span class="qtype" style="padding:2px 8px;background:#FFF0CD;color:#8C6A1E">📗 قصة طويلة</span>':'')+'</div>'+
-   '<button class="btn sm" id="playAll">🔊 استمع للفقرة كاملة</button>'+
-   '<div class="qtext en" style="text-align:left;line-height:1.9;font-size:15.5px;font-weight:400;margin-top:12px">'+esc(r.text)+'</div>'+
-   '<div class="rhint" style="margin-top:8px">اضغط أي كلمة إنكليزية لمعرفة معناها</div>'+
+   '<div class="row" style="gap:8px"><button class="btn gold sm" id="playAll" style="flex:1">🔊 استمع بتظليل الكلمات</button><button class="btn ghost sm" id="stopAll" style="flex:1">⏹ إيقاف</button></div>'+
+   '<div id="lines" style="margin-top:10px">'+readerHTML(sents)+'</div>'+
    '<button class="btn gold wide" id="startQ" style="margin-top:16px">ابدأ أسئلة الفهم ('+r.q.length+')</button>'+
    '</section>';
   $('#back').onclick=viewReadingList;
-  $('#playAll').onclick=()=>speak(r.text,{rate:Math.min(S.rate||0.85,0.85)});
+  const R=wireReader($('#lines'),sents);
+  $('#playAll').onclick=R.playAll;
+  $('#stopAll').onclick=R.stop;
   $('#startQ').onclick=()=>readingQuizStart(i);
 }
 function readingQuizStart(i){
@@ -4586,14 +5059,136 @@ function readingQuizStart(i){
   render();
 }
 
+/* ============ الكتب الطويلة — قصص كاملة بعدة صفحات مع اختبار مرحلة كل ٢-٣ صفحات ============ */
+/* تقدّم القارئ في كتاب معيّن: unlocked = عدد الصفحات المفتوحة (١-فهرسة)، done = مراحل أُنجزت، scores = نتائجها */
+function bookProgress(id){
+  S.bookProg=S.bookProg||{};
+  if(!S.bookProg[id]) S.bookProg[id]={unlocked:1,done:{},scores:{}};
+  return S.bookProg[id];
+}
+/* غلاف متوافق مع الاستدعاءات القديمة — الكتب الطويلة الآن تبويب داخل صفحة المقالات نفسها */
+function viewBooksList(){ return viewReadingList('long'); }
+function viewBookPage(bi,pi){
+  stopSpeak(); window.scrollTo(0,0);
+  const lib=(typeof BOOKS_LONG!=='undefined'?BOOKS_LONG:[]);
+  const b=lib[bi]; if(!b) return viewBooksList();
+  const p=bookProgress(b.id);
+  if(pi>p.unlocked-1) pi=p.unlocked-1;
+  if(pi<0) pi=0;
+  const sents=splitIntoSentences(b.pages[pi]);
+  const pageNum=pi+1, total=b.pages.length;
+  const cpHere=b.checkpoints.find(c=>c.afterPage===pageNum);
+  const cpIdx=cpHere?b.checkpoints.indexOf(cpHere):-1;
+  const cpDone=cpIdx>=0 && p.done[cpIdx];
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ '+esc(b.t_ar)+'</button></div>'+
+   '<section class="sheet"><div class="qhead"><span class="qcount">صفحة '+pageNum+'/'+total+'</span>'+
+   '<span class="pbar"><i style="width:'+Math.round(pi/total*100)+'%"></i></span></div>'+
+   '<div class="row" style="gap:8px;margin-top:6px"><button class="btn gold sm" id="playAll" style="flex:1">🔊 استمع بتظليل الكلمات</button><button class="btn ghost sm" id="stopAll" style="flex:1">⏹ إيقاف</button></div>'+
+   '<div id="lines" style="margin-top:10px">'+readerHTML(sents)+'</div>'+
+   (pi===0?'<button class="btn ghost wide" id="addVocab" style="margin-top:10px">➕ أضف كل مفردات الكتاب ('+b.vocab.length+') إلى المراجعة</button>':'')+
+   '<div class="row" style="margin-top:16px;gap:8px">'+
+   (pi>0?'<button class="btn sm" id="prevP">‹ السابقة</button>':'')+
+   (cpIdx>=0 && !cpDone
+     ? '<button class="btn gold wide" id="toCp" style="margin-inline-start:auto">🎯 ابدأ اختبار المرحلة ('+(cpIdx+1)+'/'+b.checkpoints.length+')</button>'
+     : (pi<total-1
+        ? '<button class="btn gold" id="nextP" style="margin-inline-start:auto">التالية ›</button>'
+        : '<button class="btn gold" id="finishBook" style="margin-inline-start:auto">🏁 أنهيت الكتاب</button>'))+
+   '</div></section>';
+  $('#back').onclick=viewBooksList;
+  const R=wireReader($('#lines'),sents);
+  $('#playAll').onclick=R.playAll;
+  $('#stopAll').onclick=R.stop;
+  if($('#addVocab')) $('#addVocab').onclick=e=>{ b.vocab.forEach(v=>addCard(v[0],v[1],-1)); e.target.textContent='✓ أُضيفت '+b.vocab.length+' كلمة'; e.target.disabled=true; };
+  if($('#prevP')) $('#prevP').onclick=()=>viewBookPage(bi,pi-1);
+  if($('#nextP')) $('#nextP').onclick=()=>{ p.unlocked=Math.max(p.unlocked,pi+2); save(); viewBookPage(bi,pi+1); };
+  if($('#toCp')) $('#toCp').onclick=()=>viewBookCheckpoint(bi,cpIdx);
+  if($('#finishBook')) $('#finishBook').onclick=()=>{ addXP(15); toast('🏁 أنهيتَ الكتاب! أحسنت.'); viewBooksList(); };
+}
+/* سؤال معاني يُولَّد تلقائياً من مفردات الكتاب: كلمة إنكليزية → اختر معناها الصحيح بالعربية */
+function genMeaningQ(vocab){
+  const idx=Math.floor(Math.random()*vocab.length);
+  const w=vocab[idx][0], ar=vocab[idx][1];
+  const distractors=shuffle(vocab.filter((v,i2)=>i2!==idx)).slice(0,3).map(v=>v[1]);
+  const opts=shuffle([ar,...distractors]);
+  return {q:'ماذا تعني كلمة "'+w+'"؟',o:opts,a:opts.indexOf(ar),type:'معنى'};
+}
+/* سؤال مرادفات يُولَّد تلقائياً من قائمة مرادفات الكتاب */
+function genSynonymQ(synList){
+  const idx=Math.floor(Math.random()*synList.length);
+  const w1=synList[idx][0], w2=synList[idx][1];
+  const askFirst=Math.random()<0.5;
+  const ask=askFirst?w1:w2, correct=askFirst?w2:w1;
+  const pool=synList.filter((_,i2)=>i2!==idx).map(s2=>Math.random()<0.5?s2[0]:s2[1]);
+  const distractors=shuffle(pool.filter(w=>w!==ask&&w!==correct)).filter((w,i2,arr)=>arr.indexOf(w)===i2).slice(0,3);
+  const opts=shuffle([correct,...distractors]);
+  return {q:'ما مرادف كلمة "'+ask+'"؟',o:opts,a:opts.indexOf(correct),type:'مرادف'};
+}
+function viewBookCheckpoint(bi,cpIdx){
+  stopSpeak(); window.scrollTo(0,0);
+  const lib=(typeof BOOKS_LONG!=='undefined'?BOOKS_LONG:[]);
+  const b=lib[bi]; if(!b) return viewBooksList();
+  const cp=b.checkpoints[cpIdx];
+  const compQs=cp.comp.map(c=>({q:c.q,o:c.o,a:c.a,type:'فهم'}));
+  const extra=[];
+  if(b.vocab&&b.vocab.length>=4) extra.push(genMeaningQ(b.vocab));
+  if(b.synonyms&&b.synonyms.length>=4) extra.push(genSynonymQ(b.synonyms));
+  const qs=shuffle([...compQs,...extra]);
+  let idx=0,right=0;
+  function render(){
+    if(idx>=qs.length) return finish();
+    const q=qs[idx];
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="quit">‹ خروج</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(idx+1)+'/'+qs.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(idx/qs.length*100)+'%"></i></span></div>'+
+     '<div class="qtype">'+esc(q.type)+'</div>'+
+     '<div class="qtext en">'+esc(q.q)+'</div>'+
+     '<div class="opts" style="margin-top:10px">'+q.o.map((o,oi)=>'<button class="opt" data-i="'+oi+'"><span class="en">'+esc(o)+'</span></button>').join('')+'</div>'+
+     '</section>';
+    $('#quit').onclick=()=>viewBookPage(bi,cp.afterPage-1);
+    app.querySelectorAll('.opt').forEach(bt=>bt.onclick=()=>{
+      const ok=+bt.dataset.i===q.a;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.i===q.a)x.classList.add('ok');});
+      if(!ok) bt.classList.add('no');
+      if(ok){ right++; addXP(3); }
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✓ صحيح!':'الصحيح: <span class="en">'+esc(q.o[q.a])+'</span>'; s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn gold wide'; nb.style.marginTop='12px';
+      nb.textContent=idx<qs.length-1?'التالي ›':'النتيجة ›'; nb.onclick=()=>{ idx++; render(); }; s.appendChild(nb);
+      try{nb.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}
+    });
+  }
+  function finish(){
+    const p=bookProgress(b.id);
+    const pct=Math.round(right/qs.length*100);
+    p.done[cpIdx]=true; p.scores[cpIdx]=pct;
+    p.unlocked=Math.max(p.unlocked,cp.afterPage+1);
+    save();
+    addXP(10);
+    if(pct>=80){ try{confetti();}catch(e){} }
+    logAttempt({title:'اختبار مرحلة: '+b.t_ar+' ('+(cpIdx+1)+'/'+b.checkpoints.length+')',pct:pct,right:right,total:qs.length});
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+     '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+     '<div class="lab">'+right+' إجابة صحيحة من '+qs.length+'</div></div>'+
+     '<div class="note" style="margin-top:10px">اجتزت المرحلة '+(cpIdx+1)+' من '+b.checkpoints.length+' في «'+esc(b.t_ar)+'».</div>'+
+     '<div class="row" style="margin-top:14px;gap:8px">'+
+     (cp.afterPage<b.pages.length?'<button class="btn gold" id="cont" style="flex:1">تابع القراءة ›</button>':'<button class="btn gold" id="cont" style="flex:1">🏁 أنهيت الكتاب</button>')+
+     '<button class="btn" id="lst" style="flex:1">الكتب</button></div></section>';
+    $('#cont').onclick=()=>{ if(cp.afterPage<b.pages.length) viewBookPage(bi,cp.afterPage); else viewBooksList(); };
+    $('#lst').onclick=viewBooksList;
+  }
+  render();
+}
+
 /* ============ مركز التدريب ============ */
 function viewPractice(){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
   const due=dueCards().length;
   const items=[
     ['smart','🎯','التدريب الذكي','يتكيّف تلقائياً مع مستواك — لا يسألك عمّا لم تدرسه بعد','var(--gold,#B9862F)'],
-    ['reading','📖','قراءة إضافية','فقرات قصيرة متنوّعة بمواضيع الحياة اليومية + أسئلة فهم','#3E9E7A'],
+    ['reading','📖','مقالات','فقرات قصيرة، وكتب طويلة كاملة بعدة صفحات + أسئلة فهم ومعاني ومرادفات','#3E9E7A'],
     ['syn','🔗','مرادفات','كلمات قريبة في المعنى + اختبر نفسك','#4A8FB8'],
+    ['ant','🔀','أضداد','كلمات متعاكسة في المعنى + اختبر نفسك','#B85A4A'],
     ['due','🔁','المراجعة المستحقة',due? due+' بطاقة تنتظرك اليوم':'لا شيء مستحق اليوم','var(--plum)'],
     ['memory','🎴','لعبة الذاكرة','اقلب البطاقات وطابق كل كلمة بمعناها','#D1497A'],
     ['scramble','🔤','رتّب الحروف','أعد ترتيب حروف مبعثرة لتكوين الكلمة الصحيحة','#2E9E7A'],
@@ -4601,6 +5196,8 @@ function viewPractice(){
     ['gram','📐','القواعد فقط','كل قواعد A1 في مكان واحد + اختبار قواعد شامل','#5B7FB9'],
     ['vocab','📚','المفردات فقط','تدريب سريع على المعاني في الاتجاهين','#B9862F'],
     ['listen','🎧','الاستماع','اسمع الجملة بلا نصّ ثم اختر معناها','#7A5A96'],
+    ['speak','🎙️','النطق بالميكروفون','سجّل صوتك وقارنه بالنطق الصحيح — يحتاج متصفح Chrome/Edge واتصالاً بالإنترنت','#3E7CB1'],
+    ['phonics','🔤','النطق حسب الحرف والصوت','٢٦ حرفاً + ١٠ أصوات يصعب تمييزها على العرب (P/B وV/F وNG...) مع شرح وتمارين ونطق بالميكروفون','#8C5A1E'],
     ['write','✍️','الكتابة والإملاء','اكتب الجملة بنفسك مع تصحيح دقيق','#8C3A56'],
     ['paragraph','📝','كتابة فقرة','فقرة كاملة برأي أو وصف أو قصة + مراجعة فورية للطول والتنوّع والمفردات','#6B4FA0'],
     ['spellrules','🔤','قواعد التهجئة','كيف تُكتب الكلمات وتُضاف الحروف','#2E7D6F'],
@@ -4614,26 +5211,33 @@ function viewPractice(){
      '<span class="thumb" style="background:'+i[4]+';font-size:24px">'+i[1]+'</span>'+
      '<span class="meta"><h3>'+i[2]+'</h3><span class="sub" style="direction:rtl;text-align:right;font-family:var(--ar)">'+i[3]+'</span></span>'+
      '<span class="tick">›</span></button>').join('')+'</div>';
-  const go={smart:()=>viewSmartPractice(),reading:()=>viewReadingList(),syn:()=>viewSynonyms(),due:()=>viewReview(),memory:()=>viewMemoryGame(),scramble:()=>viewScrambleGame(),
+  const go={smart:()=>viewSmartPractice(),reading:()=>viewReadingList(),syn:()=>viewSynonyms(),ant:()=>viewAntonyms(),due:()=>viewReview(),memory:()=>viewMemoryGame(),scramble:()=>viewScrambleGame(),
             sent:()=>viewSentSetup(),gram:()=>viewGrammar(),
-            vocab:()=>vocabDrillSetup(),listen:()=>listenSetup(),write:()=>writeSetup(),paragraph:()=>viewParagraphSetup(),
-            spellrules:()=>viewSpellRules(),minpairs:()=>viewMinimalPairs(),colloc:()=>viewCollocations()};
+            vocab:()=>vocabDrillSetup(),listen:()=>listenSetup(),speak:()=>viewSpeakSetup(),write:()=>writeSetup(),paragraph:()=>viewParagraphSetup(),
+            spellrules:()=>viewSpellRules(),minpairs:()=>viewMinimalPairs(),colloc:()=>viewCollocations(),phonics:()=>viewPatternsMegaMap()};
   app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>go[b.dataset.p]());
 }
-/* يجمع كل مفردات فصول القصة (بلا تكرار) — تُستعمل في الألعاب التفاعلية أدناه */
-function allBookVocab(){
+/* يجمع مفردات فصول القصة (بلا تكرار) — تُستعمل في الألعاب التفاعلية أدناه.
+   scope='mine' (الافتراضي): يقتصر على الفصول التي وصل إليها المتعلّم فعلاً (chapUnlocked)، فتتغيّر مادة اللعبة تلقائياً مع تقدّمه.
+   scope='all': كل مفردات الطريق الـ٨٥ فصلاً، بلا تقييد — خيار للمراجعة الشاملة عبر الفلتر داخل اللعبة. */
+function allBookVocab(scope){
   const seen={}, out=[];
-  BOOK.forEach(c=>(c.vocab||[]).forEach(v=>{
-    const key=v[0].toLowerCase();
-    if(!seen[key]){ seen[key]=1; out.push(v); }
-  }));
+  BOOK.forEach((c,ci)=>{
+    if(scope==='mine'&&!chapUnlocked(ci)) return;
+    (c.vocab||[]).forEach(v=>{
+      const key=v[0].toLowerCase();
+      if(!seen[key]){ seen[key]=1; out.push(v); }
+    });
+  });
   return out;
 }
 /* ============ لعبة الذاكرة: اقلب بطاقتين وطابق كل كلمة إنكليزية بمعناها العربي ============ */
-function viewMemoryGame(){
+function viewMemoryGame(scope){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  scope=scope||'mine';
   const PAIRS=8;
-  const pool=shuffle(allBookVocab()).slice(0,PAIRS);
+  let pool=shuffle(allBookVocab(scope)).slice(0,PAIRS);
+  if(pool.length<4&&scope==='mine'){ scope='all'; pool=shuffle(allBookVocab('all')).slice(0,PAIRS); }
   if(pool.length<4){ toast('لا توجد مفردات كافية بعد لهذه اللعبة.'); return viewPractice(); }
   let cards=[];
   pool.forEach((v,i)=>{ cards.push({id:i,text:v[0]}); cards.push({id:i,text:v[1]}); });
@@ -4643,6 +5247,8 @@ function viewMemoryGame(){
     app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
      '<section class="sheet"><h2><i>🎴</i> لعبة الذاكرة</h2>'+
      '<div class="note">اقلب بطاقتين لتجد الكلمة الإنكليزية ومعناها العربي المطابق. حاول بأقل عدد محاولات ممكن.</div>'+
+     '<div class="segs" style="margin-top:8px"><button class="seg'+(scope==='mine'?' on':'')+'" data-scope="mine">📘 من دروسي</button>'+
+     '<button class="seg'+(scope==='all'?' on':'')+'" data-scope="all">الكل</button></div>'+
      '<div class="row" style="margin:8px 0"><span class="diag">المحاولات: '+moves+'</span>'+
      '<span class="diag" style="margin-inline-start:auto">تطابق: '+Object.keys(matched).length+'/'+pool.length+'</span></div>'+
      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px">'+
@@ -4654,6 +5260,7 @@ function viewMemoryGame(){
      }).join('')+
      '</div></section>';
     $('#back').onclick=()=>viewPractice();
+    app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>viewMemoryGame(b.dataset.scope));
     app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>onPick(+b.dataset.i));
   }
   function onPick(i){
@@ -4679,16 +5286,18 @@ function viewMemoryGame(){
      '<div style="display:grid;gap:9px;margin-top:14px">'+
      '<button class="btn gold wide" id="again">العب مجدداً</button>'+
      '<button class="btn wide" id="back2">عودة</button></div></section>';
-    $('#again').onclick=()=>viewMemoryGame();
+    $('#again').onclick=()=>viewMemoryGame(scope);
     $('#back2').onclick=()=>viewPractice();
   }
   draw();
 }
 /* ============ لعبة رتّب الحروف: أعد بناء الكلمة من حروفها المبعثرة ============ */
-function viewScrambleGame(){
+function viewScrambleGame(scope){
   stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  scope=scope||'mine';
   const ROUNDS=10;
-  const words=shuffle(allBookVocab().filter(v=>/^[a-zA-Z]+$/.test(v[0])&&v[0].length>=3)).slice(0,ROUNDS);
+  let words=shuffle(allBookVocab(scope).filter(v=>/^[a-zA-Z]+$/.test(v[0])&&v[0].length>=3)).slice(0,ROUNDS);
+  if(words.length<3&&scope==='mine'){ scope='all'; words=shuffle(allBookVocab('all').filter(v=>/^[a-zA-Z]+$/.test(v[0])&&v[0].length>=3)).slice(0,ROUNDS); }
   if(words.length<3){ toast('لا توجد كلمات كافية بعد لهذه اللعبة.'); return viewPractice(); }
   let idx=0, score=0, answer=[], letters=[];
   function setupRound(){
@@ -4702,6 +5311,8 @@ function viewScrambleGame(){
     const w=words[idx][0], ar=words[idx][1];
     app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
      '<section class="sheet"><h2><i>🔤</i> رتّب الحروف</h2>'+
+     (idx===0?'<div class="segs" style="margin-bottom:8px"><button class="seg'+(scope==='mine'?' on':'')+'" data-scope="mine">📘 من دروسي</button>'+
+       '<button class="seg'+(scope==='all'?' on':'')+'" data-scope="all">الكل</button></div>':'')+
      '<div class="row"><span class="diag">السؤال '+(idx+1)+'/'+words.length+'</span>'+
      '<span class="diag" style="margin-inline-start:auto">النقاط: '+score+'</span></div>'+
      '<div class="note" style="margin-top:8px;text-align:center;font-size:15px">المعنى: <b>'+esc(ar)+'</b></div>'+
@@ -4715,6 +5326,7 @@ function viewScrambleGame(){
      '<button class="btn" id="hearIt" style="flex:1">🔊 استمع</button></div>'+
      '</section>';
     $('#back').onclick=()=>viewPractice();
+    if($('[data-scope]')) app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>viewScrambleGame(b.dataset.scope));
     $('#hearIt').onclick=()=>speak(w,{rate:0.72});
     $('#undo').onclick=()=>{ const last=answer.pop(); if(last) letters[last.i].used=false; draw(); };
     app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{
@@ -4750,7 +5362,7 @@ function viewScrambleGame(){
      '<div style="display:grid;gap:9px;margin-top:14px">'+
      '<button class="btn gold wide" id="again">العب مجدداً</button>'+
      '<button class="btn wide" id="back2">عودة</button></div></section>';
-    $('#again').onclick=()=>viewScrambleGame();
+    $('#again').onclick=()=>viewScrambleGame(scope);
     $('#back2').onclick=()=>viewPractice();
   }
   draw();
@@ -4996,7 +5608,8 @@ function viewSentSetup(){
    '<h2 style="margin:12px 0 4px;font-size:21px">💬 تدريب الجُمل</h2>'+
    '<p style="color:#9FC7C1;font-size:13px;margin:0">اختر المصدر والعدد ونمط التدريب.</p></div>'+
    '<section class="sheet"><h2><i>1</i> من أين؟</h2>'+
-   '<div class="segs"><button class="seg on" data-src="all">كل الجمل</button>'+
+   '<div class="segs"><button class="seg on" data-src="mine">📘 من دروسي</button>'+
+   '<button class="seg" data-src="all">كل الجمل</button>'+
    '<button class="seg" data-src="ch">دروس القصة</button>'+
    '<button class="seg" data-src="art">المقالات</button>'+
    '<button class="seg" data-src="un">لا أعرفها فقط</button>'+
@@ -5013,10 +5626,11 @@ function viewSentSetup(){
    '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button>'+
    '<div id="cnt" class="diag" style="color:#6B5A42"></div></section>';
   $('#back').onclick=viewPractice;
-  let src='all',n=50,mode='ar2en',us=[];
+  let src='mine',n=50,mode='ar2en',us=[];
   const pool=()=>{
     let p=SENTS.slice();
     if(us.length) p=p.filter(s=>s.ci>=0&&us.some(ui=>unitList()[ui].chs.indexOf(s.ci)>=0));
+    else if(src==='mine') p=p.filter(s=>s.ci<0||chapUnlocked(s.ci));
     else if(src==='ch') p=p.filter(s=>s.ci>=0);
     else if(src==='art') p=p.filter(s=>s.ci<0);
     else if(src==='un') p=p.filter(s=>!isSentKnown(s.en));
@@ -5086,21 +5700,28 @@ function sentDrill(list,mode){
 }
 
 /* ============ القواعد فقط ============ */
-function viewGrammar(){
+function viewGrammar(scope){
   stopSpeak(); window.scrollTo(0,0);
+  scope=scope||'mine';
+  const allCh=BOOK.map((c,i)=>({c,i})).filter(x=>!x.c.reserveReview);
+  let list=scope==='mine'?allCh.filter(x=>chapUnlocked(x.i)):allCh;
+  if(scope==='mine'&&list.length<3) list=allCh;
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
-   '<h2 style="margin:12px 0 4px;font-size:21px">📐 كل قواعد A1</h2>'+
-   '<p style="color:#9FC7C1;font-size:13px;margin:0">'+BOOK.filter(c=>!c.reserveReview).length+' قاعدة مرتّبة. اضغط أيّها لتفتح شرحها.</p></div>'+
-   '<section class="sheet"><button class="btn gold wide" id="gq">اختبار القواعد الشامل</button>'+
-   '<div class="qhint" style="margin:10px 0 0;text-align:center">أسئلة قواعد من كل الدروس مخلوطة</div></section>'+
-   BOOK.filter(c=>!c.reserveReview).map((c,i)=>'<section class="sheet"><h2><i>'+(i+1)+'</i> '+c.gram.t+'</h2>'+
-     '<div class="note">'+c.gram.note+'</div>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">📐 قواعد A1</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0">'+list.length+' قاعدة. اضغط أيّها لتفتح شرحها.</p></div>'+
+   '<section class="sheet"><div class="segs"><button class="seg'+(scope==='mine'?' on':'')+'" data-scope="mine">📘 من دروسي ('+allCh.filter(x=>chapUnlocked(x.i)).length+')</button>'+
+   '<button class="seg'+(scope==='all'?' on':'')+'" data-scope="all">الكل ('+allCh.length+')</button></div>'+
+   '<button class="btn gold wide" id="gq" style="margin-top:12px">اختبار القواعد الشامل</button>'+
+   '<div class="qhint" style="margin:10px 0 0;text-align:center">أسئلة قواعد من '+(scope==='mine'?'دروسك':'كل الدروس')+' مخلوطة</div></section>'+
+   list.map(({c,i})=>'<section class="sheet"><h2><i>'+(i+1)+'</i> '+bidiSafe(c.gram.t)+'</h2>'+
+     methodicalNote(c.gram.note)+
      '<table class="gtable">'+c.gram.rows.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'+
-     '<div class="diag" style="color:#6B5A42">'+c.unit+' · '+c.t_ar+'</div></section>').join('');
+     '<div class="diag" style="color:#6B5A42">'+bidiSafe(c.unit)+' · '+c.t_ar+'</div></section>').join('');
   $('#back').onclick=viewPractice;
+  app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>viewGrammar(b.dataset.scope));
   $('#gq').onclick=()=>{
     const qs=[];
-    BOOK.forEach((c,i)=>(c.quiz||[]).forEach(q=>{ if(q.t==='mcq'&&q.q) qs.push(Object.assign({},q,{_ci:i})); }));
+    list.forEach(({c,i})=>(c.quiz||[]).forEach(q=>{ if(q.t==='mcq'&&q.q) qs.push(Object.assign({},q,{_ci:i})); }));
     genericQuiz(shuffle(qs).slice(0,20),'اختبار القواعد');
   };
 }
@@ -5243,24 +5864,1112 @@ function viewMinimalPairs(){
   }
   draw();
 }
+/* ============ تدريب النطق حسب الحرف والصوت (Phonics) ============
+   يجمع بين التنظيم حسب الحرف الأبجدي (٢٦ حرفاً A-Z) وحسب الصوت الفعلي (١٠ أصوات/تراكيب هي الأكثر
+   صعوبة فعلياً على الناطقين بالعربية: P/B، V/F، NG، طول حرف العلة...). كل مُدخل يعرض شرحاً ممنهجاً
+   (methodicalNote)، كلمات للاستماع والنطق، تمرين تمييز سمعي إن وُجدت أزواج نطق دنيا، وتدريباً فعلياً
+   بالميكروفون يعيد استخدام بنية speakDrill الموجودة أصلاً بدل بناء محرّك نطق جديد من الصفر. */
+/* يحسب تقدّم المتعلّم عبر مراحل هرم النطق الست — الحروف والأصوات تُحتسَب من عدد المُدخلات التي زارها
+   فعلياً (S.phonicsVisited)، أما المقاطع/الكلمات/الجُمل/المقالة فتُحتسَب من علم إنجاز يُرفع بمجرّد
+   إنهاء تمرين واحد كامل في تلك المرحلة (S.phonicsSyllDone/phonicsWordsDone/phonicsSentDone/phonicsParaDone). */
+function phonicsStageProgress(){
+  const visited=S.phonicsVisited||{};
+  const lv=Object.keys(visited).filter(k=>k.startsWith('letters:')).length;
+  const sv=Object.keys(visited).filter(k=>k.startsWith('sounds:')).length;
+  return {
+    letters:{n:lv,total:26,done:lv>=26},
+    sounds:{n:sv,total:10,done:sv>=10},
+    syllables:{done:!!S.phonicsSyllDone},
+    words:{done:!!S.phonicsWordsDone},
+    sentences:{done:!!S.phonicsSentDone},
+    paragraph:{done:!!S.phonicsParaDone},
+    prodeep:{done:!!S.phonicsProDone}
+  };
+}
+/* ============ خريطة النطق ============ نقطة الدخول الرئيسية لوحدة تدريب النطق حسب الحرف والصوت —
+   تعرض هرم التعلّم الستّ مراحل بصرياً (بنفس أسلوب خريطة الدروس الرئيسية): حروف ← أصوات خاصة ←
+   مقاطع ← كلمات ← جُمل ← مقالة كاملة، من "الصفر" (كل حرف بمفرده) إلى "الاحتراف" (قراءة فقرة كاملة). */
+function viewPhonicsMap(fromMega){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const p=phonicsStageProgress();
+  const stages=[
+    {key:'letters',icon:'🔤',label:'الحروف A-Z',sub:p.letters.n+'/26 حرفاً',done:p.letters.done,go:()=>viewPhonicsList('letters')},
+    {key:'sounds',icon:'🎵',label:'الأصوات الخاصة',sub:p.sounds.n+'/10 أصوات',done:p.sounds.done,go:()=>viewPhonicsList('sounds')},
+    {key:'syllables',icon:'🧩',label:'المقاطع والنبر',sub:'تقسيم الكلمة ومكان النبر',done:p.syllables.done,go:()=>viewSyllables()},
+    {key:'words',icon:'💬',label:'الكلمات',sub:'نطق كلمات بالميكروفون',done:p.words.done,go:()=>viewSpeakSetup('word')},
+    {key:'sentences',icon:'📝',label:'الجُمل',sub:'نطق جُمل كاملة بالميكروفون',done:p.sentences.done,go:()=>viewSpeakSetup('sent')},
+    {key:'paragraph',icon:'📄',label:'المقالة الكاملة',sub:'قراءة فقرة كاملة بصوتك',done:p.paragraph.done,go:()=>viewParagraphSpeak()},
+    {key:'prodeep',icon:'🎓',label:'تعمّق احترافي',sub:'الشّوا، الربط الصوتي، قواعد النبر',done:p.prodeep.done,go:()=>viewProDeepDive()}
+  ];
+  const doneN=stages.filter(s=>s.done).length;
+  let h='<div class="hero" style="padding-bottom:0"><h1>خريطة <span>النطق</span></h1>'+
+   '<p>من الصفر للاحتراف: ابدأ بالحروف والأصوات، ثم المقاطع، ثم الكلمات والجُمل، وانتهِ بقراءة مقالة كاملة بصوتك ثم تعمّق احترافي بأسرار الكلام الطبيعي.</p>'+
+   '<div class="stats"><div class="stat"><div class="n">'+doneN+'/'+stages.length+'</div><div class="l">مراحل مكتملة</div></div></div>'+
+   '<button class="btn sm gold" id="toQuickPron" style="margin-top:10px;width:100%">⚡ تدرّب سريع على النطق (مزيج من كل المراحل)</button></div>'+
+   '<div class="map">';
+  stages.forEach((s,i)=>{
+    h+='<div class="nrow"><div class="ncol" style="transform:translateX(0px)">'+
+       '<button class="node '+(s.done?'done':'')+'" data-stage="'+s.key+'">'+(s.done?'✓':s.icon)+'</button>'+
+       '<div class="nlab">'+s.label+'</div><div class="nlab" style="color:#8FBDB6;margin-top:0;font-size:10.5px">'+s.sub+'</div>'+
+       '</div></div>';
+    if(i<stages.length-1){
+      h+='<div class="nrow" style="height:26px">';
+      for(let t=1;t<=3;t++){
+        h+='<span class="conn" style="position:absolute;left:50%;top:'+((t-1)*9)+'px;margin-inline-start:-4px"></span>';
+      }
+      h+='</div>';
+    }
+  });
+  h+='</div><button class="btn sm ghost wide" id="backP" style="margin-top:10px">‹ '+(fromMega?'خريطة النطق الكاملة':'تدرّب')+'</button>';
+  app.innerHTML=h;
+  $('#backP').onclick=()=>fromMega?viewPatternsMegaMap():viewPractice();
+  $('#toQuickPron').onclick=()=>viewQuickPronPractice();
+  app.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>{
+    const s=stages.find(x=>x.key===b.dataset.stage);
+    if(s) s.go();
+  });
+}
+function viewPhonicsList(initialTab){
+  stopSpeak(); window.scrollTo(0,0);
+  let tab=(initialTab==='patterns')?'letters':(initialTab||'letters');
+  function draw(){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button>'+
+     '<h2 style="margin:12px 0 4px;font-size:21px">🔤 النطق حسب الحرف والصوت</h2>'+
+     '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">اختر حرفاً أو صوتاً لتتعلّم كيف يُنطق فعلياً، وتتدرّب عليه بالاستماع والميكروفون.</p></div>'+
+     '<section class="sheet"><div class="segs">'+
+     '<button class="seg '+(tab==='letters'?'on':'')+'" data-tab="letters">🔤 حسب الحرف (A-Z)</button>'+
+     '<button class="seg '+(tab==='sounds'?'on':'')+'" data-tab="sounds">🎵 أصوات خاصة يصعب تمييزها على العرب</button>'+
+     '<button class="seg" data-tab="patterns">📚 أنماط النطق — الخريطة الكاملة</button>'+
+     '</div>'+
+     (tab==='letters'?
+       '<div class="letter-grid" style="margin-top:14px">'+
+       PHONICS_LETTERS.map(e=>'<button class="letter-btn" data-id="'+e.id+'">'+e.id.toUpperCase()+'</button>').join('')+
+       '</div>':
+       '<div style="margin-top:14px">'+
+       PHONICS_SOUNDS.map(e=>'<button class="ul-item" data-id="'+e.id+'" style="display:block;width:100%;text-align:right;cursor:pointer">'+
+         '<div style="font-weight:700">'+esc(e.title)+'</div>'+
+         '<div class="en" style="font-size:12px;color:var(--muted);direction:ltr;text-align:left">'+esc(e.ipa)+'</div></button>').join('')+
+       '</div>')+
+     '</section>';
+    $('#back').onclick=viewPhonicsMap;
+    app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{
+      if(b.dataset.tab==='patterns') return viewPatternsMegaMap();
+      tab=b.dataset.tab; draw();
+    });
+    app.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>viewPhonicsEntry(tab,b.dataset.id));
+  }
+  draw();
+}
+/* يُرجع كل أنماط النطق التفصيلية (PHONICS_PATTERNS) الخاصة بحرف معيّن — نفس الحرف الإنجليزي الواحد
+   غالباً ما يُنطق بأكثر من طريقة حسب سياق تهجئته (مثلاً A في Name تختلف عن A في Cat عن A في Ball)،
+   لذلك قد يُرجع هذا أكثر من نمط للحرف الواحد؛ أو يُرجع لائحة اللواحق الشائعة (tion, sion...) إن كان
+   المفتاح 'suffixes'. مصدر هذه البيانات ملف مرجعي شامل زوّدنا به المستخدم لسدّ نقص كان موجوداً فعلاً
+   في شرح النطق حسب سياق التهجئة (بخلاف PHONICS_LETTERS الذي يقدّم قاعدة عامة واحدة فقط لكل حرف). */
+/* يقسّم كلمة إنجليزية إلى مقاطع (syllables) تقريبياً بالاعتماد على مجموعات حروف العلة —
+   قاعدة تقريبية شائعة: ساكن واحد بين مقطعين ينتقل إلى المقطع التالي (V-CV)، وعنقود ساكنين أو أكثر
+   يُقسَّم في المنتصف تقريباً (VC-CV). هذا تقسيم تعليمي مساعد وليس دقيقاً صوتياً بنسبة ١٠٠٪ لكل كلمة شاذة. */
+function syllabifyEN(raw){
+  const w=String(raw).toLowerCase().replace(/[^a-z]/g,'');
+  if(!w) return [String(raw)];
+  const groups=[...w.matchAll(/[aeiouy]+/g)];
+  if(groups.length<=1) return [String(raw)];
+  const cuts=[];
+  for(let i=0;i<groups.length-1;i++){
+    const curEnd=groups[i].index+groups[i][0].length;
+    const nextStart=groups[i+1].index;
+    const consonants=nextStart-curEnd;
+    let cut;
+    if(consonants<=0) cut=nextStart;
+    else if(consonants===1) cut=curEnd;
+    else cut=curEnd+Math.ceil(consonants/2);
+    cuts.push(cut);
+  }
+  const syl=[]; let prev=0;
+  cuts.forEach(c=>{ syl.push(w.slice(prev,c)); prev=c; });
+  syl.push(w.slice(prev));
+  const out=syl.filter(s=>s.length>0);
+  if(/^[A-Z]/.test(String(raw)) && out.length) out[0]=out[0].charAt(0).toUpperCase()+out[0].slice(1);
+  return out.length?out:[String(raw)];
+}
+/* يوزّع التفريغ الصوتي العربي لكلمة كاملة (مثل "ديموكرَسي" لكلمة Democracy) على عدد مقاطعها الإنجليزية،
+   بنسبة تقريبية حسب طول كل مقطع بالحروف — تقسيم تقريبي لمساعدة المتعلّم على الربط البصري بين كل مقطع
+   إنجليزي ونطقه العربي، وليس تفريغاً صوتياً دقيقاً معتمداً لكل مقطع على حدة (لا تتوفر بيانات مقطعية أصلية). */
+function splitArabicBySyllables(arPhonetic,enSyllables){
+  const ar=String(arPhonetic||'');
+  if(enSyllables.length<=1||!ar) return [ar];
+  const totalLen=enSyllables.reduce((a,s)=>a+s.length,0)||1;
+  const parts=[]; let pos=0;
+  enSyllables.forEach((s,i)=>{
+    const isLast=i===enSyllables.length-1;
+    let take=isLast?(ar.length-pos):Math.round(ar.length*s.length/totalLen);
+    take=Math.max(1,Math.min(take,ar.length-pos));
+    parts.push(ar.slice(pos,pos+take));
+    pos+=take;
+  });
+  return parts.filter(p=>p.length>0);
+}
+function closeSylPop(){
+  const p=document.getElementById('sylpop'); if(p) p.remove();
+  const v=document.getElementById('sylveil'); if(v) v.remove();
+}
+/* نافذة منبثقة تعرض تقسيم كلمة إلى مقاطعها مع كتابة نطق كل مقطع بالعربي أسفله — تُفتح عند الضغط على
+   أي كلمة داخل درس نمط نطق (تلبيةً لطلب: "عند ضغط على طريقة نطق تظهر تقسيم للكلمة كل مقطع مع كتابة
+   نطقه بالعربي"). */
+/* ألوان تدوّر على كل مقطع بالترتيب — كل مقطع بلونه الخاص، إنجليزيه وعربيّه بنفس اللون، تلبيةً لطلب
+   صريح: "كل مقطع بلونه". المقطع المنبور (إن كان معروفاً من قاموس CMU) يُميَّز بحجم أكبر وعلامة ● فوقه. */
+var SYL_COLORS=['#B5651D','#1E7A6B','#A03B62','#2E5F9E','#6B4FA0','#8C7A1E','#C0472E','#2E8F6E'];
+function syllablePopup(enWord,arPhonetic){
+  closeSylPop(); closePop();
+  const syl=syllabifyEN(enWord);
+  const pd=pronDictEntry(enWord);
+  let arParts, stressIdx=-1;
+  if(pd && pd.s && pd.s.length===syl.length){ arParts=pd.s; stressIdx=pd.t; }
+  else{ arParts=splitArabicBySyllables(arPhonetic,syl); }
+  const hints=wordSpellingHints(enWord);
+  const veil=document.createElement('div'); veil.id='sylveil'; veil.className='veil';
+  const p=document.createElement('div'); p.id='sylpop'; p.className='wpop';
+  p.innerHTML=
+   '<div class="wp-h"><div style="flex:1"><div class="wp-w">'+esc(enWord)+'</div>'+
+   (arPhonetic?'<div class="ipa">'+esc(arPhonetic)+'</div>':'')+'</div>'+
+   '<button class="icobtn" id="syl-say">🔊</button></div>'+
+   '<div class="sect-lbl" style="margin-top:10px">✂️ تقسيم المقاطع'+(stressIdx>=0?' — النقطة ● فوق المقطع المنبور':'')+'</div>'+
+   '<div class="syl-chips">'+syl.map((s,i)=>{
+     const col=SYL_COLORS[i%SYL_COLORS.length];
+     const stressed=(i===stressIdx);
+     return '<div class="syl-chip'+(stressed?' syl-stress':'')+'" style="border-color:'+col+'">'+
+      (stressed?'<span class="syl-mark" style="color:'+col+'">●</span>':'')+
+      '<bdi class="syl-en" style="color:'+col+'">'+esc(s)+'</bdi>'+
+      '<span class="syl-ar" style="color:'+col+'">'+esc(arParts[i]||'')+'</span></div>';
+   }).join('')+'</div>'+
+   (!arPhonetic?'<div class="rhint" style="color:var(--plum)">لا يتوفر تفريغ صوتي عربي مؤلَّف لهذه الكلمة بعينها بعد — استمع لنطقها الصحيح بالأعلى 🔊</div>':'')+
+   (hints.length?(
+     '<div class="sect-lbl" style="margin-top:12px">📐 أنماط ملحوظة داخل هذه الكلمة</div>'+
+     '<div class="chips">'+hints.map(h=>'<span class="wchip" style="cursor:default">'+esc(h.hint)+'</span>').join('')+'</div>'
+   ):'')+
+   '<div class="rhint">تقسيم تقريبي مساعد — استمع للكلمة كاملة بالأعلى ثم اقرأ كل مقطع بمفرده</div>'+
+   '<button class="btn ghost wide" id="syl-close" style="margin-top:12px">إغلاق</button>';
+  document.body.appendChild(veil); document.body.appendChild(p);
+  setTimeout(()=>{ veil.onclick=closeSylPop; },260);
+  p.querySelector('#syl-close').onclick=closeSylPop;
+  p.querySelector('#syl-say').onclick=()=>speak(enWord,{rate:0.7});
+}
+function patternsForKey(key){
+  if(key==='suffixes') return PHONICS_SUFFIXES.map(s=>({title:s.title,rule:s.rule,words:s.words,sentences:s.sentences}));
+  return PHONICS_PATTERNS.filter(p=>p.letter.toLowerCase()===String(key).toLowerCase());
+}
+function viewLetterPatterns(id){
+  stopSpeak(); window.scrollTo(0,0);
+  const chap=resolveChapter(id);
+  const key=chap.keys[0];
+  const list=patternsForKeys(chap.keys);
+  const multi=chap.keys.length>1;
+  const heading=chap.isSuffix?'المقاطع واللواحق الشائعة':('أنماط نطق '+chap.title);
+  let h='<div style="padding-top:14px"><button class="btn sm" id="back">‹ '+esc(chap.title)+'</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">📚 '+esc(heading)+'</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">نفس الحرف قد يُنطق بأكثر من طريقة حسب سياق تهجئته — إليك كل الأنماط بكلمات حقيقية وتفريغها الصوتي العربي وجملة مثال.</p></div>';
+  if(!list.length){
+    h+='<section class="sheet" style="text-align:center"><div style="font-size:36px">🤷</div><div class="note" style="margin-top:8px">لا توجد أنماط تفصيلية إضافية لهذا الفصل بعد — راجع الشرح العام في «الحروف A-Z».</div></section>';
+  }
+  list.forEach((p,pi)=>{
+    const tag=multi&&p.letter?('<span class="pat-tag" style="margin-inline-end:8px">حرف '+esc(String(p.letter).toUpperCase())+'</span>'):'';
+    h+='<section class="sheet" style="margin-top:'+(pi===0?'14px':'10px')+'">'+
+     '<div class="sect-lbl">'+tag+(p.title?esc(p.title):('نمط '+(pi+1)+' من '+list.length))+'</div>'+
+     methodicalNote(p.rule)+
+     '<div class="pat-words" style="margin-top:10px">'+
+     p.words.map((w,wi)=>
+       '<div class="pat-row" data-pw="'+pi+':'+wi+'">'+
+        '<div class="pat-en">'+esc(w.word)+' <span style="font-size:12px">🔊</span></div>'+
+        '<div class="pat-mid"><span class="pat-ph">'+esc(w.phonetic)+'</span><span>'+esc(w.meaning)+'</span></div>'+
+        '<div class="pat-tag">'+bidiSafe(w.ruleApp)+'</div>'+
+       '</div>'
+     ).join('')+
+     '</div>'+
+     (p.sentences&&p.sentences.length?(
+      '<div class="sect-lbl" style="margin-top:12px">✏️ مثال</div><div class="ex-list">'+
+      p.sentences.map((s,si)=>
+        '<div class="ex-item" data-ps="'+pi+':'+si+'" style="cursor:pointer">'+
+        '<bdi class="ex-en">'+esc(s.en)+'</bdi><span class="ex-ar">'+esc(s.ar)+' — '+esc(s.pronunciation)+'</span></div>'
+      ).join('')+'</div>'
+     ):'')+
+     '<button class="btn ghost wide" data-drill="'+pi+'" style="margin-top:12px">🎤 درّب لسانك على هذا النمط</button>'+
+    '</section>';
+  });
+  app.innerHTML=h;
+  $('#back').onclick=()=>viewPatternsMegaMap(chap.id);
+  app.querySelectorAll('[data-pw]').forEach(b=>b.onclick=()=>{
+    const parts=b.dataset.pw.split(':').map(Number), pi=parts[0], wi=parts[1];
+    const w=list[pi].words[wi];
+    speak(w.word,{rate:0.75});
+    syllablePopup(w.word,w.phonetic);
+  });
+  app.querySelectorAll('[data-ps]').forEach(b=>b.onclick=()=>{
+    const parts=b.dataset.ps.split(':').map(Number), pi=parts[0], si=parts[1];
+    speak(list[pi].sentences[si].en,{rate:0.75});
+  });
+  app.querySelectorAll('[data-drill]').forEach(b=>b.onclick=()=>{
+    if(!speechRecogSupported()) return toast('يحتاج متصفح Chrome أو Edge لدعم الميكروفون.');
+    const pi=+b.dataset.drill, p=list[pi];
+    speakDrill(p.words.map(w=>({en:w.word,ar:w.meaning,ci:-1})),true);
+  });
+}
+/* ============ خريطة حالات نطق حرف واحد ============ تلبيةً لطلب: "خريطة تصبح مثل حالات نطق A،
+   ٥ دروس أو أكثر مع أسئلة مع مراجعة" — كل نمط نطق لنفس الحرف يصبح "درساً" له عقدة خاصة في خريطة
+   مصغّرة (بنفس أسلوب خريطة النطق الرئيسية)، ينتهي كل درس بسؤال قصير، وتُختتم الخريطة بعقدة "مراجعة
+   شاملة" تجمع كل الأنماط معاً. */
+function letterPatternProgress(key){
+  const list=patternsForKey(key);
+  const ld=S.patternLessonDone||{};
+  const doneCount=list.filter((p,i)=>ld[key+':'+i]).length;
+  const reviewDone=!!(S.patternReviewDone||{})[key];
+  return {list:list,doneCount:doneCount,total:list.length,reviewDone:reviewDone};
+}
+function viewLetterPatternMap(key){
+  stopSpeak(); window.scrollTo(0,0);
+  const pr=letterPatternProgress(key), list=pr.list;
+  const titleTxt=key==='suffixes'?'اللواحق الشائعة':('الحرف '+String(key).toUpperCase());
+  let h='<div class="hero" style="padding-bottom:0"><h1>خريطة <span>'+esc(titleTxt)+'</span></h1>'+
+   '<p>'+list.length+' نمط نطق مختلف'+(key!=='suffixes'?(' لنفس الحرف '+esc(String(key).toUpperCase())):'')+' — كل نمط درس قصير بكلمات حقيقية ينتهي بسؤال، ثم مراجعة شاملة في الختام.</p>'+
+   '<div class="stats"><div class="stat"><div class="n">'+pr.doneCount+'/'+pr.total+'</div><div class="l">دروس مكتملة</div></div></div></div>'+
+   '<div class="map">';
+  if(!list.length){
+    h+='<section class="sheet" style="text-align:center;margin-top:14px"><div style="font-size:36px">🤷</div><div class="note" style="margin-top:8px">لا توجد أنماط تفصيلية لهذا الحرف بعد.</div></section>';
+  }
+  list.forEach((p,i)=>{
+    const done=!!(S.patternLessonDone||{})[key+':'+i];
+    const label=p.title?p.title:('نمط '+(i+1));
+    h+='<div class="nrow"><div class="ncol" style="transform:translateX(0px)">'+
+       '<button class="node '+(done?'done':'')+'" data-lesson="'+i+'">'+(done?'✓':(i+1))+'</button>'+
+       '<div class="nlab">'+esc(label)+'</div></div></div>'+
+       '<div class="nrow" style="height:26px">'+[1,2,3].map(t=>'<span class="conn" style="position:absolute;left:50%;top:'+((t-1)*9)+'px;margin-inline-start:-4px"></span>').join('')+'</div>';
+  });
+  if(list.length){
+    h+='<div class="nrow"><div class="ncol" style="transform:translateX(0px)">'+
+       '<button class="node '+(pr.reviewDone?'done':'')+'" id="reviewNode">'+(pr.reviewDone?'✓':'🏁')+'</button>'+
+       '<div class="nlab">مراجعة شاملة</div></div></div>';
+  }
+  h+='</div>'+
+   (list.length?'<button class="btn sm ghost wide" id="quickAll" style="margin-top:6px">📋 عرض كل الأنماط في صفحة واحدة</button>':'')+
+   '<button class="btn sm ghost wide" id="backLP" style="margin-top:8px">‹ أنماط الحروف</button>';
+  app.innerHTML=h;
+  $('#backLP').onclick=()=>viewPhonicsList('patterns');
+  if($('#quickAll')) $('#quickAll').onclick=()=>viewLetterPatterns(key);
+  app.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>viewPatternLesson(key,+b.dataset.lesson));
+  if($('#reviewNode')) $('#reviewNode').onclick=()=>patternReviewQuiz(key);
+}
+/* درس واحد = نمط نطق واحد لحرف: القاعدة + كلمات حقيقية (اضغط أي كلمة لسماعها ورؤية تقسيم مقاطعها) +
+   جملة مثال، ثم زر لبدء اختبار قصير على هذا النمط تحديداً. */
+const PATTERN_MAP_KEYS='abcdefghijklmnopqrstuvwxyz'.split('').concat(['suffixes']);
+/* ============ فصول ودروس (تلبيةً لطلب: "أريد الخيارات تكون عن طريق دروس وفصول مثل الفصل الأول
+   حرف A ودروسه... ثم الفصل الثاني حرف B. أحيانا الحروف التي قليلة دروسها تكون بفصل واحد") ============
+   الحروف التي لديها ٣ أنماط نطق أو أكثر تحصل على فصل خاص بها؛ الحروف القليلة (أقل من ٣) تُدمج مع
+   جاراتها الأبجدية المتتالية في فصل واحد مشترك حتى يبلغ مجموعها ٣ أنماط فأكثر — فصل اللواحق دائماً
+   مستقل في النهاية. */
+function patternsForKeys(keys){
+  return keys.reduce((acc,k)=>acc.concat(patternsForKey(k)),[]);
+}
+function buildPatternChapters(){
+  const letterKeys=PATTERN_MAP_KEYS.filter(k=>k!=='suffixes');
+  const groups=[]; let pending=[];
+  function flush(){ if(pending.length){ groups.push(pending.slice()); pending=[]; } }
+  letterKeys.forEach(key=>{
+    const n=patternsForKey(key).length;
+    if(!n) return;
+    if(n>=3){ flush(); groups.push([key]); }
+    else{
+      pending.push(key);
+      const sum=pending.reduce((s,k)=>s+patternsForKey(k).length,0);
+      if(sum>=3) flush();
+    }
+  });
+  flush();
+  if(patternsForKey('suffixes').length) groups.push(['suffixes']);
+  return groups.map((keys,i)=>{
+    const isSuf=keys[0]==='suffixes';
+    const letters=keys.map(k=>k.toUpperCase());
+    return {
+      id:'ch'+(i+1), num:i+1, keys:keys, isSuffix:isSuf,
+      title:isSuf?'اللواحق الشائعة':(letters.length===1?('الحرف '+letters[0]):('حروف '+letters.join(' و')))
+    };
+  });
+}
+const PATTERN_CHAPTERS=buildPatternChapters();
+function chapterForKey(key){
+  return PATTERN_CHAPTERS.find(c=>c.keys.includes(key))||null;
+}
+function resolveChapter(id){
+  let c=PATTERN_CHAPTERS.find(x=>x.id===id);
+  if(c) return c;
+  c=chapterForKey(id);
+  if(c) return c;
+  return {id:id,num:0,keys:[id],isSuffix:id==='suffixes',title:String(id)};
+}
+function shortLessonLabel(rule){
+  if(!rule) return '';
+  const clean=String(rule).replace(/\s+/g,' ').trim();
+  if(clean.length<=34) return clean;
+  let cut=clean.slice(0,34);
+  const sp=cut.lastIndexOf(' ');
+  if(sp>15) cut=cut.slice(0,sp);
+  return cut+'…';
+}
+/* ============ خريطة النطق الكاملة (متصلة، من A إلى Z ثم اللواحق، دفعة واحدة) ============
+   تلبيةً لطلب صريح: الخريطة يجب أن تكون الشاشة الرئيسية عند أول دخول لأنماط النطق، بجميع الحروف
+   متصلة ببعضها من البداية للنهاية (بلا الدخول لخريطة منفصلة لكل حرف والخروج منها بين حرف وآخر) —
+   بنفس أسلوب التعرّج المستخدم في خريطة الدروس الرئيسية (viewHome)، مع فاصل عنوان لكل حرف وشريط
+   انتقال سريع (فلتر) أعلى الصفحة يقفز داخل نفس الصفحة دون مغادرتها. */
+function viewPatternsMegaMap(scrollToKey){
+  stopSpeak(); paintDots(-1); setNav('practice'); window.scrollTo(0,0);
+  const ld=S.patternLessonDone||{}, rd=S.patternReviewDone||{};
+  const WAVE=[0,52,80,52,0,-52,-80,-52];
+  let step=0, totalLessons=0, doneLessons=0, totalChapters=0, doneChapters=0;
+  let body='';
+  PATTERN_CHAPTERS.forEach(chap=>{
+    let chapLessons=0, chapDone=0;
+    const lessonRows=[];
+    chap.keys.forEach(key=>{
+      patternsForKey(key).forEach((p,i)=>{
+        chapLessons++;
+        const done=!!ld[key+':'+i];
+        if(done) chapDone++;
+        lessonRows.push({key:key,idx:i,done:done,label:p.title?p.title:shortLessonLabel(p.rule)});
+      });
+    });
+    if(!lessonRows.length) return;
+    totalLessons+=chapLessons; doneLessons+=chapDone;
+    totalChapters++;
+    const chapReviewDone=!!rd[chap.id];
+    if(chapReviewDone) doneChapters++;
+
+    body+='<div class="unitbar" id="sec-'+chap.id+'"><span class="ub-i" style="background:linear-gradient(160deg,#2E6F68,#1C4C47)">'+(chap.isSuffix?'🔤':chap.keys[0].toUpperCase())+'</span>'+
+      '<span class="ub-t"><span class="ub-n">الفصل '+chap.num+'</span><h3>'+esc(chap.title)+'</h3></span>'+
+      '<button class="btn sm ghost" data-quickall="'+chap.id+'" style="margin-inline-end:6px">📋</button>'+
+      '<span class="ub-p">'+chapDone+'/'+chapLessons+'</span></div>';
+
+    const rows=lessonRows.map((r,i)=>({
+      off:WAVE[step++%WAVE.length], done:r.done,
+      label:'الدرس '+(i+1)+(r.label?(': '+r.label):''), attr:'data-lesson="'+r.key+':'+r.idx+'"', icon:String(i+1)
+    }));
+    rows.push({off:WAVE[step++%WAVE.length], done:chapReviewDone, label:'📝 اختبار الفصل',
+      attr:'data-review="'+chap.id+'"', icon:'🏁'});
+
+    rows.forEach((r,ri)=>{
+      body+='<div class="nrow"><div class="ncol" style="transform:translateX('+r.off+'px)">'+
+        '<button class="node '+(r.done?'done':'')+'" '+r.attr+'>'+(r.done?'✓':r.icon)+'</button>'+
+        '<div class="nlab">'+esc(r.label)+'</div></div></div>';
+      const nxt=rows[ri+1];
+      if(nxt){
+        body+='<div class="nrow" style="height:26px">';
+        for(let t=1;t<=3;t++){
+          const x=r.off+(nxt.off-r.off)*(t/4);
+          body+='<span class="conn" style="transform:translateX('+x+'px);top:'+((t-1)*9)+'px;position:absolute;left:50%;margin-inline-start:-4px"></span>';
+        }
+        body+='</div>';
+      }
+    });
+  });
+
+  const allMastered=totalLessons>0 && doneLessons===totalLessons && doneChapters===totalChapters;
+  const moff=WAVE[step++%WAVE.length];
+  body+='<div class="nrow"><div class="ncol" style="transform:translateX('+moff+'px)">'+
+     '<button class="node '+(allMastered?'done':'')+'" id="masteryNode">'+(allMastered?'🏆':'🎖️')+'</button>'+
+     '<div class="nlab">الاحتراف</div></div></div>';
+
+  let h='<div class="hero" style="padding-bottom:0"><h1>خريطة <span>النطق الكاملة</span></h1>'+
+   '<p>من الفصل الأول (حرف A) إلى آخر فصل (اللواحق) — رحلة واحدة متصلة من الصفر للاحتراف، بلا توقف بين الفصول.</p>'+
+   '<div class="stats"><div class="stat"><div class="n">'+doneLessons+'/'+totalLessons+'</div><div class="l">دروس</div></div>'+
+   '<div class="stat"><div class="n">'+doneChapters+'/'+totalChapters+'</div><div class="l">فصول مكتملة</div></div></div>'+
+   '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:10px">'+
+   '<button class="btn sm gold" id="toQuickPronMega" style="flex:1;min-width:150px">⚡ تدرّب سريع على النطق</button>'+
+   '<button class="btn sm ghost" id="toOtherPaths" style="flex:1;min-width:150px">🧭 مسارات نطق أخرى (مقاطع، كلمات، جُمل، مقالة)</button>'+
+   '<button class="btn sm ghost" id="toDictPron" style="flex:1;min-width:150px">📖 تدرّب على نطق كلمات قاموسي</button>'+
+   '</div></div>'+
+   '<div class="sheet" style="margin-top:12px;padding:12px"><div class="sect-lbl" style="margin-top:0">🔎 انتقال سريع بين الفصول</div>'+
+   '<div class="segs">'+PATTERN_CHAPTERS.map(c=>'<button class="seg" data-jump="'+c.id+'">'+(c.isSuffix?'لواحق':c.keys.map(k=>k.toUpperCase()).join('+'))+'</button>').join('')+'</div></div>'+
+   '<div class="map">'+body+'</div>'+
+   '<button class="btn sm ghost wide" id="backMega" style="margin-top:10px">‹ تدرّب</button>';
+  app.innerHTML=h;
+  $('#backMega').onclick=()=>viewPractice();
+  $('#toQuickPronMega').onclick=()=>viewQuickPronPractice();
+  $('#toOtherPaths').onclick=()=>viewPhonicsMap(true);
+  $('#toDictPron').onclick=()=>viewDictPronPractice();
+  $('#masteryNode').onclick=()=>{
+    if(allMastered){ try{confetti();}catch(e){} toast('🏆 أتقنت خريطة النطق الكاملة بامتياز!'); }
+    else toast('تبقّى '+(totalLessons-doneLessons)+' درساً و'+(totalChapters-doneChapters)+' اختبار فصل للوصول للاحتراف.');
+  };
+  app.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{
+    const el=document.getElementById('sec-'+b.dataset.jump);
+    if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  app.querySelectorAll('[data-quickall]').forEach(b=>b.onclick=e=>{ if(e&&e.stopPropagation) e.stopPropagation(); viewLetterPatterns(b.dataset.quickall); });
+  app.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>{
+    const parts=b.dataset.lesson.split(':');
+    viewPatternLesson(parts[0],+parts[1]);
+  });
+  app.querySelectorAll('[data-review]').forEach(b=>b.onclick=()=>patternReviewQuiz(b.dataset.review));
+  if(scrollToKey){
+    const chap=resolveChapter(scrollToKey);
+    setTimeout(()=>{
+      const el=document.getElementById('sec-'+chap.id);
+      if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'});
+    },80);
+  }
+}
+function viewPatternLesson(key,idx){
+  stopSpeak(); window.scrollTo(0,0);
+  const list=patternsForKey(key);
+  const p=list[idx];
+  const chap=chapterForKey(key)||resolveChapter(key);
+  if(!p) return viewPatternsMegaMap(chap.id);
+  const backLbl='الفصل '+chap.num+': '+chap.title;
+  const label=p.title?p.title:('نمط '+(idx+1)+' من '+list.length);
+  let h='<div style="padding-top:14px"><button class="btn sm" id="back">‹ '+esc(backLbl)+'</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">📖 '+esc(label)+'</h2></div>'+
+   '<section class="sheet">'+
+   methodicalNote(p.rule)+
+   '<div class="pat-words" style="margin-top:10px">'+
+   p.words.map((w,wi)=>
+     '<div class="pat-row" data-pw="'+wi+'">'+
+      '<div class="pat-en">'+esc(w.word)+' <span style="font-size:12px">🔊</span></div>'+
+      '<div class="pat-mid"><span class="pat-ph">'+esc(w.phonetic)+'</span><span>'+esc(w.meaning)+'</span></div>'+
+      '<div class="pat-tag">'+bidiSafe(w.ruleApp)+'</div>'+
+     '</div>'
+   ).join('')+
+   '</div>'+
+   (p.sentences&&p.sentences.length?(
+    '<div class="sect-lbl" style="margin-top:12px">✏️ مثال</div><div class="ex-list">'+
+    p.sentences.map((s,si)=>'<div class="ex-item" data-ps="'+si+'" style="cursor:pointer"><bdi class="ex-en">'+esc(s.en)+'</bdi><span class="ex-ar">'+esc(s.ar)+' — '+esc(s.pronunciation)+'</span></div>').join('')+'</div>'
+   ):'')+
+   '<div class="rhint">اضغط أي كلمة لسماعها ورؤية تقسيم مقاطعها بالعربي</div>'+
+   '<button class="btn gold wide" id="startQuiz" style="margin-top:14px">📝 ابدأ اختبار قصير على هذا الدرس</button>'+
+   '</section>';
+  app.innerHTML=h;
+  $('#back').onclick=()=>viewPatternsMegaMap(chap.id);
+  app.querySelectorAll('[data-pw]').forEach(b=>b.onclick=()=>{
+    const w=p.words[+b.dataset.pw];
+    speak(w.word,{rate:0.75});
+    syllablePopup(w.word,w.phonetic);
+  });
+  app.querySelectorAll('[data-ps]').forEach(b=>b.onclick=()=>speak(p.sentences[+b.dataset.ps].en,{rate:0.75}));
+  $('#startQuiz').onclick=()=>patternLessonQuiz(key,idx);
+}
+/* بنك مموّهات للاختيار من متعدد: تفريغات صوتية عربية من نفس النمط أولاً، فمن باقي أنماط الحرف، فمن
+   كامل قاعدة البيانات — لضمان وجود ٣ مموّهات مختلفة حتى للأنماط القليلة الكلمات. */
+function patternQuizDistractors(pool1,pool2,pool3,correct){
+  let pool=pool1.filter(ph=>ph!==correct);
+  if(pool.length<3) pool=pool.concat(pool2.filter(ph=>ph!==correct&&!pool.includes(ph)));
+  if(pool.length<3) pool=pool.concat(pool3.filter(ph=>ph!==correct&&!pool.includes(ph)));
+  return shuffle([...new Set(pool)]).slice(0,3);
+}
+function patternLessonQuiz(key,idx){
+  stopSpeak(); window.scrollTo(0,0);
+  const list=patternsForKey(key);
+  const p=list[idx];
+  const qWords=shuffle(p.words.slice()).slice(0,Math.min(6,p.words.length));
+  let i=0,right=0;
+  function draw(){
+    if(i>=qWords.length) return done();
+    const w=qWords[i];
+    const opts=shuffle([w.phonetic].concat(patternQuizDistractors(
+      p.words.map(x=>x.phonetic),
+      list.flatMap(pp=>pp.words.map(x=>x.phonetic)),
+      PHONICS_PATTERNS.flatMap(pp=>pp.words.map(x=>x.phonetic)),
+      w.phonetic
+    )));
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الدرس</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+qWords.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(i/qWords.length*100)+'%"></i></span></div>'+
+     '<div class="qtype">كيف تُنطق هذه الكلمة؟</div>'+
+     '<div style="text-align:center;margin:14px 0"><bdi class="ex-en" style="font-size:24px">'+esc(w.word)+'</bdi></div>'+
+     '<div class="row" style="gap:8px;justify-content:center;margin-bottom:10px"><button class="btn ghost sm" id="rep">🔊 استمع</button></div>'+
+     '<div class="row" style="gap:8px;flex-direction:column">'+
+     opts.map(o=>'<button class="opt" data-ph="'+esc(o)+'" style="width:100%">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=()=>viewPatternLesson(key,idx);
+    $('#rep').onclick=()=>speak(w.word,{rate:0.7});
+    setTimeout(()=>speak(w.word,{rate:0.7}),300);
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=b.dataset.ph===w.phonetic;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(x.dataset.ph===w.phonetic) x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(2);}
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?('✅ صحيح! ('+esc(w.meaning)+')'):('❌ الصحيح: <b>'+esc(w.phonetic)+'</b> ('+esc(w.meaning)+')');
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='12px'; nb.textContent='التالي ›'; nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/qWords.length*100);
+    S.patternLessonDone=S.patternLessonDone||{}; S.patternLessonDone[key+':'+idx]=true; save();
+    const chap=chapterForKey(key)||resolveChapter(key);
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+qWords.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">أحسنت! يمكنك الآن الانتقال للدرس التالي في الفصل، أو خوض اختبار الفصل بعد إكمال كل دروسه.</div>'+
+      '<button class="btn gold wide" id="b" style="margin-top:14px">‹ خريطة الفصل</button></section>';
+    $('#b').onclick=()=>viewPatternsMegaMap(chap.id);
+  }
+  draw();
+}
+/* اختبار الفصل: يجمع كلمات كل دروس الفصل (قد تضم أكثر من حرف عند الدمج) معاً في اختبار واحد ختامي —
+   تلبيةً لطلب "دروس وفصول... وأسئلة واختبارات". يقبل معرّف فصل (ch1..) أو حرفاً مفرداً للتوافق. */
+function patternReviewQuiz(id){
+  stopSpeak(); window.scrollTo(0,0);
+  const chap=resolveChapter(id);
+  const list=patternsForKeys(chap.keys);
+  const allWords=list.flatMap(p=>p.words);
+  const qWords=shuffle(allWords.slice()).slice(0,Math.min(10,allWords.length));
+  let i=0,right=0;
+  function draw(){
+    if(i>=qWords.length) return done();
+    const w=qWords[i];
+    const opts=shuffle([w.phonetic].concat(patternQuizDistractors(
+      allWords.map(x=>x.phonetic),
+      PHONICS_PATTERNS.flatMap(pp=>pp.words.map(x=>x.phonetic)),
+      PHONICS_SUFFIXES.flatMap(pp=>pp.words.map(x=>x.phonetic)),
+      w.phonetic
+    )));
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الخريطة</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+qWords.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(i/qWords.length*100)+'%"></i></span></div>'+
+     '<div class="qtype">📝 اختبار الفصل '+chap.num+' — كيف تُنطق؟</div>'+
+     '<div style="text-align:center;margin:14px 0"><bdi class="ex-en" style="font-size:24px">'+esc(w.word)+'</bdi></div>'+
+     '<div class="row" style="gap:8px;justify-content:center;margin-bottom:10px"><button class="btn ghost sm" id="rep">🔊 استمع</button></div>'+
+     '<div class="row" style="gap:8px;flex-direction:column">'+
+     opts.map(o=>'<button class="opt" data-ph="'+esc(o)+'" style="width:100%">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=()=>viewPatternsMegaMap(chap.id);
+    $('#rep').onclick=()=>speak(w.word,{rate:0.7});
+    setTimeout(()=>speak(w.word,{rate:0.7}),300);
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=b.dataset.ph===w.phonetic;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(x.dataset.ph===w.phonetic) x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(2);}
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?('✅ صحيح! ('+esc(w.meaning)+')'):('❌ الصحيح: <b>'+esc(w.phonetic)+'</b> ('+esc(w.meaning)+')');
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='12px'; nb.textContent='التالي ›'; nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/qWords.length*100);
+    S.patternReviewDone=S.patternReviewDone||{}; S.patternReviewDone[chap.id]=true; save();
+    if(pct>=70){ try{confetti();}catch(e){} }
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+qWords.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">أتممت اختبار الفصل '+chap.num+' («'+esc(chap.title)+'»). عُد للخريطة لاختيار فصل آخر.</div>'+
+      '<button class="btn gold wide" id="b" style="margin-top:14px">‹ خريطة الفصل</button></section>';
+    $('#b').onclick=()=>viewPatternsMegaMap(chap.id);
+  }
+  draw();
+}
+/* ============ تدرّب على نطق كلمات قاموسي ============ تلبيةً لطلب: "دائماً يوجد كلمات تدرب عليها
+   تتحدث مع ما تم دراسته وأضافته للقاموس" — يجمع الكلمات التي درسها المتعلّم فعلاً (معروفة أو قيد
+   المراجعة في قاموسي)، يبحث عن نطقها (المؤلَّف أولاً ثم CMUdict)، ويحوّلها لاختبار نطق قصير، مع رابط
+   مباشر لتقسيم مقاطع كل كلمة — بدل الاقتصار على كلمات الأنماط الثابتة فقط. */
+function dictPronPool(){
+  const keys=Object.keys(WORDS).filter(k=>WORDS[k].t.toLowerCase()===k && (isKnown(k)||inReview(k)));
+  const out=[];
+  keys.forEach(k=>{
+    const w=WORDS[k];
+    const ph=findAnyPhonetic(w.t);
+    if(ph) out.push({word:w.t, meaning:w.ar, phonetic:ph});
+  });
+  return out;
+}
+function viewDictPronPractice(){
+  stopSpeak(); window.scrollTo(0,0);
+  let pool=dictPronPool();
+  if(pool.length<5){
+    const seen={}; pool.forEach(p=>{seen[p.word.toLowerCase()]=1;});
+    const extra=allBookVocab('mine').map(v=>({word:v[0],meaning:v[1],phonetic:findAnyPhonetic(v[0])}))
+      .filter(x=>x.phonetic && !seen[x.word.toLowerCase()]);
+    pool=pool.concat(extra);
+  }
+  if(pool.length<3){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق الكاملة</button></div>'+
+      '<section class="sheet" style="text-align:center"><div style="font-size:36px">📖</div>'+
+      '<div class="note" style="margin-top:8px">ادرس أو راجع بعض الكلمات في «قاموسي» أولاً، ثم عد لتتدرّب على نطقها هنا.</div>'+
+      '<button class="btn gold wide" id="toDict" style="margin-top:12px">فتح قاموسي</button></section>';
+    $('#back').onclick=()=>viewPatternsMegaMap();
+    $('#toDict').onclick=()=>viewDict();
+    return;
+  }
+  const qWords=shuffle(pool.slice()).slice(0,Math.min(10,pool.length));
+  const allPh=pool.map(x=>x.phonetic);
+  const bigPh=PHONICS_PATTERNS.flatMap(pp=>pp.words.map(x=>x.phonetic))
+    .concat(typeof PRON_DICT!=='undefined'?Object.values(PRON_DICT).map(e=>e.s.join('')):[]);
+  let i=0,right=0;
+  function draw(){
+    if(i>=qWords.length) return done();
+    const w=qWords[i];
+    const opts=shuffle([w.phonetic].concat(patternQuizDistractors(allPh, bigPh, bigPh, w.phonetic)));
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق الكاملة</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+qWords.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(i/qWords.length*100)+'%"></i></span></div>'+
+     '<div class="qtype">📖 كلمات قاموسي — كيف تُنطق؟</div>'+
+     '<div style="text-align:center;margin:14px 0"><bdi class="ex-en" style="font-size:24px">'+esc(w.word)+'</bdi></div>'+
+     '<div class="row" style="gap:8px;justify-content:center;margin-bottom:10px"><button class="btn ghost sm" id="rep">🔊 استمع</button></div>'+
+     '<div class="row" style="gap:8px;flex-direction:column">'+
+     opts.map(o=>'<button class="opt" data-ph="'+esc(o)+'" style="width:100%">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=()=>viewPatternsMegaMap();
+    $('#rep').onclick=()=>speak(w.word,{rate:0.7});
+    setTimeout(()=>speak(w.word,{rate:0.7}),300);
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=b.dataset.ph===w.phonetic;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(x.dataset.ph===w.phonetic) x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(2);}
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?('✅ صحيح! ('+esc(w.meaning)+')'):('❌ الصحيح: <b>'+esc(w.phonetic)+'</b> ('+esc(w.meaning)+')');
+      s.appendChild(d);
+      const sylBtn=document.createElement('button'); sylBtn.className='btn ghost wide'; sylBtn.style.marginTop='10px';
+      sylBtn.textContent='✂️ شاهد تقسيم مقاطعها'; sylBtn.onclick=()=>syllablePopup(w.word,w.phonetic);
+      s.appendChild(sylBtn);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='8px'; nb.textContent=(i<qWords.length-1?'التالي ›':'إنهاء'); nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/qWords.length*100);
+    if(pct>=70){ try{confetti();}catch(e){} }
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+qWords.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">هذه كلمات درستها بنفسك وأضفتها إلى «قاموسي» — كلما درست كلمات أكثر ستتوفّر هنا كلمات جديدة للتدرّب على نطقها.</div>'+
+      '<button class="btn gold wide" id="again" style="margin-top:14px">تدرّب مجدداً</button>'+
+      '<button class="btn ghost wide" id="b" style="margin-top:8px">‹ خريطة النطق الكاملة</button></section>';
+    $('#again').onclick=()=>viewDictPronPractice();
+    $('#b').onclick=()=>viewPatternsMegaMap();
+  }
+  draw();
+}
+function phonicsEntryByKey(tab,id){
+  const list=tab==='letters'?PHONICS_LETTERS:PHONICS_SOUNDS;
+  return list.find(e=>e.id===id);
+}
+function viewPhonicsEntry(tab,id){
+  stopSpeak(); window.scrollTo(0,0);
+  const e=phonicsEntryByKey(tab,id);
+  if(!e) return viewPhonicsList(tab);
+  S.phonicsVisited=S.phonicsVisited||{}; S.phonicsVisited[tab+':'+id]=true; save();
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الحروف والأصوات</button></div>'+
+   '<section class="sheet"><h2 style="font-size:22px">'+esc(e.title)+' <span class="en" style="font-size:14px;color:var(--muted);direction:ltr">'+esc(e.ipa)+'</span></h2>'+
+   '<div class="sect-lbl">📖 القاعدة</div>'+
+   methodicalNote(e.rule)+
+   (e.exceptions?('<div class="sect-lbl" style="margin-top:14px;color:var(--plum)">⚠️ الشواذّ والاستثناءات</div>'+methodicalNote(e.exceptions,'note-exc')):'')+
+   '<div class="sect-lbl" style="margin-top:14px">🔊 كلمات للتدريب</div>'+
+   '<div class="chips">'+e.words.map(w=>'<button class="wchip" data-word="'+esc(w[0])+'" data-ar="'+esc(w[1])+'">'+esc(w[0])+'</button>').join('')+'</div>'+
+   '<div class="rhint">اضغط أي كلمة لسماعها ومعرفة معناها</div>'+
+   (e.contrast?(
+    '<div class="sect-lbl" style="margin-top:14px">🎧 '+esc(e.contrast.label)+'</div>'+
+    '<div class="ex-list">'+e.contrast.pairs.map(p=>'<div class="ex-item"><bdi class="ex-en">'+esc(p[0])+' / '+esc(p[1])+'</bdi><span class="ex-ar">'+esc(p[2])+' / '+esc(p[3])+'</span></div>').join('')+'</div>'+
+    '<button class="btn ghost wide" id="discQuiz" style="margin-top:10px">🎧 تمرين تمييز سمعي</button>'
+   ):'')+
+   (tab==='letters'&&patternsForKey(id).length?
+     '<button class="btn ghost wide" id="toPatterns" style="margin-top:12px">📚 أنماط نطق أخرى لحرف '+id.toUpperCase()+' ('+patternsForKey(id).length+')</button>'
+   :'')+
+   '<button class="btn gold wide" id="micDrill" style="margin-top:12px">🎤 درّب لسانك بالميكروفون</button>'+
+   '</section>';
+  $('#back').onclick=()=>viewPhonicsList(tab);
+  app.querySelectorAll('.wchip[data-word]').forEach(b=>b.onclick=()=>{
+    speak(b.dataset.word,{rate:0.75});
+    toast(b.dataset.word+' — '+b.dataset.ar);
+  });
+  if($('#discQuiz')) $('#discQuiz').onclick=()=>phonicsDiscriminationQuiz(e,tab);
+  if($('#toPatterns')) $('#toPatterns').onclick=()=>viewPatternsMegaMap((chapterForKey(id)||resolveChapter(id)).id);
+  $('#micDrill').onclick=()=>{
+    if(!speechRecogSupported()) return toast('يحتاج متصفح Chrome أو Edge لدعم الميكروفون.');
+    speakDrill(e.words.map(w=>({en:w[0],ar:w[1],ci:-1})),true);
+  };
+}
+/* تمرين تمييز سمعي مبني على أزواج نطق دنيا (contrast.pairs) — نفس فكرة viewMinimalPairs لكن مخصّص
+   لصوت أو حرف واحد بعينه بدل قائمة عشوائية عامة، فيتدرّب المتعلّم بعمق على الصوت الذي يخلط فيه فعلاً */
+function phonicsDiscriminationQuiz(entry,tab){
+  stopSpeak(); window.scrollTo(0,0);
+  const list=shuffle(entry.contrast.pairs.slice());
+  let i=0,right=0;
+  function draw(){
+    if(i>=list.length) return done();
+    const p=list[i], target=Math.random()<0.5?0:1, word=p[target];
+    const opts=shuffle([0,1]);
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ '+esc(entry.title)+'</button></div>'+
+    '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+list.length+'</span>'+
+    '<span class="pbar"><i style="width:'+Math.round(i/list.length*100)+'%"></i></span></div>'+
+    '<div class="qtype">'+esc(entry.contrast.label)+'</div>'+
+    '<div style="text-align:center;font-size:40px;margin:10px 0">🎧</div>'+
+    '<div class="row" style="gap:8px;margin-bottom:14px"><button class="btn gold" id="rep" style="flex:1">🔊 أعد الاستماع</button></div>'+
+    '<div class="qhint">أيّ كلمة سمعت؟</div>'+
+    '<div class="opts">'+opts.map(n=>'<button class="opt" data-n="'+n+'"><span class="en">'+esc(p[n])+'</span> <span style="font-size:12px;color:var(--muted)">('+esc(p[n+2])+')</span></button>').join('')+'</div></section>';
+    $('#back').onclick=()=>viewPhonicsEntry(tab,entry.id);
+    const play=()=>speak(word,{rate:0.75});
+    $('#rep').onclick=play; setTimeout(play,400);
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.n===target;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.n===target)x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(3);} else addCard(word,p[target+2],-1);
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✅ صحيح — سمعت <span class="en">'+esc(word)+'</span>':'❌ الكلمة كانت: <span class="en">'+esc(word)+'</span>';
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='12px'; nb.textContent='التالي ›'; nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/list.length*100);
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+list.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">تمييز هذه الأصوات يحتاج تدريباً متكرراً — أعد هذا التمرين كل بضعة أيام.</div>'+
+      '<button class="btn gold wide" id="b" style="margin-top:14px">تم</button></section>';
+    $('#b').onclick=()=>viewPhonicsEntry(tab,entry.id);
+  }
+  draw();
+}
+/* ============ المقاطع والنبر (Syllables & Word Stress) ============
+   المستوى الثالث في هرم تدريب النطق (حرف ← صوت ← مقطع ← كلمة ← جملة ← مقالة): إدراك أن كل كلمة
+   تنقسم لمقاطع وأن مقطعاً واحداً يُنطق بقوة أكبر (النبر) هو ما يجعل النطق يبدو طبيعياً حتى لو كانت
+   كل الأصوات الفردية صحيحة. يشمل أيضاً أمثلة على تبديل النبر الذي يغيّر نوع الكلمة (اسم/فعل) كلياً. */
+function viewSyllables(){
+  stopSpeak(); window.scrollTo(0,0);
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">🧩 المقاطع والنبر</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">كل كلمة إنكليزية تنقسم إلى مقاطع، ومقطع واحد منها يُنطق بقوة أكبر — إتقان مكان النبر هو سرّ النطق الاحترافي الذي يبدو طبيعياً.</p></div>'+
+   '<section class="sheet">'+
+   '<div class="sect-lbl">📖 القاعدة</div>'+
+   methodicalNote("كل كلمة تتكوّن من مقطع واحد أو أكثر — كل مقطع يحتوي صوت علة واحداً على الأقل. في الكلمات من مقطعين فأكثر، يُنطق مقطع واحد بصوت أعلى ومدة أطول من البقية، ويُسمى المقطع المنبور. الخطأ في مكان النبر يجعل النطق يبدو غريباً حتى لو كانت كل الأصوات صحيحة فردياً.")+
+   '<div class="sect-lbl" style="margin-top:14px">🔊 كلمات مقسّمة إلى مقاطع — المقطع المنبور بلون مميّز</div>'+
+   '<div class="syll-list">'+
+   SYLLABLE_WORDS.map(w=>{
+     const word=w.en.replace(/-/g,'');
+     const parts=w.syll.map((s,si)=>'<span class="'+(si===w.stress?'syll-on':'')+'">'+esc(s)+'</span>').join('<span class="syll-dash">‑</span>');
+     return '<button class="syll-item" data-word="'+esc(word)+'"><span class="en" style="direction:ltr">'+parts+'</span><span class="ar">'+esc(w.ar)+'</span></button>';
+   }).join('')+
+   '</div>'+
+   '<button class="btn ghost wide" id="stressQuiz" style="margin-top:12px">🎯 تمرين: حدّد المقطع المنبور</button>'+
+   '</section>'+
+   '<section class="sheet"><div class="sect-lbl">🔀 عندما يغيّر النبر معنى الكلمة كلياً</div>'+
+   '<div class="note">في بعض الكلمات، نفس الحروف تماماً لكن بتبديل مكان النبر تتحوّل من اسم إلى فعل — استمع للفرق.</div>'+
+   '<div class="ex-list" style="margin-top:8px">'+
+   STRESS_SHIFT_PAIRS.map((p,pi)=>'<div class="ex-item" data-sp="'+pi+'" style="cursor:pointer"><bdi class="ex-en">'+esc(p.en)+' ↔ '+esc(p.en2)+'</bdi><span class="ex-ar">'+esc(p.ar)+' / '+esc(p.ar2)+'</span></div>').join('')+
+   '</div><div class="rhint">اضغط أي زوج لسماع الفرق</div>'+
+   '</section>'+
+   '<section class="sheet"><button class="btn gold wide" id="micDrill">🎤 درّب لسانك بالميكروفون</button></section>';
+  $('#back').onclick=()=>viewPhonicsMap();
+  app.querySelectorAll('.syll-item[data-word]').forEach(b=>b.onclick=()=>speak(b.dataset.word,{rate:0.7}));
+  app.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{
+    const p=STRESS_SHIFT_PAIRS[+b.dataset.sp];
+    speak(p.en.replace(/-/g,''),{rate:0.7});
+    setTimeout(()=>speak(p.en2.replace(/-/g,''),{rate:0.7}),900);
+  });
+  $('#stressQuiz').onclick=()=>syllableStressQuiz();
+  $('#micDrill').onclick=()=>{
+    if(!speechRecogSupported()) return toast('يحتاج متصفح Chrome أو Edge لدعم الميكروفون.');
+    speakDrill(SYLLABLE_WORDS.map(w=>({en:w.en.replace(/-/g,''),ar:w.ar,ci:-1})),true);
+  };
+}
+/* تمرين: بعد الاستماع للكلمة، اضغط المقطع الذي شعرت أنه أقوى/أطول نطقاً — يبني حسّاً سمعياً بالنبر */
+function syllableStressQuiz(){
+  stopSpeak(); window.scrollTo(0,0);
+  const list=shuffle(SYLLABLE_WORDS.slice());
+  let i=0,right=0;
+  function draw(){
+    if(i>=list.length) return done();
+    const w=list[i], word=w.en.replace(/-/g,'');
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ المقاطع والنبر</button></div>'+
+    '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+list.length+'</span>'+
+    '<span class="pbar"><i style="width:'+Math.round(i/list.length*100)+'%"></i></span></div>'+
+    '<div class="qtype">أيّ مقطع منبور؟</div>'+
+    '<div class="row" style="gap:8px;margin:10px 0"><button class="btn gold" id="rep" style="flex:1">🔊 استمع للكلمة</button></div>'+
+    '<div class="qhint">استمع جيداً، ثم اضغط المقطع الذي شعرت أنه أقوى/أطول نطقاً</div>'+
+    '<div class="row" style="gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">'+
+    w.syll.map((s,si)=>'<button class="opt syll-opt" data-si="'+si+'" style="flex:0 0 auto">'+esc(s)+'</button>').join('')+
+    '</div></section>';
+    $('#back').onclick=viewSyllables;
+    const play=()=>speak(word,{rate:0.7});
+    $('#rep').onclick=play; setTimeout(play,400);
+    app.querySelectorAll('.syll-opt').forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.si===w.stress;
+      app.querySelectorAll('.syll-opt').forEach(x=>{x.disabled=true; if(+x.dataset.si===w.stress) x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(3);}
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✅ صحيح!':'❌ المقطع المنبور كان: <b>'+esc(w.syll[w.stress])+'</b>';
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='12px'; nb.textContent='التالي ›'; nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/list.length*100);
+    S.phonicsSyllDone=true; save();
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+list.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">حسّ النبر يتحسّن بالاستماع المتكرر — أعد هذا التمرين كل بضعة أيام.</div>'+
+      '<button class="btn gold wide" id="b" style="margin-top:14px">تم</button></section>';
+    $('#b').onclick=viewSyllables;
+  }
+  draw();
+}
+/* ============ تعمّق احترافي بالنطق ============ تلبيةً لطلب: "التوسع أكثر بالنطق وجعله أكثر
+   احترافية" — خمسة مفاهيم متقدّمة (الشّوا، الأشكال الضعيفة، نبر الجملة والإيقاع، الربط الصوتي، قواعد النبر العامة) تميّز
+   النطق الصحيح مدرسياً عن النطق الطبيعي الذي يفهمه ويُشبه كلام الناطقين الأصليين فعلاً، مبنية على أسس
+   علم الأصوات التطبيقي المستقرة في تدريس الإنجليزية كلغة ثانية (PRO_DEEPDIVE في phonics.js). */
+function viewProDeepDive(){
+  stopSpeak(); window.scrollTo(0,0);
+  let h='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">🎓 تعمّق احترافي بالنطق</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">خمسة أسرار يميّز إتقانها بين النطق الصحيح حرفياً والنطق الطبيعي الذي يشبه فعلاً كلام الناطقين الأصليين.</p></div>';
+  PRO_DEEPDIVE.forEach((d,di)=>{
+    h+='<section class="sheet" style="margin-top:'+(di===0?'14px':'10px')+'">'+
+     '<div class="sect-lbl">'+esc(d.title)+(d.ipa&&d.ipa!=='—'?' <span class="en" style="font-size:13px;color:var(--muted);direction:ltr">'+esc(d.ipa)+'</span>':'')+'</div>'+
+     methodicalNote(d.rule)+
+     '<div class="sect-lbl" style="margin-top:10px">🔊 أمثلة</div>'+
+     '<div class="ex-list">'+d.examples.map((e,ei)=>
+       '<div class="ex-item" data-pd="'+di+':'+ei+'" style="cursor:pointer"><bdi class="ex-en">'+esc(e.en)+'</bdi><span class="ex-ar">'+esc(e.note)+'</span></div>'
+     ).join('')+'</div>'+
+     '<div class="rhint" style="margin-top:8px">💡 '+esc(d.tip)+'</div>'+
+    '</section>';
+  });
+  h+='<section class="sheet"><button class="btn gold wide" id="startProQuiz">🎯 اختبر فهمك (6 أسئلة)</button></section>'+
+   '<button class="btn sm ghost wide" id="backBottom" style="margin-top:8px">‹ خريطة النطق</button>';
+  app.innerHTML=h;
+  $('#back').onclick=()=>viewPhonicsMap();
+  $('#backBottom').onclick=()=>viewPhonicsMap();
+  app.querySelectorAll('[data-pd]').forEach(b=>b.onclick=()=>{
+    const parts=b.dataset.pd.split(':').map(Number);
+    speak(PRO_DEEPDIVE[parts[0]].examples[parts[1]].en,{rate:0.72});
+  });
+  $('#startProQuiz').onclick=()=>proDeepDiveQuiz();
+}
+function proDeepDiveQuiz(){
+  stopSpeak(); window.scrollTo(0,0);
+  const Q=[
+   {q:'ما هو صوت الشّوا (schwa)؟', opts:['أشيع صوت متحرك بالإنجليزية، يظهر في المقاطع غير المنبورة','صوت يظهر فقط في نهاية الكلمة','نفس صوت العلة الطويل دائماً','صوت ساكن قوي لا علاقة له بالحركات'], correct:0},
+   {q:'كيف تُنطق كلمة "to" عادة داخل جملة طبيعية مثل "I want to go"؟', opts:['بشكلها الكامل الواضح "too" دائماً','بشكل ضعيف مختصر قريب من الشّوا "tə"','لا تُنطق إطلاقاً وتُحذف','تتحوّل لصوت "دو" العربي'], correct:1},
+   {q:'كيف تُسمع عبارة "turn it off" في الكلام المتصل الطبيعي السريع؟', opts:['turn — it — off بفواصل واضحة بين كل كلمة','turnit فقط بلا off','متصلة تقريباً كـ tur-ni-toff','toff-it-turn بترتيب معكوس'], correct:2},
+   {q:'أي نطق صحيح لكلمة "present" بمعنى "يقدّم" (فعل لا اسم)؟', opts:['PREsent — النبر على المقطع الأول','preSENT — النبر على المقطع الثاني','نفس النطق دائماً بلا أي فرق عن الاسم','بلا أي نبر على أي مقطع'], correct:1},
+   {q:'أين يقع النبر عادة في كلمة تنتهي بـ -tion مثل "information"؟', opts:['دائماً على المقطع الأول من الكلمة','على المقطع الذي يسبق -tion مباشرة','على -tion نفسها','لا نبر إطلاقاً في هذه الكلمات'], correct:1},
+   {q:'في جملة "I want to go to the STORE"، أيّ كلمات تُنبر عادة في الكلام الطبيعي؟', opts:['كلمات المحتوى التي تحمل المعنى الأساسي (مثل STORE هنا)','كلمات الوظيفة القصيرة مثل to وthe فقط','كل الكلمات بنفس القوة تماماً بلا أي تفضيل','الكلمة الأولى في الجملة دائماً فقط'], correct:0}
+  ];
+  let i=0,right=0;
+  function draw(){
+    if(i>=Q.length) return done();
+    const q=Q[i];
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تعمّق احترافي</button></div>'+
+     '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+Q.length+'</span>'+
+     '<span class="pbar"><i style="width:'+Math.round(i/Q.length*100)+'%"></i></span></div>'+
+     '<div class="qtype">🎓 اختبر فهمك</div>'+
+     '<div class="qtext" style="margin:10px 0">'+esc(q.q)+'</div>'+
+     '<div class="row" style="gap:8px;flex-direction:column">'+
+     q.opts.map((o,oi)=>'<button class="opt" data-oi="'+oi+'" style="width:100%">'+esc(o)+'</button>').join('')+
+     '</div></section>';
+    $('#back').onclick=()=>viewProDeepDive();
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.oi===q.correct;
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(+x.dataset.oi===q.correct) x.classList.add('ok');});
+      if(!ok) b.classList.add('no');
+      if(ok){right++;addXP(3);}
+      const s=app.querySelector('.sheet');
+      const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no');
+      d.innerHTML=ok?'✅ صحيح!':'❌ الصحيح: <b>'+esc(q.opts[q.correct])+'</b>';
+      s.appendChild(d);
+      const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+      nb.style.marginTop='12px'; nb.textContent=(i<Q.length-1?'التالي ›':'إنهاء'); nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+    });
+  }
+  function done(){
+    const pct=Math.round(right/Q.length*100);
+    S.phonicsProDone=true; save();
+    if(pct>=70){ try{confetti();}catch(e){} }
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+Q.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">هذه المفاهيم متقدّمة وتحتاج استماعاً متكرراً لكلام حقيقي لترسيخها فعلياً — راجع الأمثلة كلما استمعت لمحادثة إنكليزية طبيعية.</div>'+
+      '<button class="btn gold wide" id="b" style="margin-top:14px">‹ خريطة النطق</button></section>';
+    $('#b').onclick=()=>viewPhonicsMap();
+  }
+  draw();
+}
+/* ============ تدرّب سريع على النطق ============ تلبيةً لطلب صريح: "لم أجد تدرب على النطق السريع
+   مثل على المقاطع، الكلمات، الجمل، المقالات" — جولة قصيرة (٨ أسئلة) لا تحتاج ميكروفون ولا إنترنت،
+   تخلط عشوائياً بين: تخمين المقطع المنبور، نطق كلمات (من قاموسي أولاً ثم أنماط النطق)، والتمييز بين
+   نطقَي اسم/فعل لنفس الكلمة حسب موضع النبر — مراجعة سريعة يومية تغطّي كل مهارات النطق دفعة واحدة. */
+function buildQuickPronBank(){
+  const bank=[];
+  shuffle(SYLLABLE_WORDS.slice()).slice(0,3).forEach(w=>bank.push({type:'stress',word:w}));
+  let wordPool=dictPronPool();
+  if(wordPool.length<3){
+    wordPool=wordPool.concat(allBookVocab('mine').map(v=>({word:v[0],meaning:v[1],phonetic:findAnyPhonetic(v[0])})).filter(x=>x.phonetic));
+  }
+  shuffle(wordPool.slice()).slice(0,3).forEach(w=>bank.push({type:'word',word:w}));
+  shuffle(STRESS_SHIFT_PAIRS.slice()).slice(0,2).forEach(p=>bank.push({type:'shift',pair:p}));
+  return shuffle(bank).slice(0,8);
+}
+function viewQuickPronPractice(){
+  stopSpeak(); window.scrollTo(0,0);
+  const items=buildQuickPronBank();
+  if(items.length<3){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button></div>'+
+     '<section class="sheet" style="text-align:center"><div style="font-size:36px">⚡</div>'+
+     '<div class="note" style="margin-top:8px">راجع بضعة أنماط أو كلمات أولاً، ثم عد لهذا التدريب السريع المختلط.</div></section>';
+    $('#back').onclick=()=>viewPhonicsMap();
+    return;
+  }
+  let i=0,right=0;
+  const wordPh=items.filter(it=>it.type==='word').map(it=>it.word.phonetic);
+  const bigPh=PHONICS_PATTERNS.flatMap(pp=>pp.words.map(x=>x.phonetic))
+    .concat(typeof PRON_DICT!=='undefined'?Object.values(PRON_DICT).map(e=>e.s.join('')):[]);
+  function answered(ok,msg){
+    if(ok){right++;addXP(2);}
+    const s=app.querySelector('.sheet');
+    const d=document.createElement('div'); d.className='fb '+(ok?'ok':'no'); d.innerHTML=msg; s.appendChild(d);
+    const nb=document.createElement('button'); nb.className='btn '+(ok?'gold':'')+' wide';
+    nb.style.marginTop='12px'; nb.textContent=(i<items.length-1?'التالي ›':'إنهاء'); nb.onclick=()=>{i++;draw();}; s.appendChild(nb);
+  }
+  function draw(){
+    if(i>=items.length) return done();
+    const it=items[i];
+    const head='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button></div>';
+    const progress='<div class="qhead"><span class="qcount">'+(i+1)+'/'+items.length+'</span><span class="pbar"><i style="width:'+Math.round(i/items.length*100)+'%"></i></span></div>';
+    if(it.type==='stress'){
+      const w=it.word, word=w.en.replace(/-/g,'');
+      app.innerHTML=head+'<section class="sheet">'+progress+
+       '<div class="qtype">⚡ أيّ مقطع منبور؟</div>'+
+       '<div class="row" style="gap:8px;margin:10px 0"><button class="btn gold" id="rep" style="flex:1">🔊 استمع للكلمة</button></div>'+
+       '<div class="row" style="gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">'+
+       w.syll.map((s,si)=>'<button class="opt syll-opt" data-si="'+si+'" style="flex:0 0 auto">'+esc(s)+'</button>').join('')+
+       '</div></section>';
+      $('#back').onclick=()=>viewPhonicsMap();
+      const play=()=>speak(word,{rate:0.7});
+      $('#rep').onclick=play; setTimeout(play,400);
+      app.querySelectorAll('.syll-opt').forEach(b=>b.onclick=()=>{
+        const ok=+b.dataset.si===w.stress;
+        app.querySelectorAll('.syll-opt').forEach(x=>{x.disabled=true; if(+x.dataset.si===w.stress) x.classList.add('ok');});
+        if(!ok) b.classList.add('no');
+        answered(ok, ok?'✅ صحيح!':'❌ المقطع المنبور كان: <b>'+esc(w.syll[w.stress])+'</b>');
+      });
+    }else if(it.type==='word'){
+      const w=it.word;
+      const opts=shuffle([w.phonetic].concat(patternQuizDistractors(wordPh,bigPh,bigPh,w.phonetic)));
+      app.innerHTML=head+'<section class="sheet">'+progress+
+       '<div class="qtype">⚡ كيف تُنطق؟</div>'+
+       '<div style="text-align:center;margin:14px 0"><bdi class="ex-en" style="font-size:24px">'+esc(w.word)+'</bdi></div>'+
+       '<div class="row" style="gap:8px;justify-content:center;margin-bottom:10px"><button class="btn ghost sm" id="rep">🔊 استمع</button></div>'+
+       '<div class="row" style="gap:8px;flex-direction:column">'+
+       opts.map(o=>'<button class="opt" data-ph="'+esc(o)+'" style="width:100%">'+esc(o)+'</button>').join('')+
+       '</div></section>';
+      $('#back').onclick=()=>viewPhonicsMap();
+      $('#rep').onclick=()=>speak(w.word,{rate:0.7});
+      setTimeout(()=>speak(w.word,{rate:0.7}),300);
+      app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+        const ok=b.dataset.ph===w.phonetic;
+        app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(x.dataset.ph===w.phonetic) x.classList.add('ok');});
+        if(!ok) b.classList.add('no');
+        answered(ok, ok?'✅ صحيح!':'❌ الصحيح: <b>'+esc(w.phonetic)+'</b>');
+      });
+    }else{
+      const p=it.pair, targetIsNoun=Math.random()<0.5;
+      const targetMeaning=targetIsNoun?p.ar:p.ar2, correctForm=targetIsNoun?p.en:p.en2, otherForm=targetIsNoun?p.en2:p.en;
+      const opts=shuffle([correctForm,otherForm]);
+      app.innerHTML=head+'<section class="sheet">'+progress+
+       '<div class="qtype">⚡ أيّ نطق (حسب النبر) يطابق هذا المعنى؟</div>'+
+       '<div class="note" style="text-align:center;margin:10px 0;font-size:15px"><b>'+esc(targetMeaning)+'</b></div>'+
+       '<div class="row" style="gap:8px;flex-direction:column">'+
+       opts.map(o=>'<button class="opt" data-o="'+esc(o)+'" style="width:100%;direction:ltr">'+esc(o)+'</button>').join('')+
+       '</div></section>';
+      $('#back').onclick=()=>viewPhonicsMap();
+      app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+        const ok=b.dataset.o===correctForm;
+        app.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(x.dataset.o===correctForm) x.classList.add('ok');});
+        if(!ok) b.classList.add('no');
+        answered(ok, ok?'✅ صحيح!':'❌ الصحيح: <b>'+esc(correctForm)+'</b>');
+      });
+    }
+  }
+  function done(){
+    const pct=Math.round(right/items.length*100);
+    if(pct>=70){ try{confetti();}catch(e){} }
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=70?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">'+right+' من '+items.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">تدريب سريع مختلط يجمع النبر والمقاطع ونطق الكلمات — أعده يومياً لدقائق للحفاظ على حسّك السمعي حاضراً.</div>'+
+      '<button class="btn gold wide" id="again" style="margin-top:14px">تدرّب مجدداً</button>'+
+      '<button class="btn ghost wide" id="b" style="margin-top:8px">‹ خريطة النطق</button></section>';
+    $('#again').onclick=()=>viewQuickPronPractice();
+    $('#b').onclick=()=>viewPhonicsMap();
+  }
+  draw();
+}
+/* ============ قراءة مقالة كاملة بصوتك (المستوى الأخير في هرم النطق) ============
+   يختار المتعلّم مقالة قصيرة من مكتبة القراءة، ثم يقرأها جملة جملة بالميكروفون عبر نفس محرّك
+   speakDrill المستخدم لكلمات وجُمل النطق — إتقان القراءة الشفهية المتصلة لفقرة كاملة، لا كلمات
+   منفصلة فقط، هو الاختبار الحقيقي للنطق الاحترافي وأقرب ما يكون لمهارة التحدّث المطلوبة فعلياً. */
+function viewParagraphSpeak(){
+  stopSpeak(); window.scrollTo(0,0);
+  if(!speechRecogSupported()){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button></div>'+
+     '<section class="sheet" style="text-align:center"><div style="font-size:44px">📄</div>'+
+     '<h2 style="justify-content:center">قراءة مقالة كاملة</h2>'+
+     '<div class="note" style="margin-top:10px">متصفحك الحالي لا يدعم التعرّف على الصوت. جرّب فتح التطبيق عبر متصفح Chrome أو Edge للاستفادة من هذه الميزة.</div></section>';
+    $('#back').onclick=()=>viewPhonicsMap(); return;
+  }
+  const passages=READING_LIB.filter(p=>p.level==='A1').slice(0,12);
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خريطة النطق</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">📄 قراءة مقالة كاملة بصوتك</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">اختر مقالة قصيرة، واقرأها جملة جملة بالميكروفون. هذا أقرب تمرين لمهارة التحدّث المتصل الفعلية — لا كلمات منفردة فقط.</p></div>'+
+   '<section class="sheet">'+
+   passages.map((p,pi)=>'<button class="ul-item" data-pi="'+pi+'" style="display:block;width:100%;text-align:right;cursor:pointer">'+
+     '<div style="font-weight:700">'+esc(p.icon)+' '+esc(p.t_ar)+'</div>'+
+     '<div class="en" style="font-size:12px;color:var(--muted);direction:ltr;text-align:left">'+esc(p.t_en)+'</div></button>').join('')+
+   '</section>';
+  $('#back').onclick=()=>viewPhonicsMap();
+  app.querySelectorAll('[data-pi]').forEach(b=>b.onclick=()=>{
+    const p=passages[+b.dataset.pi];
+    const sents=splitIntoSentences(p.text).map(s=>({en:s[0],ar:'',ci:-1}));
+    speakDrill(sents,false,()=>{ S.phonicsParaDone=true; save(); });
+  });
+}
 function listenSetup(){
   stopSpeak(); window.scrollTo(0,0);
+  const mineN=SENTS.filter(s=>s.ci<0||chapUnlocked(s.ci)).length;
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
    '<h2 style="margin:12px 0 4px;font-size:21px">🎧 الاستماع</h2>'+
    '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">تسمع الجملة كاملة بلا نصّ مكتوب، ثم تختار معناها. هذه أهم مهارة يهملها المتعلمون.</p></div>'+
-   '<section class="sheet"><h2><i>1</i> كم جملة؟</h2>'+
+   '<section class="sheet"><h2><i>1</i> من أين؟</h2>'+
+   '<div class="segs"><button class="seg on" data-scope="mine">📘 من دروسي ('+mineN+')</button>'+
+   '<button class="seg" data-scope="all">الكل ('+SENTS.length+')</button></div>'+
+   '<h2 style="margin-top:18px"><i>2</i> كم جملة؟</h2>'+
    '<div class="segs">'+[10,20,30].map((n,i)=>'<button class="seg '+(i===0?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
-   '<h2 style="margin-top:18px"><i>2</i> السرعة</h2>'+
+   '<h2 style="margin-top:18px"><i>3</i> السرعة</h2>'+
    '<div class="segs"><button class="seg on" data-r="0.65">بطيئة</button>'+
    '<button class="seg" data-r="0.85">عادية</button><button class="seg" data-r="1">سريعة</button></div>'+
    '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button></section>';
   $('#back').onclick=viewPractice;
-  let n=10,r=0.65;
+  let scope='mine',n=10,r=0.65;
+  app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{scope=b.dataset.scope;
+    app.querySelectorAll('[data-scope]').forEach(x=>x.classList.toggle('on',x===b));});
   app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{n=+b.dataset.n;
     app.querySelectorAll('[data-n]').forEach(x=>x.classList.toggle('on',x===b));});
   app.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{r=+b.dataset.r;
     app.querySelectorAll('[data-r]').forEach(x=>x.classList.toggle('on',x===b));});
-  $('#go').onclick=()=>listenDrill(shuffle(SENTS).slice(0,n),r);
+  $('#go').onclick=()=>{
+    let base=scope==='mine'?SENTS.filter(s=>s.ci<0||chapUnlocked(s.ci)):SENTS;
+    if(scope==='mine'&&base.length<6) base=SENTS;
+    listenDrill(shuffle(base).slice(0,n),r);
+  };
 }
 function listenDrill(list,rate){
   stopSpeak(); window.scrollTo(0,0);
@@ -5311,22 +7020,33 @@ function listenDrill(list,rate){
 /* ============ الكتابة ============ */
 function writeSetup(){
   stopSpeak(); window.scrollTo(0,0);
+  const shortSents=SENTS.filter(s=>s.en.split(' ').length<=9);
+  const mineN=shortSents.filter(s=>s.ci<0||chapUnlocked(s.ci)).length;
   app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
    '<h2 style="margin:12px 0 4px;font-size:21px">✍️ الكتابة والإملاء</h2>'+
    '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">تُعطى الجملة بالعربية أو مسموعة، فتكتبها بالإنكليزية. التصحيح يُظهر لك كل كلمة أخطأت فيها.</p></div>'+
-   '<section class="sheet"><h2><i>1</i> النمط</h2>'+
+   '<section class="sheet"><h2><i>1</i> من أين؟</h2>'+
+   '<div class="segs"><button class="seg on" data-scope="mine">📘 من دروسي ('+mineN+')</button>'+
+   '<button class="seg" data-scope="all">الكل ('+shortSents.length+')</button></div>'+
+   '<h2 style="margin-top:18px"><i>2</i> النمط</h2>'+
    '<div class="segs"><button class="seg on" data-m="ar">من العربية</button>'+
    '<button class="seg" data-m="audio">إملاء مسموع</button></div>'+
-   '<h2 style="margin-top:18px"><i>2</i> كم جملة؟</h2>'+
+   '<h2 style="margin-top:18px"><i>3</i> كم جملة؟</h2>'+
    '<div class="segs">'+[5,10,20].map((n,i)=>'<button class="seg '+(i===0?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
    '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button></section>';
   $('#back').onclick=viewPractice;
-  let m='ar',n=5;
+  let scope='mine',m='ar',n=5;
+  app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{scope=b.dataset.scope;
+    app.querySelectorAll('[data-scope]').forEach(x=>x.classList.toggle('on',x===b));});
   app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{m=b.dataset.m;
     app.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));});
   app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{n=+b.dataset.n;
     app.querySelectorAll('[data-n]').forEach(x=>x.classList.toggle('on',x===b));});
-  $('#go').onclick=()=>writeDrill(shuffle(SENTS.filter(s=>s.en.split(' ').length<=9)).slice(0,n),m);
+  $('#go').onclick=()=>{
+    let base=scope==='mine'?shortSents.filter(s=>s.ci<0||chapUnlocked(s.ci)):shortSents;
+    if(scope==='mine'&&base.length<4) base=shortSents;
+    writeDrill(shuffle(base).slice(0,n),m);
+  };
 }
 /* مقارنة كلمة بكلمة تُظهر موضع الخطأ */
 function diffWords(user,target){
@@ -5387,6 +7107,153 @@ function writeDrill(list,mode){
       '<div class="row" style="margin-top:14px;gap:8px"><button class="btn gold" id="r" style="flex:1">قواعد التهجئة</button>'+
       '<button class="btn" id="b" style="flex:1">تم</button></div></section>';
     $('#r').onclick=viewSpellRules; $('#b').onclick=viewPractice;
+  }
+  draw();
+}
+
+/* ============ النطق بالميكروفون — يسجّل صوت المتعلّم ويقارن ما تعرّف عليه المتصفح بالهدف ============
+   يعتمد على واجهة SpeechRecognition (تدعمها متصفحات Chrome/Edge وتحتاج اتصالاً بالإنترنت)؛ إن لم تكن مدعومة
+   نعرض رسالة واضحة بدل كسر الصفحة. المطابقة تقريبية (كلمة بكلمة) — مؤشّر لوضوح النطق وليس تقييماً صوتياً دقيقاً. */
+function speechRecogSupported(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
+function makeRecognizer(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR();
+  r.lang='en-US'; r.interimResults=false; r.maxAlternatives=3; r.continuous=false;
+  return r;
+}
+function speakMatchPct(said,target){
+  const s=norm(said).split(' ').filter(Boolean), t=norm(target).split(' ').filter(Boolean);
+  if(!t.length) return 0;
+  let hits=0;
+  t.forEach((w,i)=>{ if(s[i]===w||s.includes(w)) hits++; });
+  return Math.round(hits/t.length*100);
+}
+function viewSpeakSetup(presetType){
+  stopSpeak(); window.scrollTo(0,0);
+  if(!speechRecogSupported()){
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button></div>'+
+     '<section class="sheet" style="text-align:center"><div style="font-size:44px">🎙️</div>'+
+     '<h2 style="justify-content:center">النطق بالميكروفون</h2>'+
+     '<div class="note" style="margin-top:10px">متصفحك الحالي لا يدعم التعرّف على الصوت. جرّب فتح التطبيق عبر متصفح Chrome أو Edge (على حاسوب أو أندرويد) للاستفادة من هذه الميزة — وتحتاج اتصالاً بالإنترنت لأنّ التعرّف يمرّ عبر خوادم المتصفح.</div>'+
+     '<button class="btn gold wide" id="toListen" style="margin-top:16px">🎧 جرّب تدريب الاستماع بدلاً منه</button>'+
+     '<button class="btn ghost wide" id="toPhonics2" style="margin-top:8px">🔤 أو تصفّح شرح النطق حسب الحرف والصوت (بلا حاجة لميكروفون)</button></section>';
+    $('#back').onclick=viewPractice; $('#toListen').onclick=listenSetup; $('#toPhonics2').onclick=()=>viewPhonicsMap();
+    return;
+  }
+  const mineVocab=allBookVocab('mine'), allVocab=allBookVocab('all');
+  const mineSents=SENTS.filter(s=>s.ci<0||chapUnlocked(s.ci));
+  app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ تدرّب</button>'+
+   '<h2 style="margin:12px 0 4px;font-size:21px">🎙️ النطق بالميكروفون</h2>'+
+   '<p style="color:#9FC7C1;font-size:13px;margin:0;line-height:1.8">اضغط الميكروفون وانطق الكلمة أو الجملة، وسيقارن التطبيق ما سمعه بالنطق الصحيح. يحتاج إذن الميكروفون واتصالاً بالإنترنت.</p></div>'+
+   '<section class="sheet"><h2><i>1</i> النمط</h2>'+
+   '<div class="segs"><button class="seg '+(presetType==='sent'?'':'on')+'" data-t="word">كلمات مفردة</button>'+
+   '<button class="seg '+(presetType==='sent'?'on':'')+'" data-t="sent">جمل كاملة</button></div>'+
+   '<h2 style="margin-top:18px"><i>2</i> من أين؟</h2>'+
+   '<div class="segs"><button class="seg on" data-scope="mine">📘 من دروسي</button>'+
+   '<button class="seg" data-scope="all">الكل</button></div>'+
+   '<h2 style="margin-top:18px"><i>3</i> كم؟</h2>'+
+   '<div class="segs">'+[5,10,15].map((n,i)=>'<button class="seg '+(i===0?'on':'')+'" data-n="'+n+'">'+n+'</button>').join('')+'</div>'+
+   '<button class="btn gold wide" id="go" style="margin-top:18px">ابدأ</button>'+
+   '<div id="cnt" class="diag" style="color:#6B5A42"></div></section>'+
+   '<section class="sheet"><h2><i style="background:#8C5A1E;color:#FFF3DE">🔤</i> يصعب عليك صوت معيّن؟</h2>'+
+   '<div class="note">إن كنت تخلط بين أصوات معيّنة مثل P وB، أو V وF، أو NG — بدل التدريب العشوائي، اختر الصوت أو الحرف بعينه وتدرّب عليه بشرح مركّز وتمارين وميكروفون.</div>'+
+   '<button class="btn ghost wide" id="toPhonics" style="margin-top:10px">🔤 افتح تدريب النطق حسب الحرف والصوت</button></section>';
+  $('#back').onclick=viewPractice;
+  $('#toPhonics').onclick=()=>viewPhonicsMap();
+  let type=presetType==='sent'?'sent':'word',scope='mine',n=5;
+  const countFor=()=>{
+    if(type==='word') return (scope==='mine'?mineVocab:allVocab).length;
+    return (scope==='mine'?mineSents:SENTS).length;
+  };
+  const upd=()=>{ $('#cnt').textContent='المتاح الآن: '+countFor(); };
+  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{type=b.dataset.t;
+    app.querySelectorAll('[data-t]').forEach(x=>x.classList.toggle('on',x===b)); upd();});
+  app.querySelectorAll('[data-scope]').forEach(b=>b.onclick=()=>{scope=b.dataset.scope;
+    app.querySelectorAll('[data-scope]').forEach(x=>x.classList.toggle('on',x===b)); upd();});
+  app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{n=+b.dataset.n;
+    app.querySelectorAll('[data-n]').forEach(x=>x.classList.toggle('on',x===b));});
+  upd();
+  $('#go').onclick=()=>{
+    let base;
+    if(type==='word'){
+      base=(scope==='mine'?mineVocab:allVocab).filter(v=>/^[a-zA-Z' ]+$/.test(v[0]));
+      if(scope==='mine'&&base.length<4) base=allVocab.filter(v=>/^[a-zA-Z' ]+$/.test(v[0]));
+      if(!base.length) return toast('لا توجد مفردات كافية بعد.');
+      speakDrill(shuffle(base).slice(0,n).map(v=>({en:v[0],ar:v[1],ci:-1})),true,()=>{ S.phonicsWordsDone=true; save(); });
+    }else{
+      base=scope==='mine'?mineSents:SENTS;
+      if(scope==='mine'&&base.length<3) base=SENTS;
+      if(!base.length) return toast('لا توجد جمل كافية بعد.');
+      speakDrill(shuffle(base).slice(0,n),false,()=>{ S.phonicsSentDone=true; save(); });
+    }
+  };
+}
+function speakDrill(list,isWord,onDone){
+  stopSpeak(); window.scrollTo(0,0);
+  let i=0, good=0, listening=false, rec=null;
+  function stopRec(){ if(rec){ try{rec.stop();}catch(e){} rec=null; } listening=false; }
+  function draw(){
+    if(i>=list.length) return done();
+    const s=list[i];
+    app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ خروج</button></div>'+
+    '<section class="sheet"><div class="qhead"><span class="qcount">'+(i+1)+'/'+list.length+'</span>'+
+    '<span class="pbar"><i style="width:'+Math.round(i/list.length*100)+'%"></i></span></div>'+
+    '<div class="qtype">'+(isWord?'كلمة':'جملة')+'</div>'+
+    '<div class="qtext en" style="text-align:center">'+esc(s.en)+'</div>'+
+    '<div class="note" style="text-align:center;margin-top:4px">'+esc(s.ar)+'</div>'+
+    '<div class="row" style="gap:8px;margin:14px 0"><button class="btn sm" id="hear" style="flex:1">🔊 استمع للنموذج</button></div>'+
+    '<div style="text-align:center;margin:18px 0">'+
+    '<button class="btn gold" id="mic" style="width:84px;height:84px;border-radius:50%;font-size:32px">🎤</button>'+
+    '<div id="micLab" class="qhint" style="margin-top:8px">اضغط وانطق الآن</div></div>'+
+    '<div id="result"></div>'+
+    '<div class="row" style="margin-top:10px;gap:8px"><button class="btn ghost wide" id="skip">تخطَّ ›</button></div>'+
+    '</section>';
+    $('#back').onclick=()=>{ stopRec(); viewPractice(); };
+    $('#hear').onclick=()=>speak(s.en,{rate:0.72});
+    $('#skip').onclick=()=>{ stopRec(); i++; draw(); };
+    $('#mic').onclick=()=>{
+      if(listening) return;
+      listening=true; $('#micLab').textContent='🎙️ يستمع الآن… تحدّث بوضوح';
+      $('#mic').classList.add('mic-listening');
+      try{ rec=makeRecognizer(); }catch(e){ listening=false; $('#micLab').textContent='تعذّر تشغيل الميكروفون.'; return; }
+      rec.onresult=(ev)=>{
+        listening=false; $('#mic').classList.remove('mic-listening');
+        const said=ev.results&&ev.results[0]&&ev.results[0][0]?ev.results[0][0].transcript:'';
+        const pct=speakMatchPct(said,s.en);
+        const ok=pct>=70;
+        if(ok){ good++; addXP(5); } else addCard(s.en,s.ar,s.ci==null?-1:s.ci);
+        $('#micLab').textContent='اضغط لإعادة المحاولة';
+        const r=document.getElementById('result');
+        r.innerHTML='<div class="fb '+(ok?'ok':(pct>=35?'':'no'))+'">'+
+          (ok?'✅ نطق واضح!':pct>=35?'🟡 قريب — استمع للنموذج وأعد المحاولة':'❌ لم يتّضح — استمع للنموذج وحاول مجدداً')+
+          '<div style="font-size:12px;margin-top:6px">ما تعرّف عليه المتصفح: <span class="en">"'+esc(said||'—')+'"</span></div></div>'+
+          '<button class="btn '+(ok?'gold':'')+' wide" id="next" style="margin-top:12px">'+(i<list.length-1?'التالي ›':'إنهاء')+'</button>';
+        $('#next').onclick=()=>{ i++; draw(); };
+      };
+      rec.onerror=(ev)=>{
+        listening=false; $('#mic').classList.remove('mic-listening');
+        const msg=ev.error==='not-allowed'?'رفض إذن الميكروفون — فعّله من إعدادات المتصفح.':
+          ev.error==='no-speech'?'لم يُسمع أي صوت — اضغط وحاول مجدداً.':
+          ev.error==='network'?'تحتاج اتصالاً بالإنترنت لهذه الميزة.':'حدث خطأ — حاول مجدداً.';
+        $('#micLab').textContent=msg;
+      };
+      rec.onend=()=>{ listening=false; $('#mic').classList.remove('mic-listening'); };
+      try{ rec.start(); }catch(e){ listening=false; $('#micLab').textContent='تعذّر بدء التسجيل — حاول مجدداً.'; }
+    };
+    setTimeout(()=>speak(s.en,{rate:0.72}),300);
+  }
+  function done(){
+    const pct=Math.round(good/list.length*100);
+    if(onDone) onDone(pct);
+    app.innerHTML='<section class="sheet" style="margin-top:30px"><div class="score">'+
+      '<div class="big" style="color:'+(pct>=60?'var(--leaf)':'var(--plum)')+'">'+pct+'٪</div>'+
+      '<div class="lab">نطق واضح في '+good+' من '+list.length+'</div></div>'+
+      '<div class="note" style="margin-top:14px">هذا مؤشّر تقريبي من تعرّف المتصفح على كلامك، وليس تقييماً صوتياً دقيقاً — كرّر الكلمات التي لم تتّضح كل بضعة أيام.</div>'+
+      '<div class="row" style="margin-top:14px;gap:8px">'+
+      '<button class="btn gold" id="again" style="flex:1">أعد</button>'+
+      '<button class="btn" id="b" style="flex:1">تم</button></div></section>';
+    $('#again').onclick=()=>speakDrill(shuffle(list),isWord,onDone);
+    $('#b').onclick=viewPractice;
   }
   draw();
 }
@@ -6613,10 +8480,22 @@ function examWeak(){
   examQuiz(S.examWrong.slice().map(q=>Object.assign({},q)),'مراجعة أخطائي',()=>{},{clearWrong:true});
 }
 /* يبحث عن سؤال بمعرّفه (_id) عبر كل البنوك — يُستخدم لبناء وضع "الأسئلة الأكثر تكراراً للخطأ" */
+/* يحوّل سؤال درس ثابت (بأنواعه المختلفة: mcq/trans/listen) إلى الشكل الموحّد {q,o,a,exp} الذي يتوقّعه
+   محرّك الامتحان العام (examQuiz) — كل نوع يخزّن نص السؤال في حقل مختلف (mcq:q، trans:hint، listen:say)
+   فبلا هذا التطبيع يظهر النص كـ"undefined". يُرجع null للأنواع التي تحتاج واجهة خاصة (order/match/spell)
+   فتُستبعد بدل عرضها بشكل خاطئ — تلك الأنواع تُعرَض بشكل صحيح فقط داخل اختبار الفصل الأصلي (viewQuiz). */
+function normalizeChapterQ(q){
+  if(!q||!q.o) return null;
+  if(q.t==='mcq') return Object.assign({},q,{q:q.q,o:q.o,a:q.a,exp:q.hint||''});
+  if(q.t==='trans') return Object.assign({},q,{q:q.hint||'',o:q.o,a:q.a,exp:''});
+  if(q.t==='listen') return Object.assign({},q,{q:q.say||'',o:q.o,a:q.a,exp:''});
+  return null;
+}
 function findQuestionById(id){
-  /* أسئلة مصدرها فصول القصة نفسها (اختبار الفصل ch، اختبار الوحدة ut، التدريب المتداخل il) */
+  /* أسئلة مصدرها فصول القصة نفسها (اختبار الفصل ch، اختبار الوحدة ut، التدريب المتداخل il) —
+     تُطبَّع دائماً عبر normalizeChapterQ لتوافق محرّك الامتحان العام. */
   const cm=/^(ch|ut|il)(\d+)q(\d+)$/.exec(id);
-  if(cm){ const c=BOOK[+cm[2]]; return c&&c.quiz&&c.quiz[+cm[3]]; }
+  if(cm){ const c=BOOK[+cm[2]]; const raw=c&&c.quiz&&c.quiz[+cm[3]]; const nq=normalizeChapterQ(raw); return nq?Object.assign(nq,{_id:id}):null; }
   const mp=/^p(\d+)q(\d+)$/.exec(id);
   if(mp){ const p=EXAM.passages[+mp[1]]; return p&&p.q[+mp[2]]; }
   if(id.startsWith('dl')) return EXAM.dialogues[+id.slice(2)];
@@ -6631,7 +8510,7 @@ function examMostMissed(){
   stopSpeak(); window.scrollTo(0,0);
   S.qMiss=S.qMiss||{};
   const entries=Object.entries(S.qMiss).filter(([id,c])=>c>=2).sort((a,b)=>b[1]-a[1]);
-  const qs=entries.map(([id])=>{ const q=findQuestionById(id); return q?Object.assign({},q,{_missCount:S.qMiss[id]}):null; }).filter(Boolean);
+  const qs=entries.map(([id])=>{ const q=findQuestionById(id); return q?Object.assign({},q,{_id:q._id||id,_missCount:S.qMiss[id]}):null; }).filter(Boolean);
   if(!qs.length){
     app.innerHTML='<div style="padding-top:14px"><button class="btn sm" id="back">‹ الاختبار</button></div>'+
      '<section class="sheet" style="margin-top:24px"><div class="empty">لا توجد أسئلة أخطأت فيها مرتين أو أكثر بعد.<br>هذا وضع يجمع أصعب الأسئلة عليك تحديداً بمرور الوقت — تدرّب أكثر وستظهر هنا تلقائياً.</div></section>';
